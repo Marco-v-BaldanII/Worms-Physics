@@ -80,7 +80,8 @@ update_status ModulePhysics::PostUpdate()
         bullets.push_back(bullet);
 
         static char title[400];
-        sprintf_s(title, 400, "Actual integrator: EULER -- Deltatime: %f, InSpeed: %0.1f, InAngle: %0.1f, CurrSpeed: %0.1f, CurrAcceleration: %0.1f, CurrentPos: %0.1f", App->deltaTime.delta, initialSpeed, angle, bullet.velocity, bullet.acceleration, bullet.rect.x);
+        sprintf_s(title, 400, "Actual integrator: EULER -- Deltatime: %f, InSpeed: %0.1f, InAngle: %0.1f, CurrSpeed: %0.1f, CurrAcceleration: %0.1f, CurrentPos: %0.1f", 
+            App->deltaTime.delta, initialSpeed, angle*180/3.1416, bullet.velocity.x, -bullet.acceleration.y, bullet.rect.x);
         App->window->SetTitle(title);
     }
     
