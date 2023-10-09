@@ -35,6 +35,7 @@ update_status ModulePlayer::Update()
 	App->renderer->Blit(player2, 230, 355);
 	App->renderer->Blit(player2, 530, 355);
 	App->renderer->Blit(player2, 850, 355);
+
 	return UPDATE_CONTINUE;
 }
 

@@ -25,6 +25,8 @@ void ModulePhysics::IntegratorEuler(float deltaTime, SDL_Rect& rect, vec2& veloc
 {
     rect.x += velocity.x * deltaTime;
     rect.y += velocity.y * deltaTime;
+    velocity.x += acceleration.x * deltaTime;
+    velocity.y += acceleration.y * deltaTime;
     
 }
 
@@ -35,27 +37,43 @@ void ModulePhysics::IntegratorEuler2(float deltaTime, SDL_Rect& rect, vec2& velo
     vec2 oldVelocity = velocity;
     velocity.x += acceleration.x * deltaTime;
     velocity.y += acceleration.y * deltaTime;
-    rect.x += (oldVelocity.x + velocity.x) / 2 * deltaTime;
-    rect.y += (oldVelocity.y + velocity.y) / 2 * deltaTime;
+    rect.x += oldVelocity.x * deltaTime;
+    rect.y += oldVelocity.y * deltaTime;
+}
+
+void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration) 
+{
+    vec2 oldVelocity = velocity;
+    velocity.x += acceleration.x * deltaTime;
+    velocity.y += acceleration.y * deltaTime;
+    rect.x += (oldVelocity.x + velocity.x) / 2 * deltaTime + 1 / 2 * acceleration.x * deltaTime * deltaTime;
+    rect.y += (oldVelocity.y + velocity.y) / 2 * deltaTime + 1 / 2 * acceleration.y * deltaTime * deltaTime;
+
 }
 
 update_status ModulePhysics::PreUpdate()
 {
     for (Bullet& bullet : bullets)
     {
-        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
         {
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet.rect, bullet.velocity, bullet.acceleration);
         }
-        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
         {
             IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet.rect, bullet.velocity, bullet.acceleration);
+        }
+        else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_REPEAT)
+        {
+            IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bullet.rect, bullet.velocity, bullet.acceleration);
         }
         else
         {
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet.rect, bullet.velocity, bullet.acceleration);
         }
     }
+
+
 
     return UPDATE_CONTINUE;
 }

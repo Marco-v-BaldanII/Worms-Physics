@@ -13,6 +13,11 @@ struct Object
 	{}
 };
 
+struct Player : public Object {
+private:
+ 
+};
+
 class ModulePlayer : public Module
 {
 public:
@@ -26,6 +31,8 @@ public:
 	SDL_Rect player;
 	SDL_Texture* player1;
 	SDL_Texture* player2;
+
+	
 public:
 
 };
