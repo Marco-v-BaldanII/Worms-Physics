@@ -37,8 +37,8 @@ void ModulePhysics::IntegratorEuler2(float deltaTime, SDL_Rect& rect, vec2& velo
     vec2 oldVelocity = velocity;
     velocity.x += acceleration.x * deltaTime;
     velocity.y += acceleration.y * deltaTime;
-    rect.x += oldVelocity.x * deltaTime;
-    rect.y += oldVelocity.y * deltaTime;
+    rect.x += velocity.x * deltaTime;
+    rect.y += velocity.y * deltaTime;
 }
 
 void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration) 
@@ -46,8 +46,8 @@ void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velo
     vec2 oldVelocity = velocity;
     velocity.x += acceleration.x * deltaTime;
     velocity.y += acceleration.y * deltaTime;
-    rect.x += (oldVelocity.x + velocity.x) / 2 * deltaTime + 1 / 2 * acceleration.x * deltaTime * deltaTime;
-    rect.y += (oldVelocity.y + velocity.y) / 2 * deltaTime + 1 / 2 * acceleration.y * deltaTime * deltaTime;
+    rect.x += ((oldVelocity.x + velocity.x) / 2) * deltaTime + 1 / 2 * (acceleration.x * deltaTime * deltaTime);
+    rect.y += ((oldVelocity.y + velocity.y) / 2) * deltaTime + 1 / 2 * (acceleration.y * deltaTime * deltaTime);
 
 }
 
