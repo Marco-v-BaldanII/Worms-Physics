@@ -37,6 +37,14 @@ struct RigidBody {
 	fPoint speed;
 };
 
+enum class Direction {
+	RIGHT,
+	LEFT
+
+
+};
+
+
 class ModulePlayer : public Module
 {
 public:
@@ -53,13 +61,16 @@ public:
 
 	Movement myMovement[5];
 	Movement* currentMovement;
-	int m = 0;
+	int m = 2;
 
 public:
 	// Movement
 	RigidBody rigid;
 
-	void AccelerationController();
+	Direction myDirection;
+
+	void ChangeDir();
+	void AccelerationController(Direction dir);
 
 
 };

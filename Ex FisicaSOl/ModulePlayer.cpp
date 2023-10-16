@@ -2,7 +2,7 @@
 #include "Application.h"
 #include "ModulePlayer.h"
 
-#define ACCELERATION_VALUE 10;
+#define ACCELERATION_VALUE 35;
 #define MaxSpeed 4;
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -31,6 +31,8 @@ bool ModulePlayer::Start()
 	myMovement[3] = Movement::IMPULSE;
 	myMovement[4] = Movement::MOMENTUM;
 
+	myDirection = Direction::RIGHT;
+
 	currentMovement = &myMovement[0];
 	return true;
 }
@@ -50,14 +52,20 @@ update_status ModulePlayer::Update()
 
 	// MOVEMENT
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
+		if (myDirection != Direction::RIGHT) { ChangeDir(); }
 		if (*currentMovement == Movement::ACCELERATION) {
-			AccelerationController();
+			AccelerationController(Direction::RIGHT);
 		}
 
 
 
 	}
-
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
+		if (myDirection != Direction::LEFT) { ChangeDir(); }
+		if (*currentMovement == Movement::ACCELERATION) {
+			AccelerationController(Direction::LEFT);
+		}
+	}
 
 	App->renderer->Blit(player1, rigid.position.x, rigid.position.y);
 	App->renderer->Blit(player2, 230, 355);
@@ -66,16 +74,33 @@ update_status ModulePlayer::Update()
 	return UPDATE_CONTINUE;
 }
 
-void ModulePlayer::AccelerationController() {
+void ModulePlayer::ChangeDir() {
+	rigid.speed.x = 0;
 
-	rigid.acceleration.x = ACCELERATION_VALUE;
+	if (myDirection == Direction::LEFT) { myDirection = Direction::RIGHT; }
+	else if (myDirection == Direction::RIGHT) { myDirection = Direction::LEFT; }
+}
 
-	if (rigid.speed.x < 50) {
-		rigid.speed.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+void ModulePlayer::AccelerationController(Direction dir) {
+
+	if (dir == Direction::RIGHT) {
+		rigid.acceleration.x = ACCELERATION_VALUE;
+
+		if (rigid.speed.x < 90) {
+			rigid.speed.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		}
+
+		rigid.position.x += rigid.speed.x * App->deltaTime.getDeltaTimeInSeconds();
 	}
+	else if (dir == Direction::LEFT) {
+		rigid.acceleration.x = -ACCELERATION_VALUE;
 
-	rigid.position.x += rigid.speed.x * App->deltaTime.getDeltaTimeInSeconds();
+		if (rigid.speed.x > -90) {
+			rigid.speed.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		}
 
+		rigid.position.x += rigid.speed.x * App->deltaTime.getDeltaTimeInSeconds();
+	}
 
 }
 
