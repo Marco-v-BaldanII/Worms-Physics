@@ -35,19 +35,13 @@ bool ModulePlayer::Start()
 	return true;
 }
 
-// Unload assets
-bool ModulePlayer::CleanUp()
-{
-	LOG("Unloading player");
+bool ModulePlayer::CleanUp() { return true; };
 
-	return true;
-}
-
-// Update: draw background
 update_status ModulePlayer::Update()
 {
 
-	
+	App->renderer->Blit(player1, 50, 200);
+
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
 		m++;
 		currentMovement = &myMovement[(m % 5)];
@@ -69,7 +63,6 @@ update_status ModulePlayer::Update()
 	App->renderer->Blit(player2, 230, 355);
 	App->renderer->Blit(player2, 530, 355);
 	App->renderer->Blit(player2, 850, 355);
-
 	return UPDATE_CONTINUE;
 }
 

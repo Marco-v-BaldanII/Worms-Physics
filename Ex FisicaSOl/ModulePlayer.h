@@ -13,7 +13,6 @@ struct Object
 	{}
 };
 
-
 struct iPoint {
 	int x;
 	int y;
@@ -36,7 +35,7 @@ struct RigidBody {
 	fPoint position;
 	fPoint acceleration;
 	fPoint speed;
-
+};
 
 class ModulePlayer : public Module
 {
@@ -52,11 +51,9 @@ public:
 	SDL_Texture* player1;
 	SDL_Texture* player2;
 
-
 	Movement myMovement[5];
 	Movement* currentMovement;
 	int m = 0;
-
 
 public:
 	// Movement
