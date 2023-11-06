@@ -43,7 +43,7 @@ bool ModulePlayer::CleanUp() { return true; };
 update_status ModulePlayer::Update()
 {
 
-	App->renderer->Blit(player1, 50, 200);
+	/*App->renderer->Blit(player1, 50, 200);*/
 
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
 		m++;
