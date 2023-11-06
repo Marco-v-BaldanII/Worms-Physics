@@ -59,7 +59,27 @@ update_status ModulePlayer::Update()
 
 	}
 
-	// MOVEMENT
+	// Movement "tp"
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+		if (myDirection != Direction::RIGHT) { ChangeDir(); }
+		if (*currentMovement == Movement::POSITION) {
+			PositionController(Direction::RIGHT);
+		}
+
+
+
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
+		if (myDirection != Direction::LEFT) { ChangeDir(); }
+		if (*currentMovement == Movement::POSITION) {
+			PositionController(Direction::LEFT);
+		}
+	}
+
+
+
+
+	// MOVEMENT Acelerando Progresivo
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 		if (myDirection != Direction::RIGHT) { ChangeDir(); }
 		if (*currentMovement == Movement::ACCELERATION) {
@@ -119,3 +139,17 @@ void ModulePlayer::AccelerationController(Direction dir) {
 
 }
 
+void ModulePlayer :: PositionController(Direction dir) {
+
+	if (dir == Direction::RIGHT) {
+		rigid.posRect.x = rigid.posRect.x + 40;
+
+	}
+	else if (dir == Direction::LEFT) {
+		
+		rigid.posRect.x = rigid.posRect.x -40;
+		
+		
+	}
+
+}
