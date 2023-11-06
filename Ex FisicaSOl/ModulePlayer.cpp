@@ -16,15 +16,18 @@ ModulePlayer::~ModulePlayer()
 // Load assets
 bool ModulePlayer::Start()
 {
+	rigid = new RigidBody();
+
+
 	LOG("Loading player");
 	player1 = App->textures->Load("Assets/images/tirachinas.png");
 	player2 = App->textures->Load("Assets/images/PIG.png");
 	player = { 10,10,10,10 };
 
 
-	rigid.posRect.x = 50;
-	rigid.posRect.y = 200;
-	rigid.velocity.x = 10;
+	rigid->posRect.x = 50;
+	rigid->posRect.y = 200;
+	rigid->velocity.x = 10;
 
 	myMovement[0] = Movement::POSITION;
 	myMovement[1] = Movement::VELOCITY;
@@ -35,6 +38,11 @@ bool ModulePlayer::Start()
 	myDirection = Direction::RIGHT;
 
 	currentMovement = &myMovement[2];
+
+	App->physics->bodies.push_back(rigid);
+	rigid->acceleration.y = 0.981f;
+	rigid->ID = 2;
+
 	return true;
 }
 
@@ -42,7 +50,7 @@ bool ModulePlayer::CleanUp() { return true; };
 
 update_status ModulePlayer::Update()
 {
-
+	rigid->velocity.y;
 	/*App->renderer->Blit(player1, 50, 200);*/
 
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
@@ -74,7 +82,7 @@ update_status ModulePlayer::Update()
 
 
 
-	App->renderer->Blit(player1, rigid.posRect.x, rigid.posRect.y);
+	App->renderer->Blit(player1, rigid->posRect.x, rigid->posRect.y);
 	App->renderer->Blit(player2, 230, 355);
 	App->renderer->Blit(player2, 530, 355);
 	App->renderer->Blit(player2, 850, 355);
@@ -82,7 +90,7 @@ update_status ModulePlayer::Update()
 }
 
 void ModulePlayer::ChangeDir() {
-	rigid.velocity.x = 0;
+	rigid->velocity.x = 0;
 
 	if (myDirection == Direction::LEFT) { myDirection = Direction::RIGHT; }
 	else if (myDirection == Direction::RIGHT) { myDirection = Direction::LEFT; }
@@ -91,22 +99,22 @@ void ModulePlayer::ChangeDir() {
 void ModulePlayer::AccelerationController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
-		rigid.acceleration.x = ACCELERATION_VALUE;
+		rigid->acceleration.x = ACCELERATION_VALUE;
 
-		if (rigid.velocity.x < 90) {
-			rigid.velocity.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		if (rigid->velocity.x < 90) {
+			rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
-		rigid.posRect.x += rigid.velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid->posRect.x += rigid->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
 	}
 	else if (dir == Direction::LEFT) {
-		rigid.acceleration.x = -ACCELERATION_VALUE;
+		rigid->acceleration.x = -ACCELERATION_VALUE;
 
-		if (rigid.velocity.x > -90) {
-			rigid.velocity.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		if (rigid->velocity.x > -90) {
+			rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
-		rigid.posRect.x += rigid.velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid->posRect.x += rigid->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
 	}
 
 }

@@ -58,25 +58,28 @@ void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velo
 
 update_status ModulePhysics::PreUpdate()
 {
-    for (RigidBody& bullet : bodies)
+    for (RigidBody* bullet : bodies)
     {
+        if (bullet->ID == 2) {
+            LOG("Here");
+        }
         
             if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
             {
-                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet.posRect, bullet.velocity, bullet.acceleration);
+                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
        
             else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
             {
-                IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet.posRect, bullet.velocity, bullet.acceleration);
+                IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
             else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_REPEAT)
             {
-                IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bullet.posRect, bullet.velocity, bullet.acceleration);
+                IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
             else
             {
-                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet.posRect, bullet.velocity, bullet.acceleration);
+                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
     }
 
@@ -91,47 +94,48 @@ update_status ModulePhysics::PostUpdate()
 
     if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
     {
-        Bullet bullet;
-        bullet.posRect.x = App->player->rigid.posRect.x;
-        bullet.posRect.y = App->player->rigid.posRect.y;
-        bullet.posRect.w = 10;
-        bullet.posRect.h = 10;
+        Bullet* bullet = new Bullet;
+        bullet->posRect.x = App->player->rigid->posRect.x;
+        bullet->posRect.y = App->player->rigid->posRect.y;
+        bullet->posRect.w = 10;
+        bullet->posRect.h = 10;
         float initialSpeed = 400.0f;
         float angle = 45;
         angle = angle * M_PI / 180.0f;
-        bullet.velocity.x = initialSpeed * cos(angle);
-        bullet.velocity.y = -initialSpeed * sin(angle);
-        bullet.acceleration = { 0,981 };
+        bullet->velocity.x = initialSpeed * cos(angle);
+        bullet->velocity.y = -initialSpeed * sin(angle);
+        bullet->acceleration = { 0,981 };
         bodies.push_back(bullet);
 
         static char title[400];
         sprintf_s(title, 400, "Actual integrator: EULER -- Deltatime: %f, InSpeed: %0.1f, InAngle: %0.1f, CurrSpeed: %0.1f, CurrAcceleration: %0.1f, CurrentPos: %0.1f",
-            App->deltaTime.delta, initialSpeed, angle * 180 / 3.1416, bullet.velocity.x, - (float)GRAVITY, bullet.posRect.x);
+            App->deltaTime.delta, initialSpeed, angle * 180 / 3.1416, bullet->velocity.x, - (float)GRAVITY, bullet->posRect.x);
         App->window->SetTitle(title);
     }
 
-    for (const RigidBody& bullet : bodies)
+    for (const RigidBody* bullet : bodies)
     {
-        App->renderer->Blit(bird, bullet.posRect.x, bullet.posRect.y);
+        App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y);
 
         /*
         SDL_SetRenderDrawColor(App->renderer->renderer, 255, 0, 0, 255);
         SDL_RenderFillRect(App->renderer->renderer, &bullet.rect);*/
     }
 
-    for (RigidBody& bullet : bodies)
+    float gravity = GRAVITY;
+    for (RigidBody* bullet : bodies)
     {
         if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
         {
-            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet.posRect, bullet.velocity, bullet.acceleration);
+            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
         else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
         {
-            IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet.posRect, bullet.velocity, bullet.acceleration);
+            IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
         else
         {
-            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet.posRect, bullet.velocity, bullet.acceleration);
+            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
     }
 

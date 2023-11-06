@@ -61,7 +61,7 @@ public:
 
 public:
 	// Movement
-	RigidBody rigid;
+	RigidBody* rigid;
 
 	Direction myDirection;
 

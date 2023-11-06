@@ -17,6 +17,8 @@ public:
     vec2 acceleration;
     SDL_Texture* bird;
 
+    int ID = 0;
+
 };
 
 class Bullet : public RigidBody {
@@ -39,7 +41,7 @@ public:
     update_status PreUpdate();
     update_status PostUpdate();
     bool CleanUp();
-    std::list<RigidBody> bodies;
+    std::list<RigidBody*> bodies;
 
 private:
     vec2 canon = {10, 150};
