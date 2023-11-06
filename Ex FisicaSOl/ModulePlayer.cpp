@@ -1,6 +1,7 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModulePlayer.h"
+#include "ModulePhysics.h"
 
 #define ACCELERATION_VALUE 35;
 #define MaxSpeed 4;
@@ -21,9 +22,9 @@ bool ModulePlayer::Start()
 	player = { 10,10,10,10 };
 
 
-	rigid.position.x = 50;
-	rigid.position.y = 200;
-	rigid.speed.x = 10;
+	rigid.posRect.x = 50;
+	rigid.posRect.y = 200;
+	rigid.velocity.x = 10;
 
 	myMovement[0] = Movement::POSITION;
 	myMovement[1] = Movement::VELOCITY;
@@ -33,7 +34,7 @@ bool ModulePlayer::Start()
 
 	myDirection = Direction::RIGHT;
 
-	currentMovement = &myMovement[0];
+	currentMovement = &myMovement[2];
 	return true;
 }
 
@@ -67,7 +68,13 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	App->renderer->Blit(player1, rigid.position.x, rigid.position.y);
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+
+	}
+
+
+
+	App->renderer->Blit(player1, rigid.posRect.x, rigid.posRect.y);
 	App->renderer->Blit(player2, 230, 355);
 	App->renderer->Blit(player2, 530, 355);
 	App->renderer->Blit(player2, 850, 355);
@@ -75,7 +82,7 @@ update_status ModulePlayer::Update()
 }
 
 void ModulePlayer::ChangeDir() {
-	rigid.speed.x = 0;
+	rigid.velocity.x = 0;
 
 	if (myDirection == Direction::LEFT) { myDirection = Direction::RIGHT; }
 	else if (myDirection == Direction::RIGHT) { myDirection = Direction::LEFT; }
@@ -86,20 +93,20 @@ void ModulePlayer::AccelerationController(Direction dir) {
 	if (dir == Direction::RIGHT) {
 		rigid.acceleration.x = ACCELERATION_VALUE;
 
-		if (rigid.speed.x < 90) {
-			rigid.speed.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		if (rigid.velocity.x < 90) {
+			rigid.velocity.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
-		rigid.position.x += rigid.speed.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid.posRect.x += rigid.velocity.x * App->deltaTime.getDeltaTimeInSeconds();
 	}
 	else if (dir == Direction::LEFT) {
 		rigid.acceleration.x = -ACCELERATION_VALUE;
 
-		if (rigid.speed.x > -90) {
-			rigid.speed.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		if (rigid.velocity.x > -90) {
+			rigid.velocity.x += rigid.acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
-		rigid.position.x += rigid.speed.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid.posRect.x += rigid.velocity.x * App->deltaTime.getDeltaTimeInSeconds();
 	}
 
 }

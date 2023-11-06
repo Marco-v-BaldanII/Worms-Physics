@@ -8,12 +8,22 @@ struct vec2 {
     float y;
 };
 
-struct Bullet {
-    SDL_Rect rect;
+
+class RigidBody {
+
+public:
+    SDL_Rect posRect;
     vec2 velocity;
     vec2 acceleration;
     SDL_Texture* bird;
+
 };
+
+class Bullet : public RigidBody {
+public:
+
+};
+
 
 class ModulePhysics : public Module
 {
@@ -29,7 +39,7 @@ public:
     update_status PreUpdate();
     update_status PostUpdate();
     bool CleanUp();
-    std::list<Bullet> bullets;
+    std::list<RigidBody> bodies;
 
 private:
     vec2 canon = {10, 150};

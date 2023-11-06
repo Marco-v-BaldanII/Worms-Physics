@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "Globals.h"
 #include "p2Point.h"
+#include "ModulePhysics.h"
 
 struct Object
 {
@@ -31,11 +32,6 @@ enum Movement {
 	IMPULSE
 };
 
-struct RigidBody {
-	fPoint position;
-	fPoint acceleration;
-	fPoint speed;
-};
 
 enum class Direction {
 	RIGHT,
