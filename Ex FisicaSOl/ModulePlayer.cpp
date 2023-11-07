@@ -37,7 +37,7 @@ bool ModulePlayer::Start()
 
 	myDirection = Direction::RIGHT;
 
-	currentMovement = &myMovement[1];
+	currentMovement = &myMovement[0];
 
 	App->physics->bodies.push_back(rigid);
 	rigid->acceleration.y = 0.981f;
@@ -76,7 +76,7 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	// Movement "velocity change"
+	// Movement "velocity set"
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
 		if (myDirection != Direction::RIGHT) { ChangeDir(); }
 		if (*currentMovement == Movement::VELOCITY) {
@@ -92,6 +92,26 @@ update_status ModulePlayer::Update()
 			VelocityController(Direction::LEFT);
 		}
 	}
+
+
+	// Movement "Impulse change"
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+		if (myDirection != Direction::RIGHT) { ChangeDir(); }
+		if (*currentMovement == Movement::IMPULSE) {
+			ImpulseController(Direction::RIGHT);
+		}
+
+
+
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
+		if (myDirection != Direction::LEFT) { ChangeDir(); }
+		if (*currentMovement == Movement::IMPULSE) {
+			ImpulseController(Direction::LEFT);
+		}
+	}
+
+
 
 
 	// MOVEMENT Acelerando Progresivo
@@ -170,20 +190,33 @@ void ModulePlayer :: PositionController(Direction dir) {
 }
 
 
-
 void ModulePlayer::VelocityController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
-		rigid->velocity.x = rigid->velocity.x + 30 ;
+		rigid->velocity.x = 50 ;
 
 	}
 	else if (dir == Direction::LEFT) {
 
-		rigid->velocity.x = rigid->velocity.x -30 ;
+		rigid->velocity.x = -50 ;
 
 
 	}
 
+}
+
+void ModulePlayer::ImpulseController(Direction dir) {
+
+	if (dir == Direction::RIGHT) {
+		rigid->velocity.x = rigid->velocity.x + 20;
+
+	}
+	else if (dir == Direction::LEFT) {
+
+		rigid->velocity.x = rigid->velocity.x - 20;
+
+
+	}
 
 
 }
