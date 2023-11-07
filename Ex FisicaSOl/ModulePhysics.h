@@ -16,6 +16,8 @@ public:
     vec2 velocity;
     vec2 acceleration;
     SDL_Texture* bird;
+    
+    bool isMoving = false;
 
     int ID = 0;
 
