@@ -63,12 +63,12 @@ update_status ModulePhysics::PreUpdate()
         if (bullet->ID == 2) {
             LOG("Here");
         }
-        
+        if (bullet->isMoving == true) {
             if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
             {
                 IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
-       
+
             else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
             {
                 IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
@@ -81,6 +81,7 @@ update_status ModulePhysics::PreUpdate()
             {
                 IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
+        }
     }
 
 
@@ -95,6 +96,7 @@ update_status ModulePhysics::PostUpdate()
     if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
     {
         Bullet* bullet = new Bullet;
+        bullet->isMoving = true;
         bullet->posRect.x = App->player->rigid->posRect.x;
         bullet->posRect.y = App->player->rigid->posRect.y;
         bullet->posRect.w = 10;

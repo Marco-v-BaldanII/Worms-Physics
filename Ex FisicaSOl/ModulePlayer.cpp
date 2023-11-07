@@ -27,7 +27,7 @@ bool ModulePlayer::Start()
 
 	rigid->posRect.x = 50;
 	rigid->posRect.y = 200;
-	rigid->velocity.x = 10;
+
 
 	myMovement[0] = Movement::POSITION;
 	myMovement[1] = Movement::VELOCITY;
@@ -89,12 +89,18 @@ update_status ModulePlayer::Update()
 
 
 	}
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
+	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
 		if (myDirection != Direction::LEFT) { ChangeDir(); }
 		if (*currentMovement == Movement::ACCELERATION) {
 			AccelerationController(Direction::LEFT);
 		}
 	}
+	else if (App->input->GetKey(SDL_SCANCODE_LEFT) != KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_RIGHT) != KEY_REPEAT){
+		rigid->velocity.x = 0; 
+		rigid->acceleration.x = 0;
+		rigid->isMoving = false;
+	}
+	
 
 	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 
@@ -118,6 +124,7 @@ void ModulePlayer::ChangeDir() {
 
 void ModulePlayer::AccelerationController(Direction dir) {
 
+	rigid->isMoving = true;
 	if (dir == Direction::RIGHT) {
 		rigid->acceleration.x = ACCELERATION_VALUE;
 
@@ -125,7 +132,7 @@ void ModulePlayer::AccelerationController(Direction dir) {
 			rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
-		rigid->posRect.x += rigid->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+		
 	}
 	else if (dir == Direction::LEFT) {
 		rigid->acceleration.x = -ACCELERATION_VALUE;
@@ -134,7 +141,7 @@ void ModulePlayer::AccelerationController(Direction dir) {
 			rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
-		rigid->posRect.x += rigid->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+		
 	}
 
 }
@@ -142,12 +149,12 @@ void ModulePlayer::AccelerationController(Direction dir) {
 void ModulePlayer :: PositionController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
-		rigid.posRect.x = rigid.posRect.x + 40;
+		rigid->posRect.x = rigid->posRect.x + 40;
 
 	}
 	else if (dir == Direction::LEFT) {
 		
-		rigid.posRect.x = rigid.posRect.x -40;
+		rigid->posRect.x = rigid->posRect.x -40;
 		
 		
 	}
