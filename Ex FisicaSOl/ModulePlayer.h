@@ -68,5 +68,6 @@ public:
 	void ChangeDir();
 	void AccelerationController(Direction dir);
 	void PositionController(Direction dir);
+	void VelocityController(Direction dir);
 
 };
