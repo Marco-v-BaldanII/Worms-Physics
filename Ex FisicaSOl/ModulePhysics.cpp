@@ -31,9 +31,9 @@ void ModulePhysics::IntegratorEuler(float deltaTime, SDL_Rect& rect, vec2& veloc
             LOG("\n whyyyyyyyy \n");
         }
         LOG("\n position X = %d + %lf * %lf", rect.x, velocity.x, deltaTime);
-        rect.x += velocity.x * 0.016f;
+        rect.x += velocity.x * deltaTime;
        
-        rect.y += velocity.y * 0.16f;
+        rect.y += velocity.y * deltaTime;
         if (acceleration.x != 0) velocity.x += acceleration.x * deltaTime;
         if (acceleration.y != 0)velocity.y += acceleration.y * deltaTime;
     }

@@ -238,12 +238,12 @@ void ModulePlayer::PositionController(Direction dir) {
 void ModulePlayer::VelocityController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
-		rigid->velocity.x = 50 ;
+		rigid->velocity.x = 200 ;
 
 	}
 	else if (dir == Direction::LEFT) {
 
-		rigid->velocity.x = -50 ;
+		rigid->velocity.x = -200 ;
 
 
 	}
