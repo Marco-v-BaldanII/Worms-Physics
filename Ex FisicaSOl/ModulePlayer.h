@@ -70,5 +70,7 @@ public:
 	void PositionController(Direction dir);
 	void VelocityController(Direction dir);
 	void ImpulseController(Direction dir);
+	void MomentumController(Direction dir);
 
+	float CalculateMomentum();
 };

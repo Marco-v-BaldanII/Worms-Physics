@@ -111,7 +111,21 @@ update_status ModulePlayer::Update()
 		}
 	}
 
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+		if (myDirection != Direction::RIGHT) { ChangeDir(); }
+		if (*currentMovement == Movement::MOMENTUM) {
+			MomentumController(Direction::RIGHT);
+		}
 
+
+
+	}
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
+		if (myDirection != Direction::LEFT) { ChangeDir(); }
+		if (*currentMovement == Movement::MOMENTUM) {
+			MomentumController(Direction::LEFT);
+		}
+	}
 
 
 	// MOVEMENT Acelerando Progresivo
@@ -181,7 +195,7 @@ void ModulePlayer::AccelerationController(Direction dir) {
 
 }
 
-void ModulePlayer :: PositionController(Direction dir) {
+void ModulePlayer::PositionController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
 		rigid->posRect.x = rigid->posRect.x + 40;
@@ -222,8 +236,28 @@ void ModulePlayer::ImpulseController(Direction dir) {
 
 		rigid->velocity.x = rigid->velocity.x - 20;
 
-
 	}
 
 
+}
+
+float ModulePlayer::CalculateMomentum() {
+	float mass = 1; 
+	vec2 velocity = rigid->velocity;
+
+	float momentum = mass * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
+
+	return momentum;
+}
+
+void ModulePlayer::MomentumController(Direction dir) {
+	float friction = 0.1; 
+	float momentum = CalculateMomentum();
+
+	if (dir == Direction::RIGHT) {
+		rigid->velocity.x = (momentum + 20) * (1 - friction);
+	}
+	else if (dir == Direction::LEFT) {
+		rigid->velocity.x = (momentum - 20) * (1 - friction);
+	}
 }
