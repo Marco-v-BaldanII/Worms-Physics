@@ -26,10 +26,17 @@ bool ModulePhysics::Start()
 
 void ModulePhysics::IntegratorEuler(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration)
 {
-    rect.x += velocity.x * deltaTime;
-    rect.y += velocity.y * deltaTime;
-    velocity.x += acceleration.x * deltaTime;
-    velocity.y += acceleration.y * deltaTime;
+    if (deltaTime != 0) {
+        if (velocity.x == 0) {
+            LOG("\n whyyyyyyyy \n");
+        }
+        LOG("\n position X = %d + %lf * %lf", rect.x, velocity.x, deltaTime);
+        rect.x += velocity.x * 0.016f;
+       
+        rect.y += velocity.y * 0.16f;
+        if (acceleration.x != 0) velocity.x += acceleration.x * deltaTime;
+        if (acceleration.y != 0)velocity.y += acceleration.y * deltaTime;
+    }
 
 }
 
@@ -63,7 +70,7 @@ update_status ModulePhysics::PreUpdate()
         if (bullet->ID == 2) {
             LOG("Here");
         }
-        if (bullet->isMoving == true) {
+        
             if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
             {
                 IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
@@ -79,9 +86,12 @@ update_status ModulePhysics::PreUpdate()
             }
             else
             {
+                if (App->deltaTime.getDeltaTimeInSeconds() == 0) {
+                    LOG("This should never happen");
+                }
                 IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
-        }
+        
     }
 
 
@@ -127,17 +137,19 @@ update_status ModulePhysics::PostUpdate()
     float gravity = GRAVITY;
     for (RigidBody* bullet : bodies)
     {
-        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-        {
-            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-        }
-        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-        {
-            IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-        }
-        else
-        {
-            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+        if (bullet->isMoving) {
+            if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+            {
+                IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+            }
+            else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+            {
+                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+            }
+            else
+            {
+                IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+            }
         }
     }
 
