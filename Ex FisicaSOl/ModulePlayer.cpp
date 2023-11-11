@@ -37,7 +37,9 @@ bool ModulePlayer::Start()
 
 	myDirection = Direction::RIGHT;
 
-	currentMovement = &myMovement[0];
+	currentMovement = &myMovement[4];
+
+	
 
 	App->physics->bodies.push_back(rigid);
 	rigid->acceleration.y = 0.981f;
@@ -50,7 +52,7 @@ bool ModulePlayer::CleanUp() { return true; };
 
 update_status ModulePlayer::Update()
 {
-	rigid->velocity.y;
+	//rigid->velocity.y;
 	/*App->renderer->Blit(player1, 50, 200);*/
 
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
@@ -111,7 +113,9 @@ update_status ModulePlayer::Update()
 		}
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+
+	// Momentum
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 		if (myDirection != Direction::RIGHT) { ChangeDir(); }
 		if (*currentMovement == Movement::MOMENTUM) {
 			MomentumController(Direction::RIGHT);
@@ -120,7 +124,7 @@ update_status ModulePlayer::Update()
 
 
 	}
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
 		if (myDirection != Direction::LEFT) { ChangeDir(); }
 		if (*currentMovement == Movement::MOMENTUM) {
 			MomentumController(Direction::LEFT);
@@ -251,13 +255,33 @@ float ModulePlayer::CalculateMomentum() {
 }
 
 void ModulePlayer::MomentumController(Direction dir) {
-	float friction = 0.1; 
+	rigid->isMoving = true;
 	float momentum = CalculateMomentum();
+	float initialVelocity = 0.5;
+	float maxVelocity = 2.0; 
 
 	if (dir == Direction::RIGHT) {
-		rigid->velocity.x = (momentum + 20) * (1 - friction);
+
+		rigid->acceleration.x = momentum;
+		rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		if (rigid->velocity.x < initialVelocity) {
+			rigid->velocity.x = initialVelocity;
+		}
+		if (rigid->velocity.x > maxVelocity) {
+			rigid->velocity.x = maxVelocity;
+		}
+
 	}
 	else if (dir == Direction::LEFT) {
-		rigid->velocity.x = (momentum - 20) * (1 - friction);
+
+		rigid->acceleration.x = -momentum;
+		rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		if (rigid->velocity.x > -initialVelocity) {
+			rigid->velocity.x = -initialVelocity;
+		}
+		if (rigid->velocity.x < -maxVelocity) {
+			rigid->velocity.x = -maxVelocity;
+		}
 	}
 }
+
