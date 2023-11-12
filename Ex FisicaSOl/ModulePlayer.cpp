@@ -277,24 +277,24 @@ float ModulePlayer::CalculateMomentum() {
 void ModulePlayer::MomentumController(Direction dir) {
 	rigid->isMoving = true;
 	float momentum = CalculateMomentum();
-	float initialVelocity = 0.5;
+	float initialVelocity = 1.0f;
 	float maxVelocity = 2.0;
 	rigid->acceleration.x = momentum;
 
 	if (dir == Direction::RIGHT) {
 
-		rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid->velocity.x += rigid->acceleration.x;
 		if (rigid->velocity.x < initialVelocity) {
 			rigid->velocity.x = initialVelocity;
 		}
 		if (rigid->velocity.x > maxVelocity) {
 			rigid->velocity.x = maxVelocity;
 		}
-
+		 
 	}
 	else if (dir == Direction::LEFT) {
 
-		rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid->velocity.x += rigid->acceleration.x;
 		if (rigid->velocity.x > -initialVelocity) {
 			rigid->velocity.x = -initialVelocity;
 		}

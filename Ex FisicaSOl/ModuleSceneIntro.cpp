@@ -22,7 +22,7 @@ bool ModuleSceneIntro::Start()
 	pigTexture = App->textures->Load("Assets/images/PIG.png");
 
 	SDL_Rect Trect1 = { 200,200,60,60 };
-	AddTarget(Trect1, Trect1);
+	//AddTarget(Trect1, Trect1);
 
 
 	return ret;
