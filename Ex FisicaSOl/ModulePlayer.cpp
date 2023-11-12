@@ -271,6 +271,7 @@ float ModulePlayer::CalculateMomentum() {
 
 	float momentum = mass * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
 
+	LOG(" \n MOmentum %f", momentum);
 	return momentum;
 }
 
@@ -278,12 +279,12 @@ void ModulePlayer::MomentumController(Direction dir) {
 	rigid->isMoving = true;
 	float momentum = CalculateMomentum();
 	float initialVelocity = 0.5;
-	float maxVelocity = 2.0;
+	float maxVelocity = 80;
 	rigid->acceleration.x = momentum;
 
 	if (dir == Direction::RIGHT) {
 
-		rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid->velocity.x += rigid->acceleration.x;
 		if (rigid->velocity.x < initialVelocity) {
 			rigid->velocity.x = initialVelocity;
 		}
@@ -294,7 +295,7 @@ void ModulePlayer::MomentumController(Direction dir) {
 	}
 	else if (dir == Direction::LEFT) {
 
-		rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
+		rigid->velocity.x += rigid->acceleration.x ;
 		if (rigid->velocity.x > -initialVelocity) {
 			rigid->velocity.x = -initialVelocity;
 		}
