@@ -6,6 +6,7 @@
 #include "ModulePlayer.h"
 
 #define GRAVITY 0.981
+#define OPACITY 80
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -27,9 +28,7 @@ bool ModulePhysics::Start()
 void ModulePhysics::IntegratorEuler(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration)
 {
     if (deltaTime != 0) {
-        if (velocity.x == 0) {
-            LOG("\n whyyyyyyyy \n");
-        }
+        
         LOG("\n position X = %d + %lf * %lf", rect.x, velocity.x, deltaTime);
         rect.x += velocity.x * deltaTime;
        
@@ -67,9 +66,9 @@ update_status ModulePhysics::PreUpdate()
 {
     for (RigidBody* bullet : bodies)
     {
-        if (bullet->ID == 2) {
-            LOG("Here");
-        }
+
+        
+        
         
             if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
             {
@@ -100,6 +99,8 @@ update_status ModulePhysics::PreUpdate()
 }
 update_status ModulePhysics::PostUpdate()
 {
+    
+
     if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
         debug = !debug;
 
@@ -117,6 +118,8 @@ update_status ModulePhysics::PostUpdate()
         bullet->velocity.x = initialSpeed * cos(angle);
         bullet->velocity.y = -initialSpeed * sin(angle);
         bullet->acceleration = { 0,981 };
+        SDL_Rect r = { 0,0,40,40 };
+        bullet->CreateCollider(r);
         bodies.push_back(bullet);
 
         static char title[400];
@@ -128,10 +131,16 @@ update_status ModulePhysics::PostUpdate()
     for (const RigidBody* bullet : bodies)
     {
         App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y);
+        
+            if (bullet->collider != nullptr) {
 
-        /*
-        SDL_SetRenderDrawColor(App->renderer->renderer, 255, 0, 0, 255);
-        SDL_RenderFillRect(App->renderer->renderer, &bullet.rect);*/
+                bullet->collider->data.x = bullet->posRect.x;
+                bullet->collider->data.y = bullet->posRect.y;
+                
+                App->renderer->DrawQuad(bullet->collider->data, 255, 80, 70,OPACITY);
+            }
+
+
     }
 
     float gravity = GRAVITY;

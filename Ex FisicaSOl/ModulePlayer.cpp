@@ -5,7 +5,7 @@
 #include "ModulePhysics.h"
 
 
-#define ACCELERATION_VALUE 35;
+#define ACCELERATION_VALUE 90;
 #define MaxSpeed 4;
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -39,7 +39,7 @@ bool ModulePlayer::Start()
 
 	myDirection = Direction::RIGHT;
 
-	currentMovement = &myMovement[1];
+	currentMovement = &myMovement[4];
 
 	
 
@@ -201,7 +201,7 @@ void ModulePlayer::AccelerationController(Direction dir) {
 	if (dir == Direction::RIGHT) {
 		rigid->acceleration.x = ACCELERATION_VALUE;
 
-		if (rigid->velocity.x < 90) {
+		if (rigid->velocity.x < 200) {
 			rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
@@ -210,7 +210,7 @@ void ModulePlayer::AccelerationController(Direction dir) {
 	else if (dir == Direction::LEFT) {
 		rigid->acceleration.x = -ACCELERATION_VALUE;
 
-		if (rigid->velocity.x > -90) {
+		if (rigid->velocity.x > -200) {
 			rigid->velocity.x += rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
@@ -253,12 +253,12 @@ void ModulePlayer::VelocityController(Direction dir) {
 void ModulePlayer::ImpulseController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
-		rigid->velocity.x = rigid->velocity.x + 20;
+		rigid->velocity.x = rigid->velocity.x + 80;
 
 	}
 	else if (dir == Direction::LEFT) {
 
-		rigid->velocity.x = rigid->velocity.x - 20;
+		rigid->velocity.x = rigid->velocity.x - 80;
 
 	}
 

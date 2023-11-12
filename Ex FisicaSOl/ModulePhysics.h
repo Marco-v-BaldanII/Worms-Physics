@@ -7,6 +7,16 @@ struct vec2 {
     float x;
     float y;
 };
+class Collider {
+public:
+    
+    SDL_Rect data;
+
+    Collider(SDL_Rect r) {
+        data = r;
+    }
+
+};
 
 
 class RigidBody {
@@ -20,6 +30,11 @@ public:
     bool isMoving = false;
 
     int ID = 0;
+    Collider* collider = nullptr;
+
+    void CreateCollider(SDL_Rect& col) {
+        collider = new Collider(col);
+    }
 
 };
 
@@ -27,6 +42,8 @@ class Bullet : public RigidBody {
 public:
 
 };
+
+
 
 
 class ModulePhysics : public Module
