@@ -8,7 +8,7 @@ Group:
 - Jordi Tur
 - Pablo Longaron
 
-
+Controls:
 - F2 - IntegratorEuler
 - F3 - IntegratorEuler2
 - F4 - IntegratorVerlet  
