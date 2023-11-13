@@ -3,6 +3,16 @@
 #include "Globals.h"
 #include <list>
 
+
+enum ColliderType {
+
+    GROUND,
+    BULLET
+
+
+};
+
+
 struct vec2 {
     float x;
     float y;
@@ -11,17 +21,27 @@ class Collider {
 public:
     
     SDL_Rect data;
+    ColliderType type;
 
-    Collider(SDL_Rect r) {
+    Collider(SDL_Rect r, ColliderType type) {
         data = r;
+        this->type = type;
     }
 
+    
 };
 
 
 class RigidBody {
 
 public:
+
+    RigidBody(SDL_Rect posRect) {
+        this->posRect = posRect;
+    }
+
+    RigidBody() {};
+
     SDL_Rect posRect;
     vec2 velocity;
     vec2 acceleration;
@@ -32,8 +52,10 @@ public:
     int ID = 0;
     Collider* collider = nullptr;
 
-    void CreateCollider(SDL_Rect& col) {
-        collider = new Collider(col);
+    void CreateCollider(SDL_Rect& col, ColliderType type) {
+        
+        collider = new Collider(col , type);
+        
     }
 
 };
@@ -43,7 +65,14 @@ public:
 
 };
 
+class Target {
 
+public:
+    RigidBody rigid;
+
+
+
+};
 
 
 class ModulePhysics : public Module

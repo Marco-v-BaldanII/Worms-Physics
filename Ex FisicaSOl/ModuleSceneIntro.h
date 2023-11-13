@@ -39,7 +39,11 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	void AddTarget(SDL_Rect posRect, SDL_Rect collid);
+
 public:
+
+	RigidBody* ground;
 
 	SDL_Texture* backgound;
 	SDL_Texture* graphics;

@@ -44,7 +44,7 @@ bool ModulePlayer::Start()
 	
 
 	App->physics->bodies.push_back(rigid);
-	rigid->acceleration.y = 0;
+	rigid->acceleration.y = 90;
 	rigid->ID = 2;
 
 	return true;

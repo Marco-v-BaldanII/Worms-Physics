@@ -119,7 +119,7 @@ update_status ModulePhysics::PostUpdate()
         bullet->velocity.y = -initialSpeed * sin(angle);
         bullet->acceleration = { 0,981 };
         SDL_Rect r = { 0,0,40,40 };
-        bullet->CreateCollider(r);
+        bullet->CreateCollider(r, ColliderType::BULLET);
         bodies.push_back(bullet);
 
         static char title[400];
