@@ -28,6 +28,24 @@ public:
         this->type = type;
     }
 
+    bool Intersects(SDL_Rect* r) const
+    {
+        if (r != nullptr && &data != nullptr) {
+            if (data.w != 0 && data.h != 0 && r->w != 0 && r->h != 0) {
+                // returns true if there has been an intersection
+                return (data.x < r->x + r->w &&
+                    data.x + data.w > r->x &&
+                    data.y < r->y + r->h &&
+                    data.h + data.y > r->y);
+            }
+        }
+
+        else {
+            return false;
+        }
+
+    }
+
     
 };
 

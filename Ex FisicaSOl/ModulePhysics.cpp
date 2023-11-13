@@ -67,6 +67,21 @@ update_status ModulePhysics::PreUpdate()
     for (RigidBody* bullet : bodies)
     {
 
+        for (RigidBody* bullet2 : bodies) {
+
+            if (bullet != bullet2) {
+
+                if (bullet->collider->Intersects(&bullet2->collider->data)) {
+
+                    LOG("\n \nColllision\n");
+                }
+
+            }
+
+
+        }
+
+
         
         
         
