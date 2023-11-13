@@ -39,7 +39,7 @@ bool ModulePlayer::Start()
 
 	myDirection = Direction::RIGHT;
 
-	currentMovement = &myMovement[4];
+	currentMovement = &myMovement[3];
 
 	
 
@@ -65,7 +65,7 @@ update_status ModulePlayer::Update()
 	}
 
 	// Movement "tp"
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 		moved = true;
 		if (myDirection != Direction::RIGHT) { ChangeDir(); }
 		if (*currentMovement == Movement::POSITION) {
@@ -75,7 +75,7 @@ update_status ModulePlayer::Update()
 
 
 	}
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
 		moved = true;
 		if (myDirection != Direction::LEFT) { ChangeDir(); }
 		if (*currentMovement == Movement::POSITION) {
@@ -104,7 +104,7 @@ update_status ModulePlayer::Update()
 
 
 	// Movement "Impulse change"
-	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 		moved = true;
 		if (myDirection != Direction::RIGHT) { ChangeDir(); }
 		if (*currentMovement == Movement::IMPULSE) {
@@ -114,7 +114,7 @@ update_status ModulePlayer::Update()
 
 
 	}
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
 		moved = true;
 		if (myDirection != Direction::LEFT) { ChangeDir(); }
 		if (*currentMovement == Movement::IMPULSE) {
@@ -222,12 +222,12 @@ void ModulePlayer::AccelerationController(Direction dir) {
 void ModulePlayer::PositionController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
-		rigid->posRect.x = rigid->posRect.x + 40;
+		rigid->posRect.x = rigid->posRect.x + 10;
 
 	}
 	else if (dir == Direction::LEFT) {
 		
-		rigid->posRect.x = rigid->posRect.x -40;
+		rigid->posRect.x = rigid->posRect.x -10;
 		
 		
 	}
@@ -253,12 +253,12 @@ void ModulePlayer::VelocityController(Direction dir) {
 void ModulePlayer::ImpulseController(Direction dir) {
 
 	if (dir == Direction::RIGHT) {
-		rigid->velocity.x = rigid->velocity.x + 80;
+		rigid->velocity.x = rigid->velocity.x + 20;
 
 	}
 	else if (dir == Direction::LEFT) {
 
-		rigid->velocity.x = rigid->velocity.x - 80;
+		rigid->velocity.x = rigid->velocity.x - 20;
 
 	}
 
