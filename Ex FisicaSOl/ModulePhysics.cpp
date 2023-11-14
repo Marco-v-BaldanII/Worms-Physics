@@ -74,6 +74,9 @@ update_status ModulePhysics::PreUpdate()
                 if (bullet->collider->Intersects(&bullet2->collider->data)) {
 
                     LOG("\n \nColllision\n");
+                    
+                    bullet2->collider->listener->OnCollision(bullet, bullet2);
+
                 }
 
             }
@@ -134,7 +137,7 @@ update_status ModulePhysics::PostUpdate()
         bullet->velocity.y = -initialSpeed * sin(angle);
         bullet->acceleration = { 0,981 };
         SDL_Rect r = { 0,0,40,40 };
-        bullet->CreateCollider(r, ColliderType::BULLET);
+        bullet->CreateCollider(r, ColliderType::BULLET, this);
         bodies.push_back(bullet);
 
         static char title[400];

@@ -59,6 +59,8 @@ public:
 	Movement* currentMovement;
 	int m = 2;
 
+	bool isGrounded = true;
+
 public:
 	// Movement
 	RigidBody* rigid;
@@ -71,6 +73,7 @@ public:
 	void VelocityController(Direction dir);
 	void ImpulseController(Direction dir);
 	void MomentumController(Direction dir);
+	void OnCollision(RigidBody* c1, RigidBody* c2);
 
 	float CalculateMomentum();
 };

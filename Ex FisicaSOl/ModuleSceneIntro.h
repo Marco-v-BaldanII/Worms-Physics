@@ -41,6 +41,8 @@ public:
 
 	void AddTarget(SDL_Rect posRect, SDL_Rect collid);
 
+	
+
 public:
 
 	RigidBody* ground;

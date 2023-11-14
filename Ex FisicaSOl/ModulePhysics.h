@@ -7,7 +7,8 @@
 enum ColliderType {
 
     GROUND,
-    BULLET
+    BULLET,
+    PLAYER
 
 
 };
@@ -23,9 +24,10 @@ public:
     SDL_Rect data;
     ColliderType type;
 
-    Collider(SDL_Rect r, ColliderType type) {
+    Collider(SDL_Rect r, ColliderType type, Module* Listener) {
         data = r;
         this->type = type;
+        listener = Listener;
     }
 
     bool Intersects(SDL_Rect* r) const
@@ -46,6 +48,7 @@ public:
 
     }
 
+    Module* listener;
     
 };
 
@@ -70,9 +73,9 @@ public:
     int ID = 0;
     Collider* collider = nullptr;
 
-    void CreateCollider(SDL_Rect& col, ColliderType type) {
+    void CreateCollider(SDL_Rect& col, ColliderType type, Module* listener) {
         
-        collider = new Collider(col , type);
+        collider = new Collider(col , type, listener);
         
     }
 

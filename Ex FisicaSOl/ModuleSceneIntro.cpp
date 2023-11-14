@@ -25,7 +25,7 @@ bool ModuleSceneIntro::Start()
 	SDL_Rect Trect1 = { 200,200,60,60 };
 	//AddTarget(Trect1, Trect1);
 	ground = new RigidBody(SDL_Rect{ 500,282,171,261 });
-	ground->CreateCollider(SDL_Rect{ 0,282,171,261 }, ColliderType::GROUND);
+	ground->CreateCollider(SDL_Rect{ 0,282,171,261 }, ColliderType::GROUND, this);
 	App->physics->bodies.push_back(ground);
 
 	return ret;
@@ -56,3 +56,4 @@ void AddTarget(SDL_Rect posRect, SDL_Rect collid) {
 
 
 }
+

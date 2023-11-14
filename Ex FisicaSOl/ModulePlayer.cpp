@@ -29,6 +29,7 @@ bool ModulePlayer::Start()
 
 	rigid->posRect.x = 50;
 	rigid->posRect.y = 200;
+	rigid->CreateCollider(SDL_Rect{ 0,0,65,87 }, ColliderType::PLAYER, this);
 
 
 	myMovement[0] = Movement::POSITION;
@@ -309,3 +310,15 @@ void ModulePlayer::MomentumController(Direction dir) {
 	}
 }
 
+void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
+
+	if (c1->collider->type == ColliderType::GROUND) {
+
+		isGrounded = true;
+
+
+	}
+
+	LOG("Collision");
+
+}

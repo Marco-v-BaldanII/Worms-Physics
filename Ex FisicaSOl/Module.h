@@ -1,6 +1,10 @@
+
 #pragma once
 
+
+
 class Application;
+class RigidBody;
 
 class Module
 {
@@ -62,6 +66,10 @@ public:
 	virtual update_status PostUpdate()
 	{
 		return UPDATE_CONTINUE;
+	}
+
+	virtual void OnCollision(RigidBody* c1, RigidBody* c2) {
+
 	}
 
 	virtual bool CleanUp() 
