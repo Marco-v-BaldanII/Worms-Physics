@@ -45,7 +45,7 @@ bool ModulePlayer::Start()
 	
 
 	App->physics->bodies.push_back(rigid);
-	rigid->acceleration.y;
+	rigid->acceleration.y = 90;
 	rigid->ID = 2;
 
 	return true;
@@ -63,6 +63,11 @@ update_status ModulePlayer::Update()
 		m++;
 		currentMovement = &myMovement[(m % 5)];
 
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && isGrounded) {
+		rigid->velocity.y -= 100;
+		isGrounded = false;
 	}
 
 	// Movement "tp"
@@ -315,8 +320,10 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 	if (c1->collider->type == ColliderType::GROUND) {
 
 		isGrounded = true;
-
-
+		c2->velocity.y = 0;
+		c2->acceleration.y = 0;
+		c2->posRect.y = c1->posRect.y - 85 /*altura player*/;
+		LOG("MAKAKOOOOOOOOOOOOOOOOOOO");
 	}
 
 	LOG("Collision");

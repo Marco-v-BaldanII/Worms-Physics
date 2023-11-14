@@ -33,8 +33,8 @@ void ModulePhysics::IntegratorEuler(float deltaTime, SDL_Rect& rect, vec2& veloc
         rect.x += velocity.x * deltaTime;
        
         rect.y += velocity.y * deltaTime;
-        if (acceleration.x != 0) velocity.x += acceleration.x * deltaTime;
-        if (acceleration.y != 0)velocity.y += acceleration.y * deltaTime;
+        velocity.x += acceleration.x * deltaTime;
+        velocity.y += acceleration.y * deltaTime;
     }
 
 }
