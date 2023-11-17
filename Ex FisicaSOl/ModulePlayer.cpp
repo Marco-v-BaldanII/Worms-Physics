@@ -43,7 +43,9 @@ bool ModulePlayer::Start()
 
 	currentMovement = &myMovement[3];
 
-	
+	Weapon weapon1; weapon1.name = "birdBazooka";
+	myWeapons = new Weapon[NUM_WEAPONS];
+	myWeapons[0] = weapon1;
 
 	App->physics->bodies.push_back(rigid);
 	rigid->acceleration.y = 90;
@@ -191,6 +193,22 @@ update_status ModulePlayer::Update()
 		rigid->isMoving;
 	}
 
+
+	//------------------------Shooting---------------------------//
+	if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+
+
+		myWeapons[0].Shoot(this, App->physics);
+	}
+
+
+
+
+
+
+
+
+
 	App->renderer->Blit(player1, rigid->posRect.x, rigid->posRect.y);
 	App->renderer->Blit(player2, 230, 355);
 	App->renderer->Blit(player2, 530, 355);
@@ -199,7 +217,7 @@ update_status ModulePlayer::Update()
 
 
 
-	//rigid->isGrounded = false;
+	rigid->isGrounded = false;
 
 
 	return UPDATE_CONTINUE;

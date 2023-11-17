@@ -1,4 +1,8 @@
 #pragma once
+#ifndef APPLICATION_H
+#define APPLICATION_H
+
+
 
 #include "p2List.h"
 #include "Globals.h"
@@ -91,3 +95,6 @@ private:
 
 	void AddModule(Module* mod);
 };
+// Your Application class definition
+
+#endif // APPLICATION_H

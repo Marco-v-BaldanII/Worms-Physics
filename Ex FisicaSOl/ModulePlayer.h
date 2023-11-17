@@ -4,10 +4,13 @@
 #include "Globals.h"
 #include "p2Point.h"
 #include "ModulePhysics.h"
+
+#include "Application.h"
 #include <string>
 
 #define NUM_WEAPONS 1
 
+class Weapon;
 
 struct Object
 {
@@ -50,14 +53,6 @@ class Bullet : public RigidBody {
 
 };
 
-class Weapon {
-public:
-	
-	const char* name;
-
-	std::list<Bullet*> bodies;
-	
-};
 
 
 
@@ -79,7 +74,7 @@ public:
 	Movement* currentMovement;
 	int m = 2;
 
-	Weapon* myWeapons = nullptr;
+	Weapon* myWeapons;
 
 	bool isJumping = false;
 	int jumpingCnt = 90;
@@ -102,4 +97,38 @@ public:
 
 
 	float CalculateMomentum();
+};
+
+class Weapon {
+public:
+
+	const char* name;
+
+	std::list<Bullet*> bodies;
+
+	virtual void Shoot(ModulePlayer* player, ModulePhysics* physics) {
+
+
+
+
+		Bullet* bullet = new Bullet;
+		bullet->isMoving = true;
+		bullet->posRect.x = player->rigid->posRect.x;
+		bullet->posRect.y = player->rigid->posRect.y;
+		bullet->posRect.w = 10;
+		bullet->posRect.h = 10;
+		float initialSpeed = 400.0f;
+		float angle = 45;
+		angle = angle * M_PI / 180.0f;
+		bullet->velocity.x = initialSpeed * cos(angle);
+		bullet->velocity.y = -initialSpeed * sin(angle);
+		bullet->acceleration = { 0,981 };
+		SDL_Rect r = { 0,0,40,40 };
+		bullet->CreateCollider(r, ColliderType::BULLET, player);
+		physics->bodies.push_back(bullet);
+
+		static char title[400];
+		
+	}
+
 };

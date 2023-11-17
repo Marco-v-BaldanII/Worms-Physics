@@ -105,6 +105,8 @@ public:
     void IntegratorEuler2(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration);
     void IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration);
 
+    //void UpdateBullets(list<RigidBody>bullets);
+
     bool Start();
     update_status PreUpdate();
     update_status PostUpdate();
