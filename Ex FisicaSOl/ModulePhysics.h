@@ -70,6 +70,8 @@ public:
     
     bool isMoving = false;
 
+    bool isGrounded = true;
+
     int ID = 0;
     Collider* collider = nullptr;
 
@@ -81,10 +83,7 @@ public:
 
 };
 
-class Bullet : public RigidBody {
-public:
 
-};
 
 class Target {
 

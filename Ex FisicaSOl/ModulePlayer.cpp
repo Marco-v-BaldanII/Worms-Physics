@@ -6,6 +6,7 @@
 
 
 #define ACCELERATION_VALUE 90;
+#define JUMP_FORCE 300;
 #define MaxSpeed 4;
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -59,16 +60,23 @@ update_status ModulePlayer::Update()
 	rigid->velocity;
 	/*App->renderer->Blit(player1, 50, 200);*/
 
+	if (rigid->isGrounded == false ) {
+		rigid->acceleration.y = 500;
+	}
+
 	if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
 		m++;
 		currentMovement = &myMovement[(m % 5)];
 
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && isGrounded) {
-		rigid->velocity.y -= 100;
-		isGrounded = false;
+	if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && rigid->isGrounded) {
+		rigid->velocity.y -= JUMP_FORCE;
+		rigid->isGrounded = false;
+		isJumping = true;
 	}
+
+	if (isJumping) { jumpingCnt--; }
 
 	// Movement "tp"
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
@@ -188,6 +196,12 @@ update_status ModulePlayer::Update()
 	App->renderer->Blit(player2, 530, 355);
 	App->renderer->Blit(player2, 850, 355);
 	LOG(" \nXXXXXXXXXXXXXXXXXXXXXXXXXX : %f", rigid->velocity.x);
+
+
+
+	//rigid->isGrounded = false;
+
+
 	return UPDATE_CONTINUE;
 
 	
@@ -313,17 +327,28 @@ void ModulePlayer::MomentumController(Direction dir) {
 			rigid->velocity.x = -maxVelocity;
 		}
 	}
+
+
+	
+
 }
 
 void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 
 	if (c1->collider->type == ColliderType::GROUND) {
+		if (!isJumping) {
+			rigid->isGrounded = true;
+			c2->velocity.y = 0;
+			c2->acceleration.y = 0;
 
-		isGrounded = true;
-		c2->velocity.y = 0;
-		c2->acceleration.y = 0;
+		}
 		c2->posRect.y = c1->posRect.y - 85 /*altura player*/;
 		LOG("MAKAKOOOOOOOOOOOOOOOOOOO");
+		if (jumpingCnt <= 0) {
+			
+			isJumping = false;
+			jumpingCnt = 90;
+		}
 	}
 
 	LOG("Collision");

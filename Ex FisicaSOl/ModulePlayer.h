@@ -4,6 +4,10 @@
 #include "Globals.h"
 #include "p2Point.h"
 #include "ModulePhysics.h"
+#include <string>
+
+#define NUM_WEAPONS 1
+
 
 struct Object
 {
@@ -40,6 +44,22 @@ enum class Direction {
 
 };
 
+class Bullet : public RigidBody {
+
+	SDL_Texture* texture = nullptr;
+
+};
+
+class Weapon {
+public:
+	
+	const char* name;
+
+	std::list<Bullet*> bodies;
+	
+};
+
+
 
 class ModulePlayer : public Module
 {
@@ -59,7 +79,10 @@ public:
 	Movement* currentMovement;
 	int m = 2;
 
-	bool isGrounded = true;
+	Weapon* myWeapons = nullptr;
+
+	bool isJumping = false;
+	int jumpingCnt = 90;
 
 public:
 	// Movement
@@ -74,6 +97,9 @@ public:
 	void ImpulseController(Direction dir);
 	void MomentumController(Direction dir);
 	void OnCollision(RigidBody* c1, RigidBody* c2);
+
+	void Shoot();
+
 
 	float CalculateMomentum();
 };
