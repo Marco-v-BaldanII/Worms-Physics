@@ -94,7 +94,11 @@ public:
 	void OnCollision(RigidBody* c1, RigidBody* c2);
 
 	void Shoot();
-
+	int turno = 0;
+	enum Fase { Movimiento, Disparo };
+	Fase faseActual = Movimiento;
+	bool shoted = false;
+	bool moved = false;
 
 	float CalculateMomentum();
 };

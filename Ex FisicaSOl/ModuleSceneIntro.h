@@ -41,7 +41,7 @@ public:
 
 	void AddTarget(SDL_Rect posRect, SDL_Rect collid);
 
-	
+	int currentPlayer = 0;
 
 public:
 

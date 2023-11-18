@@ -28,6 +28,8 @@ bool ModuleSceneIntro::Start()
 	ground->CreateCollider(SDL_Rect{ 0,282,300,261 }, ColliderType::GROUND, this);
 	App->physics->bodies.push_back(ground);
 
+	currentPlayer = 0;
+
 	return ret;
 }
 
@@ -42,6 +44,9 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
+	//metodo para cambiar para jugadrres
+
+	
 	App->renderer->Blit(backgound, 0, 0);
 
 	return UPDATE_CONTINUE;
