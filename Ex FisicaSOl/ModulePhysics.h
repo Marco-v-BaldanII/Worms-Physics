@@ -133,6 +133,8 @@ public:
     CollisionDetection collisionMethod[3];
     CollisionDetection* currentCollisionMethod;
 
+    int c = 2;
+
 private:
     vec2 canon = {10, 150};
     bool debug;

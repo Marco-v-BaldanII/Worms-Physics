@@ -70,6 +70,13 @@ void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velo
 
 update_status ModulePhysics::PreUpdate()
 {
+    // ---------C HotKey Changes the current Collision method-----------//
+    if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
+        c++;
+        int index = c % 3;
+        *currentCollisionMethod = collisionMethod[index ];
+    }
+
     
 
     for (RigidBody* bullet : bodies)
@@ -163,8 +170,10 @@ update_status ModulePhysics::PostUpdate()
                 IterativeCollisionIntegration(bullet, bullet2);
             }
         }
-
-        RayCast(bullet);
+        if (*currentCollisionMethod == CollisionDetection::RAYCAST && bullet->isMoving) {
+            RayCast(bullet);
+        }
+        // The teleport method is the OnCollision of the shooter (player)
 
         SDL_Rect Screen = { 0,0,SCREEN_WIDTH , SCREEN_HEIGHT };
         if (bullet->collider->Intersects(&Screen) == false) {
