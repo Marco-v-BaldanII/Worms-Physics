@@ -64,8 +64,15 @@ void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velo
 
 update_status ModulePhysics::PreUpdate()
 {
+    
+
     for (RigidBody* bullet : bodies)
     {
+        /*static char title[400];
+
+        sprintf_s(title, 400, "Actual integrator: EULER -- Deltatime: %f, InSpeed: %0.1f, InAngle: %0.1f, CurrSpeed: %0.1f, CurrAcceleration: %0.1f, CurrentPos: %0.1f",
+            App->deltaTime.delta, initialSpeed, angle * 180 / 3.1416, bullet->velocity.x, -(float)GRAVITY, bullet->posRect.x);
+        App->window->SetTitle(title);*/
 
         for (RigidBody* bullet2 : bodies) {
 
@@ -117,6 +124,7 @@ update_status ModulePhysics::PreUpdate()
 }
 update_status ModulePhysics::PostUpdate()
 {
+    LOG("\n\n  %d num bodies \n",bodies.size());
     
 
     if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -156,7 +164,33 @@ update_status ModulePhysics::PostUpdate()
                 IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
             }
         }
+
+        for (RigidBody* bullet2 : bodies) {
+            IterativeCollisionIntegration(bullet, bullet2);
+        }
+
+        SDL_Rect Screen = { 0,0,SCREEN_WIDTH , SCREEN_HEIGHT };
+        if (bullet->collider->Intersects(&Screen) == false) {
+            for (int i = 0; i < 50; ++i) {
+                if (corpses[i] == nullptr) {
+                    corpses[i] = bullet;
+                }
+            }
+        }
+
     }
+
+    //-----------Delete Corpses---------------//
+    for (int i = 0; i < 50; ++i) {
+        if (corpses[i] == nullptr) { break; }
+        else {
+            bodies.remove(corpses[i]);
+            corpses[i] = nullptr;
+
+        }
+    }
+
+
 
     if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
     {
@@ -168,6 +202,48 @@ update_status ModulePhysics::PostUpdate()
 
     return UPDATE_CONTINUE;
 }
+
+// This method cosnumes a lot
+void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) {
+
+    const int maxIterations = 3;
+    const float epsilon = 0.001f; 
+
+    SDL_Rect prevPos;
+    bool willCollide = false;
+
+    for (int i = 0; i < maxIterations; ++i) {
+       
+        prevPos = c2->collider->data;
+
+        // Call the current integrator method with copy variables that don't actually modify the body
+        SDL_Rect fake_posRect = c1->collider->data;
+        vec2 fake_velocity = c1->velocity;
+        vec2 fake_acceleration = c1->acceleration;
+
+        IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), fake_posRect, fake_velocity, fake_acceleration);
+       
+        
+        if (c2->collider->Intersects(&fake_posRect) && c1 != c2) {
+            willCollide = true;
+            if (c2->collider->type == ColliderType::GROUND && c1->collider->type == ColliderType::BULLET) {
+                c1->acceleration.y = 0;
+                c1->velocity.y = 0;
+            }
+            break;
+        }
+
+        if (willCollide == true) {
+            c1->posRect = prevPos;
+        }
+    }
+
+        
+}
+
+
+
+
 
 
 // Called before quitting

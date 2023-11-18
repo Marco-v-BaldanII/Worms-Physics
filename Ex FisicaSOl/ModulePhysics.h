@@ -111,7 +111,9 @@ public:
     update_status PreUpdate();
     update_status PostUpdate();
     bool CleanUp();
+    void IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2);
     std::list<RigidBody*> bodies;
+    RigidBody* corpses[50] = { nullptr };
 
 private:
     vec2 canon = {10, 150};
