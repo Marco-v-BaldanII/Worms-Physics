@@ -353,14 +353,16 @@ void ModulePlayer::MomentumController(Direction dir) {
 
 void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 
-	if (c1->collider->type == ColliderType::GROUND && c2->collider->type != ColliderType::BULLET) {
+	if (c1->collider->type == ColliderType::GROUND && (c2->collider->type != ColliderType::BULLET && c1->collider->type != ColliderType::BULLET)) {
 		if (!isJumping) {
 			rigid->isGrounded = true;
 			c2->velocity.y = 0;
 			c2->acceleration.y = 0;
 
 		}
-		c2->posRect.y = c1->posRect.y - c2->collider->data.h +1;/*altura player*/;
+		if (c2->collider->type == ColliderType::PLAYER) { 
+			c2->posRect.y = c1->posRect.y - c2->collider->data.h + 1;/*altura player*/
+		}
 		LOG("MAKAKOOOOOOOOOOOOOOOOOOO");
 		if (jumpingCnt <= 0) {
 			

@@ -150,25 +150,13 @@ update_status ModulePhysics::PostUpdate()
     float gravity = GRAVITY;
     for (RigidBody* bullet : bodies)
     {
+     
+
         if (bullet->isMoving) {
-            if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-            {
-                IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-            }
-            else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-            {
-                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-            }
-            else
-            {
-                IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+            for (RigidBody* bullet2 : bodies) {
+                IterativeCollisionIntegration(bullet, bullet2);
             }
         }
-
-        for (RigidBody* bullet2 : bodies) {
-            IterativeCollisionIntegration(bullet, bullet2);
-        }
-
         SDL_Rect Screen = { 0,0,SCREEN_WIDTH , SCREEN_HEIGHT };
         if (bullet->collider->Intersects(&Screen) == false) {
             for (int i = 0; i < 50; ++i) {
@@ -206,7 +194,7 @@ update_status ModulePhysics::PostUpdate()
 // This method cosnumes a lot
 void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) {
 
-    const int maxIterations = 3;
+    const int maxIterations = 15;
     const float epsilon = 0.001f; 
 
     SDL_Rect prevPos;
@@ -214,7 +202,7 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
 
     for (int i = 0; i < maxIterations; ++i) {
        
-        prevPos = c2->collider->data;
+        prevPos = c1->collider->data;
 
         // Call the current integrator method with copy variables that don't actually modify the body
         SDL_Rect fake_posRect = c1->collider->data;
@@ -225,16 +213,22 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
        
         
         if (c2->collider->Intersects(&fake_posRect) && c1 != c2) {
+            
             willCollide = true;
-            if (c2->collider->type == ColliderType::GROUND && c1->collider->type == ColliderType::BULLET) {
+            if (c2->collider->type != ColliderType::PLAYER && c1->collider->type == ColliderType::BULLET) {
+                App->renderer->DrawQuad(fake_posRect, 80, 80, 80, 255, true);
+                c1->isMoving = false;
+                //SDL_Delay(3000);
                 c1->acceleration.y = 0;
                 c1->velocity.y = 0;
+                c1->velocity.x = 0;
+                
             }
             break;
         }
 
         if (willCollide == true) {
-            c1->posRect = prevPos;
+            c1->collider->data = prevPos;
         }
     }
 
