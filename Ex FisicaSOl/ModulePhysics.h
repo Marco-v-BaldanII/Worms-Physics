@@ -13,6 +13,12 @@ enum ColliderType {
 
 };
 
+enum CollisionDetection {
+    TELEPORT,
+    ITERATIVE,
+    RAYCAST
+};
+
 
 struct vec2 {
     float x;
@@ -81,6 +87,13 @@ public:
         
     }
 
+    void StopAllMotion() {
+        velocity.x = 0; velocity.y = 0;
+        acceleration.x = 0; acceleration.y = 0;
+        isMoving = false;
+    }
+
+
 };
 
 
@@ -112,8 +125,13 @@ public:
     update_status PostUpdate();
     bool CleanUp();
     void IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2);
+    void RayCast(RigidBody* c1);
+
     std::list<RigidBody*> bodies;
     RigidBody* corpses[50] = { nullptr };
+
+    CollisionDetection collisionMethod[3];
+    CollisionDetection* currentCollisionMethod;
 
 private:
     vec2 canon = {10, 150};

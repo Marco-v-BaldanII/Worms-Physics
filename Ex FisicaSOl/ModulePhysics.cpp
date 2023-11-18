@@ -22,6 +22,12 @@ bool ModulePhysics::Start()
 {
     LOG("Creating Physics 2D environment");
     bird = App->textures->Load("Assets/images/triangulo.png");
+
+    collisionMethod[0] = CollisionDetection::ITERATIVE;
+    collisionMethod[1] = CollisionDetection::TELEPORT;
+    collisionMethod[2] = CollisionDetection::RAYCAST;
+    currentCollisionMethod = &collisionMethod[2];
+
     return true;
 }
 
@@ -152,11 +158,14 @@ update_status ModulePhysics::PostUpdate()
     {
      
 
-        if (bullet->isMoving) {
+        if (*currentCollisionMethod == CollisionDetection::ITERATIVE && bullet->isMoving) {
             for (RigidBody* bullet2 : bodies) {
                 IterativeCollisionIntegration(bullet, bullet2);
             }
         }
+
+        RayCast(bullet);
+
         SDL_Rect Screen = { 0,0,SCREEN_WIDTH , SCREEN_HEIGHT };
         if (bullet->collider->Intersects(&Screen) == false) {
             for (int i = 0; i < 50; ++i) {
@@ -236,7 +245,33 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
 }
 
 
+void ModulePhysics::RayCast(RigidBody* c1) {
 
+    if (c1->collider->type == ColliderType::BULLET) {
+        int rayLength = 3;
+
+        int x1 = c1->collider->data.x + c1->collider->data.w / 2;  // Start point of the ray (center of the bullet)
+        int y1 = c1->collider->data.y + c1->collider->data.h / 2;
+        int x2 = x1 + (c1->velocity.x * App->deltaTime.getDeltaTimeInSeconds() * rayLength);  // End point of the ray
+        int y2 = y1 + (c1->velocity.y * App->deltaTime.getDeltaTimeInSeconds() * rayLength);
+
+        App->renderer->DrawLine(x1, y1, x2, y2, 100, 100, 100, 255);
+
+
+        for (RigidBody* bullet : bodies) {
+            if (bullet->collider->type == ColliderType::GROUND && SDL_IntersectRectAndLine( &bullet->collider->data, &x1, &y1, &x2, &y2 )) {
+
+                
+                c1->StopAllMotion();
+                c1->collider->data.x = x2;
+                c1->collider->data.y = y2;
+               
+
+            }
+        }
+    }
+
+}
 
 
 
