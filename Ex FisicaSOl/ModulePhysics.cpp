@@ -77,8 +77,6 @@ update_status ModulePhysics::PreUpdate()
         *currentCollisionMethod = collisionMethod[index ];
     }
 
-    
-
     for (RigidBody* bullet : bodies)
     {
         /*static char title[400];
@@ -96,43 +94,31 @@ update_status ModulePhysics::PreUpdate()
                     LOG("\n \nColllision\n");
                     
                     bullet2->collider->listener->OnCollision(bullet, bullet2);
-
                 }
-
             }
-
-
         }
 
+        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
+        {
+            IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+        }
 
-        
-        
-        
-            if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
-            {
-                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
+        {
+            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+        }
+        else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_REPEAT)
+        {
+            IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+        }
+        else
+        {
+            if (App->deltaTime.getDeltaTimeInSeconds() == 0) {
+                LOG("This should never happen");
             }
-
-            else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
-            {
-                IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-            }
-            else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_REPEAT)
-            {
-                IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-            }
-            else
-            {
-                if (App->deltaTime.getDeltaTimeInSeconds() == 0) {
-                    LOG("This should never happen");
-                }
-                IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-            }
-        
+            IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
+        } 
     }
-
-
-
     return UPDATE_CONTINUE;
 }
 update_status ModulePhysics::PostUpdate()
@@ -143,7 +129,6 @@ update_status ModulePhysics::PostUpdate()
     if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
         debug = !debug;
 
- 
 
     for (const RigidBody* bullet : bodies)
     {
@@ -156,15 +141,11 @@ update_status ModulePhysics::PostUpdate()
                 
                 App->renderer->DrawQuad(bullet->collider->data, 255, 80, 70,OPACITY);
             }
-
-
     }
 
     float gravity = GRAVITY;
     for (RigidBody* bullet : bodies)
     {
-     
-
         if (*currentCollisionMethod == CollisionDetection::ITERATIVE && bullet->isMoving) {
             for (RigidBody* bullet2 : bodies) {
                 IterativeCollisionIntegration(bullet, bullet2);
@@ -183,7 +164,6 @@ update_status ModulePhysics::PostUpdate()
                 }
             }
         }
-
     }
 
     //-----------Delete Corpses---------------//
@@ -192,11 +172,8 @@ update_status ModulePhysics::PostUpdate()
         else {
             bodies.remove(corpses[i]);
             corpses[i] = nullptr;
-
         }
     }
-
-
 
     if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
     {
@@ -229,7 +206,7 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
 
         IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), fake_posRect, fake_velocity, fake_acceleration);
        
-        
+     
         if (c2->collider->Intersects(&fake_posRect) && c1 != c2) {
             
             willCollide = true;
@@ -240,7 +217,6 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
                 c1->acceleration.y = 0;
                 c1->velocity.y = 0;
                 c1->velocity.x = 0;
-                
             }
             break;
         }
@@ -249,10 +225,7 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
             c1->collider->data = prevPos;
         }
     }
-
-        
 }
-
 
 void ModulePhysics::RayCast(RigidBody* c1) {
 
@@ -266,20 +239,14 @@ void ModulePhysics::RayCast(RigidBody* c1) {
 
         App->renderer->DrawLine(x1, y1, x2, y2, 100, 100, 100, 255);
 
-
         for (RigidBody* bullet : bodies) {
             if (bullet->collider->type == ColliderType::GROUND && SDL_IntersectRectAndLine( &bullet->collider->data, &x1, &y1, &x2, &y2 )) {
-
-                
                 c1->StopAllMotion();
                 c1->collider->data.x = x2;
                 c1->collider->data.y = y2;
-               
-
             }
         }
     }
-
 }
 
 RigidBody* ModulePhysics::createBouncer(int x, int y, int width, int height) 
@@ -294,11 +261,9 @@ RigidBody* ModulePhysics::createBouncer(int x, int y, int width, int height)
     return bouncer;
 }
 
-
 // Called before quitting
 bool ModulePhysics::CleanUp()
 {
     LOG("Destroying physics world");
-
     return true;
 }
