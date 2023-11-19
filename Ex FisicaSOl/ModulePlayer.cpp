@@ -341,6 +341,22 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 			c2->isMoving = false;
 		}
 	}
+	if (c1->collider->type == ColliderType::BOUNCER && c2->collider->type == ColliderType::PLAYER) {
+		float c1_center_x = c1->posRect.x + c1->collider->data.w / 2;
+		float c1_center_y = c1->posRect.y + c1->collider->data.h / 2;
+		float c2_center_x = c2->posRect.x + c2->collider->data.w / 2;
+		float c2_center_y = c2->posRect.y + c2->collider->data.h / 2;
+
+		float dx = c2_center_x - c1_center_x;
+		float dy = c2_center_y - c1_center_y;
+
+		if (abs(dx) > abs(dy)) {
+			c2->velocity.x *= -1;
+		}
+		else {
+			c2->velocity.y *= -1;
+		}
+	}
 
 	LOG("Collision");
 }

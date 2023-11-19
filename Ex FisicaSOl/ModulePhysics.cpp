@@ -282,6 +282,17 @@ void ModulePhysics::RayCast(RigidBody* c1) {
 
 }
 
+RigidBody* ModulePhysics::createBouncer(int x, int y, int width, int height) 
+{
+    RigidBody* bouncer = new RigidBody();
+
+    bouncer->posRect.x = x; 
+    bouncer->posRect.y = y; 
+
+    bouncer->CreateCollider(SDL_Rect{ x,y,width,height }, ColliderType::BOUNCER, this);
+
+    return bouncer;
+}
 
 
 // Called before quitting

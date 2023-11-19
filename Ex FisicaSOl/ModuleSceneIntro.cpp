@@ -27,7 +27,8 @@ bool ModuleSceneIntro::Start()
 	ground = new RigidBody(SDL_Rect{ 0,282,171,261 });
 	ground->CreateCollider(SDL_Rect{ 0,282,300,261 }, ColliderType::GROUND, this);
 	App->physics->bodies.push_back(ground);
-
+	bouncer1 = App->physics->createBouncer(10, 10, 10, 10);
+	App->physics->bodies.push_back(bouncer1);
 	currentPlayer = 0;
 
 	return ret;

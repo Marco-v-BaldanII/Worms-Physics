@@ -8,8 +8,8 @@ enum ColliderType {
 
     GROUND,
     BULLET,
-    PLAYER
-
+    PLAYER,
+    BOUNCER
 
 };
 
@@ -24,6 +24,12 @@ struct vec2 {
     float x;
     float y;
 };
+
+struct ResitutionObj {
+    int x, y; 
+    int dx, dy;
+};
+
 class Collider {
 public:
     
@@ -126,6 +132,7 @@ public:
     bool CleanUp();
     void IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2);
     void RayCast(RigidBody* c1);
+    RigidBody* createBouncer(int x, int y, int width, int height);
 
     std::list<RigidBody*> bodies;
     RigidBody* corpses[50] = { nullptr };
