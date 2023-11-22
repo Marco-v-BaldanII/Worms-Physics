@@ -150,6 +150,8 @@ update_status ModulePlayer::Update()
 				preview = true;
 				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP) {
 					myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
+					turntaken = true;
 					//preview = false;
 					//metdo para pasar al siguiente player
 				}
