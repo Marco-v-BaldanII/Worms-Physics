@@ -9,6 +9,8 @@
 #define JUMP_FORCE 300;
 #define MaxSpeed 4;
 
+
+
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -19,7 +21,7 @@ ModulePlayer::~ModulePlayer()
 // Load assets
 bool ModulePlayer::Start()
 {
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		myPlayers[i] = new Player();
 		myPlayers[i]->rigid = new RigidBody();
 
@@ -57,6 +59,8 @@ bool ModulePlayer::Start()
 		myPlayers[i]->rigid->ID = 2;
 		myPlayers[i]->shoted = false;
 	}
+	currentPlayer = myPlayers[0];
+
 	return true;
 }
 
@@ -64,156 +68,115 @@ bool ModulePlayer::CleanUp() { return true; };
 
 update_status ModulePlayer::Update()
 {
+	bool turntaken = false;
+
 	for (int i = 0; i < 2; ++i) {
+		if (turntaken) { break; }
+		if (myPlayers[i] == currentPlayer) {
+			if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+				if (myPlayers[i]->faseActual == Movimiento) {
+					myPlayers[i]->rigid->velocity.x = 0;
+					myPlayers[i]->faseActual = Fase::Disparo;
+				}
+				else {
+					myPlayers[i]->faseActual = Fase::Movimiento;
+				}
+			}
 
-		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-			if (myPlayers[i]->faseActual == Movimiento) {
-				myPlayers[i]->rigid->velocity.x = 0;
-				myPlayers[i]->faseActual = Fase::Disparo;
+			switch (myPlayers[i]->faseActual) {
+			case Movimiento:
+				myPlayers[i]->rigid->velocity;
+				/*App->renderer->Blit(player1, 50, 200);*/
+
+				if (myPlayers[i]->rigid->isGrounded == false) {
+					myPlayers[i]->rigid->acceleration.y = 500;
+				}
+
+				if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
+					m++;
+					currentMovement = &myMovement[(m % 5)];
+				}
+
+				if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && myPlayers[i]->rigid->isGrounded) {
+					myPlayers[i]->rigid->velocity.y -= JUMP_FORCE;
+					myPlayers[i]->rigid->isGrounded = false;
+					myPlayers[i]->isJumping = true;
+				}
+
+				if (myPlayers[i]->isJumping) { myPlayers[i]->jumpingCnt--; }
+
+				// Movement "tp"
+				if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
+					moved = true;
+					if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
+				}
+				if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
+					moved = true;
+					if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
+				}
+				if (moved) {
+					switch (*currentMovement) {
+					case Movement::POSITION:
+						PositionController(myPlayers[i]->myDirection, myPlayers[i]);
+						break;
+					case Movement::VELOCITY:
+						VelocityController(myPlayers[i]->myDirection, myPlayers[i]);
+						break;
+					case Movement::ACCELERATION:
+						AccelerationController(myPlayers[i]->myDirection, myPlayers[i]);
+						break;
+					case Movement::MOMENTUM:
+						MomentumController(myPlayers[i]->myDirection, myPlayers[i]);
+						break;
+					case Movement::IMPULSE:
+						ImpulseController(myPlayers[i]->myDirection, myPlayers[i]);
+						break;
+					}
+				}
+
+				if (App->input->GetKey(SDL_SCANCODE_LEFT) != KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_RIGHT) != KEY_REPEAT) {
+					LOG("NOT MOVING");
+					myPlayers[i]->rigid->isMoving = false;
+				}
+				
+
+				if (moved == false) {
+					myPlayers[i]->rigid->velocity.x = 0;
+					myPlayers[i]->rigid->isMoving;
+				}
+				moved = false;
+				break;
+			case Disparo:
+				if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) {
+					//+= 1 al angulo
+				}
+				if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
+					//-= 1 al angulo
+				}
+
+				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
+					//+= 1 al power
+					 // Turn on the next player
+				}
+				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP) {
+					myPlayers[i]->myWeapons[0].Shoot(this, App->physics); //aqui disparamos el arma
+					int index = (i + 1) % NUM_PLAYERS;
+					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
+					turntaken = true;
+					//power = 0; //y aqui reseteariamos la potencia a 0
+					//metdo para pasar al siguiente player
+				}
+				break;
 			}
-			else {
-				myPlayers[i]->faseActual = Fase::Movimiento;
-			}
+
+			App->renderer->Blit(myPlayers[i]->player1, myPlayers[i]->rigid->posRect.x, myPlayers[i]->rigid->posRect.y);
+			//App->renderer->Blit(player2, 230, 355);
+			/*App->renderer->Blit(player2, 530, 355);
+			App->renderer->Blit(player2, 850, 355);*/
+			//LOG(" \nXXXXXXXXXXXXXXXXXXXXXXXXXX : %f", rigid->velocity.x);
+
+			myPlayers[i]->rigid->isGrounded = false;
 		}
-
-		switch (myPlayers[i]->faseActual) {
-		case Movimiento:
-			myPlayers[i]->rigid->velocity;
-			/*App->renderer->Blit(player1, 50, 200);*/
-
-			if (myPlayers[i]->rigid->isGrounded == false) {
-				myPlayers[i]->rigid->acceleration.y = 500;
-			}
-
-			if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
-				m++;
-				currentMovement = &myMovement[(m % 5)];
-			}
-
-			if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && myPlayers[i]->rigid->isGrounded) {
-				myPlayers[i]->rigid->velocity.y -= JUMP_FORCE;
-				myPlayers[i]->rigid->isGrounded = false;
-				myPlayers[i]->isJumping = true;
-			}
-
-			if (myPlayers[i]->isJumping) { myPlayers[i]->jumpingCnt--; }
-
-			// Movement "tp"
-			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::POSITION) {
-					PositionController(Direction::RIGHT, myPlayers[i]);
-				}
-			}
-			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::POSITION) {
-					PositionController(Direction::LEFT, myPlayers[i]);
-				}
-			}
-
-			// Movement "velocity set"
-			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::VELOCITY) {
-					VelocityController(Direction::RIGHT, myPlayers[i]);
-				}
-			}
-			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::VELOCITY) {
-					VelocityController(Direction::LEFT, myPlayers[i]);
-				}
-			}
-
-			// Movement "Impulse change"
-			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::IMPULSE) {
-					ImpulseController(Direction::RIGHT, myPlayers[i]);
-				}
-			}
-			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::IMPULSE) {
-					ImpulseController(Direction::LEFT, myPlayers[i]);
-				}
-			}
-
-			// Momentum
-			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::MOMENTUM) {
-					MomentumController(Direction::RIGHT, myPlayers[i]);
-				}
-			}
-			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::MOMENTUM) {
-					MomentumController(Direction::LEFT, myPlayers[i]);
-				}
-			}
-
-			// MOVEMENT Acelerando Progresivo
-			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::ACCELERATION) {
-					AccelerationController(Direction::RIGHT, myPlayers[i]);
-				}
-			}
-			else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
-				moved = true;
-				if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
-				if (*currentMovement == Movement::ACCELERATION) {
-					AccelerationController(Direction::LEFT, myPlayers[i]);
-				}
-			}
-			else if (App->input->GetKey(SDL_SCANCODE_LEFT) != KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_RIGHT) != KEY_REPEAT) {
-				LOG("NOT MOVING");
-				myPlayers[i]->rigid->isMoving = false;
-			}
-
-			if (moved == false) {
-				myPlayers[i]->rigid->velocity.x = 0;
-				myPlayers[i]->rigid->isMoving;
-			}
-			moved = false;
-			break;
-		case Disparo:
-			if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) {
-				//+= 1 al angulo
-			}
-			if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
-				//-= 1 al angulo
-			}
-
-			if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
-				//+= 1 al power
-			}
-			if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP) {
-				myPlayers[i]->myWeapons[0].Shoot(this, App->physics); //aqui disparamos el arma
-				//power = 0; //y aqui reseteariamos la potencia a 0
-				//metdo para pasar al siguiente player
-			}
-			break;
-		}
-
-		App->renderer->Blit(myPlayers[i]->player1, myPlayers[i]->rigid->posRect.x, myPlayers[i]->rigid->posRect.y);
-		//App->renderer->Blit(player2, 230, 355);
-		/*App->renderer->Blit(player2, 530, 355);
-		App->renderer->Blit(player2, 850, 355);*/
-		//LOG(" \nXXXXXXXXXXXXXXXXXXXXXXXXXX : %f", rigid->velocity.x);
-
-		myPlayers[i]->rigid->isGrounded = false;
 	}
 	return UPDATE_CONTINUE;
 }
@@ -322,21 +285,23 @@ void ModulePlayer::MomentumController(Direction dir, Player* p) {
 
 void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 
-	if (c1->collider->type == ColliderType::GROUND && c2->collider->type != ColliderType::BULLET && c1->collider->type != ColliderType::BULLET) {
+	if (c1->collider->type == ColliderType::GROUND && c2->collider->type == ColliderType::PLAYER) {
 		for (int i = 0; i < 2; ++i) {
-			if (!myPlayers[i]->isJumping) {
-				myPlayers[i]->rigid->isGrounded = true;
-				c2->velocity.y = 0;
-				c2->acceleration.y = 0;
+			if (myPlayers[i]->rigid == c2) /*Comprobar que el player es el correcto*/ {
+				if (!myPlayers[i]->isJumping) {
+					myPlayers[i]->rigid->isGrounded = true;
+					c2->velocity.y = 0;
+					c2->acceleration.y = 0;
 
-			}
-			c2->posRect.y = c1->posRect.y - c2->collider->data.h + 1;/*altura player*/
+				}
+				c2->posRect.y = c1->posRect.y - c2->collider->data.h + 1;/*altura player*/
 
-			LOG("MAKAKOOOOOOOOOOOOOOOOOOO");
-			if (myPlayers[i]->jumpingCnt <= 0) {
+				LOG("MAKAKOOOOOOOOOOOOOOOOOOO");
+				if (myPlayers[i]->jumpingCnt <= 0) {
 
-				myPlayers[i]->isJumping = false;
-				myPlayers[i]->jumpingCnt = 90;
+					myPlayers[i]->isJumping = false;
+					myPlayers[i]->jumpingCnt = 90;
+				}
 			}
 		}
 		

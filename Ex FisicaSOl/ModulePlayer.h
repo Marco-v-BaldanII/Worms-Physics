@@ -69,6 +69,7 @@ public:
 	bool CleanUp();
 	
 	Player* myPlayers[2];
+	Player* currentPlayer;
 
 public:
 	// Movement
