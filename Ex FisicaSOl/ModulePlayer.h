@@ -1,10 +1,13 @@
+#ifndef __ModulePlayer_H__
+#define __ModulePlayer_H__
+
 #pragma once
 #include "Module.h"
 #include "Animation.h"
 #include "Globals.h"
 #include "p2Point.h"
 #include "ModulePhysics.h"
-
+#include "Player.h"
 #include "Application.h"
 #include <string>
 
@@ -55,7 +58,6 @@ class Bullet : public RigidBody {
 
 
 
-
 class ModulePlayer : public Module
 {
 public:
@@ -65,52 +67,44 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
-	SDL_Texture* playertex;
-	SDL_Rect player;
-	SDL_Texture* player1;
-	SDL_Texture* player2;
-
-	Movement myMovement[5];
-	Movement* currentMovement;
-	int m = 2;
-
-	Weapon* myWeapons;
-
-	bool isJumping = false;
-	int jumpingCnt = 90;
+	
+	Player* myPlayers[2];
 
 public:
 	// Movement
-	RigidBody* rigid;
+	
 
-	Direction myDirection;
-
-	void ChangeDir();
-	void AccelerationController(Direction dir);
-	void PositionController(Direction dir);
-	void VelocityController(Direction dir);
-	void ImpulseController(Direction dir);
-	void MomentumController(Direction dir);
+	void ChangeDir(Player &p);
+	void AccelerationController(Direction dir , Player* p);
+	void PositionController(Direction dir, Player* p);
+	void VelocityController(Direction dir, Player* p);
+	void ImpulseController(Direction dir , Player* p);
+	void MomentumController(Direction dir, Player* p);
 	void OnCollision(RigidBody* c1, RigidBody* c2);
 
 	void Shoot();
 	int turno = 0;
-	enum Fase { Movimiento, Disparo };
-	Fase faseActual = Movimiento;
+	
+	Movement myMovement[5];
+	Movement* currentMovement;
+
+
+	int m = 2;
+
 	bool shoted = false;
 	bool moved = false;
 
-	float CalculateMomentum();
+	float CalculateMomentum(Player* p);
 };
 
 class Weapon {
 public:
 
 	const char* name;
-
+	Player* player;
 	std::list<Bullet*> bodies;
 
-	virtual void Shoot(ModulePlayer* player, ModulePhysics* physics) {
+	virtual void Shoot(ModulePlayer* pManager, ModulePhysics* physics) {
 
 
 
@@ -128,7 +122,7 @@ public:
 		bullet->velocity.y = -initialSpeed * sin(angle);
 		bullet->acceleration = { 0,981 };
 		SDL_Rect r = { 0,0,40,40 };
-		bullet->CreateCollider(r, ColliderType::BULLET, player);
+		bullet->CreateCollider(r, ColliderType::BULLET, pManager);
 		physics->bodies.push_back(bullet);
 
 		static char title[400];
@@ -136,3 +130,5 @@ public:
 	}
 
 };
+
+#endif
