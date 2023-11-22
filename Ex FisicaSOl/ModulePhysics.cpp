@@ -129,20 +129,36 @@ update_status ModulePhysics::PostUpdate()
     if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
         debug = !debug;
 
+    
+        for (const RigidBody* bullet : bodies)
+        {
+            App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y);
+            if (debug) {
+                if (bullet->collider != nullptr) {
 
-    for (const RigidBody* bullet : bodies)
-    {
-        App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y);
-        
-            if (bullet->collider != nullptr) {
+                    bullet->collider->data.x = bullet->posRect.x;
+                    bullet->collider->data.y = bullet->posRect.y;
 
-                bullet->collider->data.x = bullet->posRect.x;
-                bullet->collider->data.y = bullet->posRect.y;
-                
-                App->renderer->DrawQuad(bullet->collider->data, 255, 80, 70,OPACITY);
+                    switch (bullet->collider->type) {
+
+                    case ColliderType::PLAYER:
+                        App->renderer->DrawQuad(bullet->collider->data, 0, 0, 255, OPACITY);
+                        break;
+                    case ColliderType::GROUND:
+                        App->renderer->DrawQuad(bullet->collider->data, 0, 255, 10, OPACITY);
+                        break;
+                    case ColliderType::BULLET:
+                        App->renderer->DrawQuad(bullet->collider->data, 255, 80, 70, OPACITY);
+                        break;
+                    case ColliderType::BOUNCER:
+                        App->renderer->DrawQuad(bullet->collider->data, 80, 0, 100, OPACITY);
+                        break;
+
+                    }
+                }
             }
-    }
-
+        }
+    
     float gravity = GRAVITY;
     for (RigidBody* bullet : bodies)
     {
