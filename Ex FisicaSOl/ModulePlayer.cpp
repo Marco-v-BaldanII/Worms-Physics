@@ -147,26 +147,18 @@ update_status ModulePlayer::Update()
 				moved = false;
 				break;
 			case Disparo:
-				if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) {
-					//+= 1 al angulo
-				}
-				if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
-					//-= 1 al angulo
-				}
-
-				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT) {
-					//+= 1 al power
-					 // Turn on the next player
-				}
+				preview = true;
 				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP) {
-					myPlayers[i]->myWeapons[0].Shoot(this, App->physics); //aqui disparamos el arma
-					int index = (i + 1) % NUM_PLAYERS;
-					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
-					turntaken = true;
-					//power = 0; //y aqui reseteariamos la potencia a 0
+					myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+					//preview = false;
 					//metdo para pasar al siguiente player
 				}
 				break;
+			}
+
+			if (preview)
+			{
+				myPlayers[i]->myWeapons[0].PreviewShot(App->input->GetMouseX(), App->input->GetMouseY(), App->renderer->renderer, App->deltaTime.getDeltaTimeInSeconds());
 			}
 
 			App->renderer->Blit(myPlayers[i]->player1, myPlayers[i]->rigid->posRect.x, myPlayers[i]->rigid->posRect.y);

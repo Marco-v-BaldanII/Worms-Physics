@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Application.h"
 #include <string>
+#include <cmath>
 
 #define NUM_WEAPONS 1
 
@@ -94,6 +95,7 @@ public:
 
 	bool shoted = false;
 	bool moved = false;
+	bool preview = false;
 
 	float CalculateMomentum(Player* p);
 };
@@ -105,10 +107,7 @@ public:
 	Player* player;
 	std::list<Bullet*> bodies;
 
-	virtual void Shoot(ModulePlayer* pManager, ModulePhysics* physics) {
-
-
-
+	virtual void Shoot(ModulePlayer* pManager, ModulePhysics* physics, int mouseX, int mouseY) {
 
 		Bullet* bullet = new Bullet;
 		bullet->isMoving = true;
@@ -116,20 +115,75 @@ public:
 		bullet->posRect.y = player->rigid->posRect.y;
 		bullet->posRect.w = 10;
 		bullet->posRect.h = 10;
-		float initialSpeed = 400.0f;
-		float angle = 45;
-		angle = angle * M_PI / 180.0f;
-		bullet->velocity.x = initialSpeed * cos(angle);
-		bullet->velocity.y = -initialSpeed * sin(angle);
+
+		float dx = mouseX - bullet->posRect.x;
+		float dy = bullet->posRect.y - mouseY + 50;
+		float mag = std::sqrt(dx * dx + dy * dy);
+
+		float speed = std::sqrt(2 * 981 * mag);
+		float maxSpeed = 1000;
+		if (speed > maxSpeed) {
+			speed = maxSpeed;
+		}
+		float angle = std::atan2(dy, dx);
+
+		bullet->velocity.x = speed * std::cos(angle);
+		bullet->velocity.y = -speed * std::sin(angle);
+
 		bullet->acceleration = { 0,981 };
 		SDL_Rect r = { 0,0,40,40 };
 		bullet->CreateCollider(r, ColliderType::BULLET, pManager);
 		physics->bodies.push_back(bullet);
 
 		static char title[400];
-		
 	}
 
+	virtual void PreviewShot(int mouseX, int mouseY, SDL_Renderer* renderer, float delta) {
+
+		float x = player->rigid->posRect.x;
+		float y = player->rigid->posRect.y;
+
+		float dx = mouseX - x;
+		float dy = y - mouseY + 30;
+		float mag = std::sqrt(dx * dx + dy * dy);
+		float speed = std::sqrt(2 * 981 * mag);
+		float maxSpeed = 1000;
+		if (speed > maxSpeed) {
+			speed = maxSpeed;
+		}
+		float angle = std::atan2(dy, dx);
+		float vx = speed * std::cos(angle);
+		float vy = -speed * std::sin(angle);
+
+		float ax = 0;
+		float ay = 981;
+
+		float dt = delta * 5;
+
+		int fallingSteps = 0;
+
+		for (int i = 0; i < 1000; i++) {
+			x += vx * dt;
+			y += vy * dt;
+			vx += ax * dt;
+			vy += ay * dt;
+
+			if (vy > 0) {
+				fallingSteps++;
+			}
+
+			if (fallingSteps > 5) {
+				break;
+			}
+
+			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+			for (int dx = -1; dx <= 1; dx++) {
+				for (int dy = -1; dy <= 1; dy++) {
+					SDL_RenderDrawPoint(renderer, x + dx, y + dy);
+				}
+			}
+		}
+	}
 };
 
 #endif
