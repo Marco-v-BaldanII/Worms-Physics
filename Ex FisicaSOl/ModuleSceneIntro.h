@@ -46,6 +46,7 @@ public:
 public:
 
 	RigidBody* ground;
+	RigidBody* ground2;
 	RigidBody* bouncer1;
 
 	SDL_Texture* backgound;

@@ -24,9 +24,14 @@ bool ModuleSceneIntro::Start()
 
 	SDL_Rect Trect1 = { 200,200,60,60 };
 	//AddTarget(Trect1, Trect1);
-	ground = new RigidBody(SDL_Rect{ 0,282,171,261 });
-	ground->CreateCollider(SDL_Rect{ 0,282,800,261 }, ColliderType::GROUND, this);
+	ground = new RigidBody(SDL_Rect{ 65,300,171,261 });
+	ground->CreateCollider(SDL_Rect{ 0,282,225,80 }, ColliderType::GROUND, this);
+
+	ground2 = new RigidBody(SDL_Rect{ 290,330,171,261 });
+	ground2->CreateCollider(SDL_Rect{ 0,282,140,80 }, ColliderType::GROUND, this);
+
 	App->physics->bodies.push_back(ground);
+	App->physics->bodies.push_back(ground2);
 	bouncer1 = App->physics->createBouncer(10, 10, 10, 10);
 	App->physics->bodies.push_back(bouncer1);
 	currentPlayer = 0;
