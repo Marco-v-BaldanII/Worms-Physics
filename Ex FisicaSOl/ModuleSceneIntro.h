@@ -47,6 +47,18 @@ public:
 
 	RigidBody* ground;
 	RigidBody* ground2;
+	RigidBody* ground3;
+	RigidBody* ground4;
+	RigidBody* ground5;
+	RigidBody* ground6;
+	RigidBody* ground7;
+	RigidBody* ground8;
+	RigidBody* ground9;
+	RigidBody* ground10;
+	RigidBody* ground11;
+	RigidBody* ground12;	
+	RigidBody* ground13;
+
 	RigidBody* bouncer1;
 
 	SDL_Texture* backgound;
