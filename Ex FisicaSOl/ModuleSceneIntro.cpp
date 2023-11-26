@@ -182,6 +182,54 @@ bool ModuleSceneIntro::Start()
 	App->physics->bodies.push_back(underground23);
 
 
+	//segunda plataforma//
+
+	aground = new RigidBody(SDL_Rect{1153,300,171,261}); 
+	aground->CreateCollider(SDL_Rect{ 0,282,272,95 }, ColliderType::GROUND, this);
+
+	aground1= new RigidBody(SDL_Rect{ 1232,250,171,261 });
+	aground1->CreateCollider(SDL_Rect{ 0,282,80 ,30 }, ColliderType::GROUND, this);
+
+	aground2 = new RigidBody(SDL_Rect{ 1153,280,171,261 });
+	aground2->CreateCollider(SDL_Rect{ 0,282,190,21 }, ColliderType::GROUND, this);
+
+	aground3 = new RigidBody(SDL_Rect{ 912 ,425,171,261 });
+	aground3->CreateCollider(SDL_Rect{ 0,282,450,16 }, ColliderType::GROUND, this);
+
+	aground4 = new RigidBody(SDL_Rect{ 833 ,394,171,261 });
+	aground4->CreateCollider(SDL_Rect{ 0,282,540,31 }, ColliderType::GROUND, this);
+
+	aground5 = new RigidBody(SDL_Rect{ 815 ,330,171,261 });
+	aground5->CreateCollider(SDL_Rect{ 0,282,112,64 }, ColliderType::GROUND, this);
+
+	aground6 = new RigidBody(SDL_Rect{ 944 ,330,171,261 });
+	aground6->CreateCollider(SDL_Rect{ 0,282, 30,10 }, ColliderType::GROUND, this);
+
+	aground7 = new RigidBody(SDL_Rect{1008 ,330,171,261 });
+	aground7->CreateCollider(SDL_Rect{ 0,282, 80,20 }, ColliderType::GROUND, this);
+
+	aground8 = new RigidBody(SDL_Rect{ 1082 ,345,171,261 });
+	aground8->CreateCollider(SDL_Rect{ 0,282, 45,10 }, ColliderType::GROUND, this);
+
+	aground9 = new RigidBody(SDL_Rect{ 1120 ,330,171,261 });
+	aground9->CreateCollider(SDL_Rect{ 0,282, 30,30 }, ColliderType::GROUND, this);
+
+	aground10= new RigidBody(SDL_Rect{ 1137 ,315,171,261 });
+	aground10->CreateCollider(SDL_Rect{ 0,282, 30,30 }, ColliderType::GROUND, this);
+
+
+
+	App->physics->bodies.push_back(aground);
+	App->physics->bodies.push_back(aground1);
+	App->physics->bodies.push_back(aground2);
+	App->physics->bodies.push_back(aground3);
+	App->physics->bodies.push_back(aground4);
+	App->physics->bodies.push_back(aground5);
+	App->physics->bodies.push_back(aground6);
+	App->physics->bodies.push_back(aground7);
+	App->physics->bodies.push_back(aground8);
+	App->physics->bodies.push_back(aground9);
+	App->physics->bodies.push_back(aground10);
 
 
 	bouncer1 = App->physics->createBouncer(10, 10, 10, 10);

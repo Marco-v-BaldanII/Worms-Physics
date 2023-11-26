@@ -89,6 +89,21 @@ public:
 	RigidBody* underground22;
 	RigidBody* underground23;
 
+	RigidBody* aground;
+	RigidBody* aground1;
+	RigidBody* aground2;
+	RigidBody* aground3;
+	RigidBody* aground4;
+	RigidBody* aground5;
+	RigidBody* aground6;
+	RigidBody* aground7;
+	RigidBody* aground8;
+	RigidBody* aground9;
+	RigidBody* aground10;
+
+
+
+
 	RigidBody* bouncer1;
 
 	SDL_Texture* backgound;
