@@ -63,9 +63,7 @@ bool ModuleSceneIntro::Start()
 	ground12 = new RigidBody(SDL_Rect{ 640,395,171,261 });
 	ground12->CreateCollider(SDL_Rect{ 0,282,30,15 }, ColliderType::GROUND, this);
 
-	ground13 = new RigidBody(SDL_Rect{ 112,443,171,261 });
-	ground13->CreateCollider(SDL_Rect{ 0,282,430,15 }, ColliderType::GROUND, this);
-
+	
 	App->physics->bodies.push_back(ground);
 	App->physics->bodies.push_back(ground2);
 	App->physics->bodies.push_back(ground3);
@@ -78,7 +76,7 @@ bool ModuleSceneIntro::Start()
 	App->physics->bodies.push_back(ground10);
 	App->physics->bodies.push_back(ground11);
 	App->physics->bodies.push_back(ground12);
-	App->physics->bodies.push_back(ground13);
+	
 
 	//subsuelo//
 	underground = new RigidBody(SDL_Rect{ 0,490,171,261 });
@@ -128,8 +126,11 @@ bool ModuleSceneIntro::Start()
 	underground14->CreateCollider(SDL_Rect{ 0,282,65,20 }, ColliderType::GROUND, this);
 
 
-	underground15 = new RigidBody(SDL_Rect{ 960,538,171,261 });
-	underground15->CreateCollider(SDL_Rect{ 0,282,18,20 }, ColliderType::GROUND, this);
+	underground15 = new RigidBody(SDL_Rect{1056,522,171,261 });
+	underground15->CreateCollider(SDL_Rect{ 0,282,35,20 }, ColliderType::GROUND, this);
+
+	underground16 = new RigidBody(SDL_Rect{ 1088,506,171,261 });
+	underground16->CreateCollider(SDL_Rect{ 0,282,78,20 }, ColliderType::GROUND, this);
 
 
 	App->physics->bodies.push_back(underground);
@@ -148,7 +149,7 @@ bool ModuleSceneIntro::Start()
 	App->physics->bodies.push_back(underground13);
 	App->physics->bodies.push_back(underground14);
 	App->physics->bodies.push_back(underground15);
-
+	App->physics->bodies.push_back(underground16);
 
 	bouncer1 = App->physics->createBouncer(10, 10, 10, 10);
 	App->physics->bodies.push_back(bouncer1);
