@@ -59,6 +59,31 @@ public:
 	RigidBody* ground12;	
 	RigidBody* ground13;
 
+
+
+
+
+
+	RigidBody* underground;
+	RigidBody* underground1;
+	RigidBody* underground2;
+	RigidBody* underground3;
+	RigidBody* underground4;
+	RigidBody* underground5;
+	RigidBody* underground6;
+	RigidBody* underground7;
+	RigidBody* underground8;
+	RigidBody* underground9;
+	RigidBody* underground10;
+	RigidBody* underground11;
+	RigidBody* underground12;
+	RigidBody* underground13;
+	RigidBody* underground14;
+	RigidBody* underground15;
+
+
+
+
 	RigidBody* bouncer1;
 
 	SDL_Texture* backgound;
