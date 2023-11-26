@@ -21,6 +21,7 @@ ModulePhysics::~ModulePhysics()
 bool ModulePhysics::Start()
 {
     LOG("Creating Physics 2D environment");
+    //aqui esta los pajaros de todos los colliders change//
     bird = App->textures->Load("Assets/images/triangulo.png");
 
     collisionMethod[0] = CollisionDetection::ITERATIVE;
