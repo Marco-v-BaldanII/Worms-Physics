@@ -25,6 +25,7 @@ struct vec2 {
     float y;
 };
 
+
 struct ResitutionObj {
     int x, y; 
     int dx, dy;
@@ -84,6 +85,9 @@ public:
 
     bool isGrounded = true;
 
+    float dragCoefficient;
+    vec2 windForce;
+
     int ID = 0;
     Collider* collider = nullptr;
 
@@ -99,6 +103,18 @@ public:
         isMoving = false;
     }
 
+    float LengthSquared() const {
+        return velocity.x * velocity.x + velocity.y * velocity.y;
+    }
+
+    float Length() const {
+		return sqrt(LengthSquared());
+	}
+
+    vec2 Normalize() const {
+		float length = Length();
+		return { velocity.x / length, velocity.y / length };
+	}
 
 };
 
@@ -133,12 +149,16 @@ public:
     void IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2);
     void RayCast(RigidBody* c1);
     RigidBody* createBouncer(int x, int y, int width, int height);
+    void ApplyAerodynamics(RigidBody* body, float deltaTime);
+    void ApplyWindForce(RigidBody* body, float deltaTime);
 
     std::list<RigidBody*> bodies;
     RigidBody* corpses[50] = { nullptr };
 
     CollisionDetection collisionMethod[3];
     CollisionDetection* currentCollisionMethod;
+
+
 
     int c = 2;
 

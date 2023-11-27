@@ -86,6 +86,9 @@ update_status ModulePhysics::PreUpdate()
             App->deltaTime.delta, initialSpeed, angle * 180 / 3.1416, bullet->velocity.x, -(float)GRAVITY, bullet->posRect.x);
         App->window->SetTitle(title);*/
 
+        //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+        //ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
+
         for (RigidBody* bullet2 : bodies) {
 
             if (bullet != bullet2) {
@@ -277,6 +280,22 @@ RigidBody* ModulePhysics::createBouncer(int x, int y, int width, int height)
 
     return bouncer;
 }
+
+//void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime)
+//{
+//    float speed = body->LengthSquared();
+//    float dragMagnitude = body->dragCoefficient * speed * speed;
+//
+//    if (speed != 0) {
+//        vec2 dragForce = body->Normalize() * -dragMagnitude;
+//        body->velocity += dragForce * deltaTime;
+//    }
+//}
+//
+//void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)
+//{
+//    body->velocity += body->windForce * deltaTime;
+//}
 
 // Called before quitting
 bool ModulePhysics::CleanUp()

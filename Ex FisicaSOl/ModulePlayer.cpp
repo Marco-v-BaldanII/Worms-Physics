@@ -79,6 +79,7 @@ update_status ModulePlayer::Update()
 					myPlayers[i]->faseActual = Fase::Disparo;
 				}
 				else {
+					preview = false;
 					myPlayers[i]->faseActual = Fase::Movimiento;
 				}
 			}
@@ -152,7 +153,7 @@ update_status ModulePlayer::Update()
 					myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
 					turntaken = true;
-					//preview = false;
+					preview = false;
 					//metdo para pasar al siguiente player
 				}
 				break;
