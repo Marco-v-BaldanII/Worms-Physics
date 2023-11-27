@@ -25,7 +25,7 @@ public:
 	Weapon* myWeapons;
 
 	bool isJumping = false;
-	int jumpingCnt = 90;
+	int jumpingCnt = 70;
 
 	// Movement
 	RigidBody* rigid;
