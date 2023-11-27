@@ -282,20 +282,36 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 
 	if (c1->collider->type == ColliderType::GROUND && c2->collider->type == ColliderType::PLAYER) {
 		for (int i = 0; i < 2; ++i) {
+			
+
 			if (myPlayers[i]->rigid == c2) /*Comprobar que el player es el correcto*/ {
-				if (!myPlayers[i]->isJumping) {
+				if (!myPlayers[i]->isJumping && myPlayers[i]->rigid->collider->data.y < c1->collider->data.y) {
 					myPlayers[i]->rigid->isGrounded = true;
 					c2->velocity.y = 0;
 					c2->acceleration.y = 0;
-
+					
 				}
-				c2->posRect.y = c1->posRect.y - c2->collider->data.h + 1;/*altura player*/
+				SDL_Rect c2LPoint = { c2->collider->data.x, c2->collider->data.y,1,1 };
+				if ( myPlayers[i]->rigid->collider->data.x < c1->collider->data.x ) {
+					c2->posRect.x -= c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+					c2->velocity.x = (c2->velocity.x * 0.1f);
+				}
+				else if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x+(c1->collider->data.w/4)) {
+					c2->posRect.x += c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+					// Creo que el suelo esta interfiriendo apluicandole algo
+					c2->velocity.x = (c2->velocity.x * 0.1f);
+				}
+				/*if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x ) {
+					c2->posRect.x += 1;
+				}*/
+
+				/*c2->posRect.y = c1->posRect.y - c2->collider->data.h + 1;*//*altura player*/
 
 				LOG("MAKAKOOOOOOOOOOOOOOOOOOO");
 				if (myPlayers[i]->jumpingCnt <= 0) {
 
 					myPlayers[i]->isJumping = false;
-					myPlayers[i]->jumpingCnt = 90;
+					myPlayers[i]->jumpingCnt = 70;
 				}
 			}
 		}
