@@ -290,7 +290,7 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 					myPlayers[i]->rigid->isGrounded = true;
 					c2->velocity.y = 0;
 					c2->acceleration.y = 0;
-					
+					// Negar movimiento vertical en seguida que choca con algo
 				}
 
 				int feet = myPlayers[i]->rigid->collider->data.y + myPlayers[i]->rigid->collider->data.h    - 6;
@@ -309,13 +309,8 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 					// Creo que el suelo esta interfiriendo apluicandole algo
 					c2->velocity.x = (c2->velocity.x * 0.1f)* 0;
 				}
-				/*if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x ) {
-					c2->posRect.x += 1;
-				}*/
+				
 
-				/*c2->posRect.y = c1->posRect.y - c2->collider->data.h + 1;*//*altura player*/
-
-				LOG("MAKAKOOOOOOOOOOOOOOOOOOO");
 				if (myPlayers[i]->jumpingCnt <= 0) {
 
 					myPlayers[i]->isJumping = false;
@@ -326,13 +321,57 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 		
 		
 	}
+	//if (c1->collider->type == ColliderType::BULLET && c2->collider->type == ColliderType::GROUND) {
+
+	//	c1->acceleration.x = 0;
+	//	c1->velocity.x = 0;
+
+	//	int feet = myPlayers[i]->rigid->collider->data.y + myPlayers[i]->rigid->collider->data.h - 6;
+	//	if (feet < c1->collider->data.y + 6)/*Above collider*/ {
+
+
+	//		c2->posRect.y = c1->posRect.y - c2->collider->data.h - 1;
+	//	}
+	//	else if (myPlayers[i]->rigid->collider->data.x < c1->collider->data.x) /*LEFT*/ {
+	//		c2->posRect.x -= c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+	//		c2->velocity.x = (c2->velocity.x * 0.1f * 0);
+	//	}
+	//	else if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x)  /*RIGHT*/ {
+	//		c2->velocity.x = (c2->velocity.x * 0.1f) * 0;
+	//		c2->posRect.x += c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds() + 3;
+	//		// Creo que el suelo esta interfiriendo apluicandole algo
+	//		c2->velocity.x = (c2->velocity.x * 0.1f) * 0;
+	//	}
+
+
+	//	if (myPlayers[i]->jumpingCnt <= 0) {
+
+	//		myPlayers[i]->isJumping = false;
+	//		myPlayers[i]->jumpingCnt = 70;
+	//	}
+
+	//}
+
+
+	
 	if (*App->physics->currentCollisionMethod == CollisionDetection::TELEPORT) {
 
 		if (c2->collider->type == ColliderType::BULLET && c1->collider->type != ColliderType::PLAYER && c2->isMoving) {
 			c2->velocity.x = 0;
 			c2->velocity.y = 0;
 			c2->acceleration.y = 0;
-			c2->posRect.y = c1->posRect.y - c2->collider->data.h -1; // Teleportation //
+
+		         if (c2->collider->data.x < c1->collider->data.x) /*LEFT*/ {
+		         	c2->posRect.x -= c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+		         	c2->velocity.x = (c2->velocity.x * 0.1f * 0);
+		         }
+		         else if (c2->collider->data.x > c1->collider->data.x)  /*RIGHT*/ {
+		         	c2->velocity.x = (c2->velocity.x * 0.1f) * 0;
+		         	c2->posRect.x += c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds() + 3;
+		         	c2->velocity.x = (c2->velocity.x * 0.1f) * 0;
+		         }
+
+			//c2->posRect.y = c1->posRect.y - c2->collider->data.h -1; // Teleportation //
 			c2->isGrounded = true;
 			c2->isMoving = false;
 		}

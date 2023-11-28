@@ -27,7 +27,7 @@ bool ModulePhysics::Start()
     collisionMethod[0] = CollisionDetection::ITERATIVE;
     collisionMethod[1] = CollisionDetection::TELEPORT;
     collisionMethod[2] = CollisionDetection::RAYCAST;
-    currentCollisionMethod = &collisionMethod[2];
+    currentCollisionMethod = &collisionMethod[1];
 
     return true;
 }
