@@ -86,8 +86,13 @@ update_status ModulePhysics::PreUpdate()
             App->deltaTime.delta, initialSpeed, angle * 180 / 3.1416, bullet->velocity.x, -(float)GRAVITY, bullet->posRect.x);
         App->window->SetTitle(title);*/
 
-        //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
-        //ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
+        /*if (bullet->collider->type == ColliderType::BULLET)
+        {
+            ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
+        }*/
+        /*ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+        ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());*/
 
         for (RigidBody* bullet2 : bodies) {
 
@@ -281,21 +286,31 @@ RigidBody* ModulePhysics::createBouncer(int x, int y, int width, int height)
     return bouncer;
 }
 
-//void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime)
-//{
-//    float speed = body->LengthSquared();
-//    float dragMagnitude = body->dragCoefficient * speed * speed;
-//
-//    if (speed != 0) {
-//        vec2 dragForce = body->Normalize() * -dragMagnitude;
-//        body->velocity += dragForce * deltaTime;
-//    }
-//}
-//
-//void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)
-//{
-//    body->velocity += body->windForce * deltaTime;
-//}
+void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime)
+{
+    //The formula for aerodynamic drag is: Drag = 0.5 * airDensity * velocity^2 * dragCoefficient * area
+    //airDensity = 1.225 (at sea level and at 15 °C), and area = 1 for simplicity
+    body->dragCoefficient = 0.47f;
+    float airDensity = 1.225f;
+    float area = 1.0f;
+    float dragForce = 0.5f * airDensity * body->velocity.LengthSquared() * body->dragCoefficient * area;
+
+    vec2 dragDirection = body->velocity.Normalize();
+    dragDirection.x *= -1;
+    dragDirection.y *= -1;
+
+    body->acceleration.x += dragForce * dragDirection.x * deltaTime;
+    body->acceleration.y += dragForce * dragDirection.y * deltaTime;
+}
+
+void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)
+{
+    body->windForce.x = 0.0f;
+    body->windForce.y = 0.0f;   
+    //hace falta hacer que windforce sea random cada turno
+    body->acceleration.x += body->windForce.x * deltaTime;
+    body->acceleration.y += body->windForce.y * deltaTime;
+}
 
 // Called before quitting
 bool ModulePhysics::CleanUp()

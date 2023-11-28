@@ -23,6 +23,19 @@ enum CollisionDetection {
 struct vec2 {
     float x;
     float y;
+
+    float LengthSquared() const {
+        return x * x + y * y;
+    }
+
+    float Length() const {
+        return sqrt(LengthSquared());
+    }
+
+    vec2 Normalize() const {
+        float length = Length();
+        return { x / length, y / length };
+    }
 };
 
 
