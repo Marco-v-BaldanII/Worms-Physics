@@ -305,9 +305,9 @@ void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime)
 
 void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)
 {
-    body->windForce.x = 0.0f;
-    body->windForce.y = 0.0f;   
-    //hace falta hacer que windforce sea random cada turno
+    body->windForce.x = App->player->windForceX;
+    body->windForce.y = App->player->windForceY;
+
     body->acceleration.x += body->windForce.x * deltaTime;
     body->acceleration.y += body->windForce.y * deltaTime;
 }

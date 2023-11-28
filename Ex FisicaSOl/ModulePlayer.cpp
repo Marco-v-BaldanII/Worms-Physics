@@ -1,4 +1,6 @@
 #include <iostream>
+#include <iomanip>
+#include <random>
 #include "Globals.h"
 #include "Application.h"
 #include "ModulePlayer.h"
@@ -151,11 +153,21 @@ update_status ModulePlayer::Update()
 			case Disparo:
 				preview = true;
 				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP) {
+					myPlayers[i]->faseActual = Fase::Movimiento;
 					myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
 					turntaken = true;
 					preview = false;
-					//metdo para pasar al siguiente player
+					//ranodm windforceX y windforceY entre los numeros del -1 y 1
+					
+					std::random_device rd;
+					std::mt19937 gen(rd());
+					std::uniform_real_distribution<> dis(-1, 1);
+
+					windForceX = std::round(dis(gen) * 1e5) / 1e5;
+					windForceY = std::round(dis(gen) * 1e5) / 1e5;
+
+					//se pasa al siguiente turno
 				}
 				break;
 			}
