@@ -55,8 +55,9 @@ bool ModulePlayer::Start()
 		myPlayers[i]->myWeapons[0].player = myPlayers[i];
 
 		App->physics->bodies.push_back(myPlayers[i]->rigid);
-		myPlayers[i]->rigid->acceleration.y = 90;
+		myPlayers[i]->rigid->acceleration.y = 0;
 		myPlayers[i]->rigid->ID = 2;
+		myPlayers[i]->rigid->isGrounded = false;
 		myPlayers[i]->shoted = false;
 	}
 	currentPlayer = myPlayers[0];
@@ -170,7 +171,7 @@ update_status ModulePlayer::Update()
 			App->renderer->Blit(player2, 850, 355);*/
 			//LOG(" \nXXXXXXXXXXXXXXXXXXXXXXXXXX : %f", rigid->velocity.x);
 
-			myPlayers[i]->rigid->isGrounded = false;
+			//myPlayers[i]->rigid->isGrounded = false;
 		}
 	}
 	return UPDATE_CONTINUE;
@@ -280,7 +281,7 @@ void ModulePlayer::MomentumController(Direction dir, Player* p) {
 
 void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 
-	if (c1->collider->type == ColliderType::GROUND && c2->collider->type == ColliderType::PLAYER) {
+	if (c1->collider->type == ColliderType::GROUND || c1->collider->type == ColliderType::TESTGROUND && c2->collider->type == ColliderType::PLAYER) {
 		for (int i = 0; i < 2; ++i) {
 			
 
@@ -291,15 +292,22 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 					c2->acceleration.y = 0;
 					
 				}
-				SDL_Rect c2LPoint = { c2->collider->data.x, c2->collider->data.y,1,1 };
-				if ( myPlayers[i]->rigid->collider->data.x < c1->collider->data.x ) {
-					c2->posRect.x -= c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
-					c2->velocity.x = (c2->velocity.x * 0.1f);
+
+				int feet = myPlayers[i]->rigid->collider->data.y + myPlayers[i]->rigid->collider->data.h    - 6;
+				if (feet < c1->collider->data.y+6)/*Above collider*/ {
+					
+					
+					c2->posRect.y = c1->posRect.y - c2->collider->data.h - 1;
 				}
-				else if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x+(c1->collider->data.w/4)) {
-					c2->posRect.x += c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+				else if ( myPlayers[i]->rigid->collider->data.x < c1->collider->data.x ) /*LEFT*/ {
+					c2->posRect.x -= c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
+					c2->velocity.x = (c2->velocity.x * 0.1f* 0);
+				}
+				else if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x)  /*RIGHT*/ {
+					c2->velocity.x = (c2->velocity.x * 0.1f) * 0;
+					c2->posRect.x += c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds() +3;
 					// Creo que el suelo esta interfiriendo apluicandole algo
-					c2->velocity.x = (c2->velocity.x * 0.1f);
+					c2->velocity.x = (c2->velocity.x * 0.1f)* 0;
 				}
 				/*if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x ) {
 					c2->posRect.x += 1;
