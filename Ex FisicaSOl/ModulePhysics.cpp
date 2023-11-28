@@ -27,7 +27,7 @@ bool ModulePhysics::Start()
     collisionMethod[0] = CollisionDetection::ITERATIVE;
     collisionMethod[1] = CollisionDetection::TELEPORT;
     collisionMethod[2] = CollisionDetection::RAYCAST;
-    currentCollisionMethod = &collisionMethod[2];
+    currentCollisionMethod = &collisionMethod[1];
 
     return true;
 }
@@ -153,7 +153,7 @@ update_status ModulePhysics::PostUpdate()
                     case ColliderType::PLAYER:
                         App->renderer->DrawQuad(bullet->collider->data, 0, 0, 255, OPACITY);
                         break;
-                    case ColliderType::GROUND:
+                    case ColliderType::GROUND :
                         App->renderer->DrawQuad(bullet->collider->data, 0, 255, 10, OPACITY);
                         break;
                     case ColliderType::BULLET:
@@ -162,6 +162,8 @@ update_status ModulePhysics::PostUpdate()
                     case ColliderType::BOUNCER:
                         App->renderer->DrawQuad(bullet->collider->data, 80, 0, 100, OPACITY);
                         break;
+                    case ColliderType::TESTGROUND:
+                        App->renderer->DrawQuad(bullet->collider->data, 0, 215, 60, OPACITY);
 
                     }
                 }

@@ -9,7 +9,8 @@ enum ColliderType {
     GROUND,
     BULLET,
     PLAYER,
-    BOUNCER
+    BOUNCER,
+    TESTGROUND
 
 };
 
