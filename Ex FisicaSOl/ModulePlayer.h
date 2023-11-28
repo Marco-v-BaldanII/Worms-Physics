@@ -11,6 +11,8 @@
 #include "Application.h"
 #include <string>
 #include <cmath>
+#include "Timer.h"
+
 
 #define NUM_WEAPONS 1
 
@@ -35,6 +37,8 @@ struct fPoint {
 	float y;
 };
 
+
+
 enum Movement {
 	POSITION,
 	VELOCITY,
@@ -51,9 +55,38 @@ enum class Direction {
 
 };
 
+
+
+
 class Bullet : public RigidBody {
 
+	circle explosionArea;
+
+public:
+	Collider* explosionCollider;
 	SDL_Texture* texture = nullptr;
+
+	void SetExplosionRadius(int rad) { explosionArea.r = rad; }
+
+	Bullet() :RigidBody() {
+		explosionArea.r = 2;
+		explosionArea.x = 0;
+		explosionArea.y = 0;
+	}
+
+	Bullet(int radius) :RigidBody() {
+		explosionArea.r = radius;
+	}
+
+	
+
+	void CollisionBehaviour(Module* listener) override{
+
+		/*SDL_Rect explosion = { collider->data.x, collider->data.y, collider->data.w * 2, collider->data.h * 2 };
+		explosionCollider = new Collider(explosion, ColliderType::GROUND, listener);*/
+
+
+	}
 
 };
 
@@ -83,6 +116,7 @@ public:
 	void ImpulseController(Direction dir , Player* p);
 	void MomentumController(Direction dir, Player* p);
 	void OnCollision(RigidBody* c1, RigidBody* c2);
+	void OnExplosion(RigidBody* c1);
 
 	void Shoot();
 	int turno = 0;
@@ -112,7 +146,7 @@ public:
 		Bullet* bullet = new Bullet;
 		bullet->isMoving = true;
 		bullet->posRect.x = player->rigid->posRect.x;
-		bullet->posRect.y = player->rigid->posRect.y;
+		bullet->posRect.y = player->rigid->posRect.y-50;
 		bullet->posRect.w = 10;
 		bullet->posRect.h = 10;
 
@@ -133,6 +167,7 @@ public:
 		bullet->acceleration = { 0,981 };
 		SDL_Rect r = { 0,0,40,40 };
 		bullet->CreateCollider(r, ColliderType::BULLET, pManager);
+		bullet->collider->made_explosion = false;
 		physics->bodies.push_back(bullet);
 
 		static char title[400];

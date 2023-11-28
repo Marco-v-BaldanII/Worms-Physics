@@ -2,6 +2,8 @@
 #include "Module.h"
 #include "Globals.h"
 #include <list>
+#include "Timer.h"
+#include "ModulePlayer.h"
 
 
 enum ColliderType {
@@ -10,8 +12,13 @@ enum ColliderType {
     BULLET,
     PLAYER,
     BOUNCER,
-    TESTGROUND
+    TESTGROUND,
+    BREAKABLE
 
+};
+enum ColliderShape {
+    QUAD,
+    CIRCLE
 };
 
 enum CollisionDetection {
@@ -26,6 +33,11 @@ struct vec2 {
     float y;
 };
 
+struct circle {
+    int x;
+    int y;
+    int r;
+};
 
 struct ResitutionObj {
     int x, y; 
@@ -37,35 +49,62 @@ public:
     
     SDL_Rect data;
     ColliderType type;
+    ColliderShape shape = QUAD;
 
-    Collider(SDL_Rect r, ColliderType type, Module* Listener) {
+    bool made_explosion = false;
+
+    Collider(SDL_Rect r, ColliderType type, Module* Listener, ColliderShape myShape = ColliderShape::QUAD) {
         data = r;
         this->type = type;
         listener = Listener;
+        shape = myShape;
     }
 
     bool Intersects(SDL_Rect* r) const
     {
-        if (r != nullptr && &data != nullptr) {
-            if (data.w != 0 && data.h != 0 && r->w != 0 && r->h != 0) {
-                // returns true if there has been an intersection
-                return (data.x < r->x + r->w &&
-                    data.x + data.w > r->x &&
-                    data.y < r->y + r->h &&
-                    data.h + data.y > r->y);
+        if (shape == ColliderShape::QUAD) {
+            if (r != nullptr && &data != nullptr) {
+                if (data.w != 0 && data.h != 0 && r->w != 0 && r->h != 0) {
+                    // returns true if there has been an intersection
+                    return (data.x < r->x + r->w &&
+                        data.x + data.w > r->x &&
+                        data.y < r->y + r->h &&
+                        data.h + data.y > r->y);
+                }
+            }
+
+
+            else {
+                return false;
             }
         }
-
         else {
-            return false;
-        }
 
+        }
     }
 
     Module* listener;
     
 };
 
+class Explosion {
+
+public:
+    Timer myTimer;
+    circle shape;
+
+    bool done = false;
+
+    Explosion(int x, int y, int rad) {
+        myTimer.Start();
+        shape.x = x;
+        shape.y = y;
+        shape.r = rad;
+        // add explosion to explosion list
+    }
+
+    RigidBody* mybody;
+};
 
 class RigidBody {
 
@@ -117,6 +156,13 @@ public:
 		return { velocity.x / length, velocity.y / length };
 	}
 
+    virtual void CollisionBehaviour(Module* listener) {
+
+    }
+    
+    
+
+  
 };
 
 
@@ -153,8 +199,12 @@ public:
     void ApplyAerodynamics(RigidBody* body, float deltaTime);
     void ApplyWindForce(RigidBody* body, float deltaTime);
 
+    bool IsRectangleIntersectingWithCircle(const SDL_Rect& rect, const SDL_Point& circleCenter, int circleRadius);
+
     std::list<RigidBody*> bodies;
+    std::list<Explosion*> explosions;
     RigidBody* corpses[50] = { nullptr };
+    Explosion* defused[10] = { nullptr };
 
     CollisionDetection collisionMethod[3];
     CollisionDetection* currentCollisionMethod;

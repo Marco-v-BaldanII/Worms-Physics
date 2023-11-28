@@ -20,6 +20,9 @@ public:
 	SDL_Texture* player1;
 	SDL_Texture* player2;
 
+
+	SDL_Rect healthBar;
+	int HP = 100;
 	
 
 	Weapon* myWeapons;
@@ -41,5 +44,7 @@ public:
 
 
 };
+
+
 
 #endif
