@@ -91,8 +91,6 @@ update_status ModulePhysics::PreUpdate()
             ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
             ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
         }*/
-        /*ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
-        ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());*/
 
         for (RigidBody* bullet2 : bodies) {
 
