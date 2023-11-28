@@ -4,6 +4,7 @@
 #include "math.h"
 #include <list>
 #include "ModulePlayer.h"
+#include "Timer.h"
 
 
 #define OPACITY 80
@@ -104,6 +105,16 @@ update_status ModulePhysics::PreUpdate()
                 }
             }
         }
+        for (Explosion* _explosion : explosions) {
+            SDL_Point p = { _explosion->shape.x, _explosion->shape.y };
+            if (IsRectangleIntersectingWithCircle(bullet->collider->data, p, _explosion->shape.r) == true && _explosion->done == false) {
+                LOG("someone has touched an explosion");
+                bullet->collider->listener->OnExplosion(bullet);
+                if (bullet->collider->type == ColliderType::PLAYER) {
+                    _explosion->done = true;
+                }
+            };
+        }
 
         if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
         {
@@ -126,6 +137,21 @@ update_status ModulePhysics::PreUpdate()
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         } 
     }
+    // Add finished explosions to the "defused" list of explosions to be deleted
+    for (Explosion* _explosion : explosions) {
+
+        if (_explosion->myTimer.ReadMSec() > 500) {
+            for (int i = 0; i < 10; ++i) {
+                if (defused[i] == nullptr) {
+                    defused[i] = _explosion;
+                    
+                    break;
+                }
+            }
+        }
+        
+    }
+
     return UPDATE_CONTINUE;
 }
 update_status ModulePhysics::PostUpdate()
@@ -160,12 +186,15 @@ update_status ModulePhysics::PostUpdate()
                     case ColliderType::BOUNCER:
                         App->renderer->DrawQuad(bullet->collider->data, 80, 0, 100, OPACITY);
                         break;
-                    case ColliderType::TESTGROUND:
-                        App->renderer->DrawQuad(bullet->collider->data, 0, 215, 60, OPACITY);
+                    case ColliderType::BREAKABLE:
+                        App->renderer->DrawQuad(bullet->collider->data, 60, 150, 60, OPACITY);
 
                     }
                 }
             }
+        }
+        for (Explosion* explode : explosions) {
+            App->renderer->DrawCircle(explode->shape.x, explode->shape.y, explode->shape.r, 80,80,0,OPACITY);
         }
     
     float gravity = GRAVITY;
@@ -197,6 +226,20 @@ update_status ModulePhysics::PostUpdate()
         else {
             bodies.remove(corpses[i]);
             corpses[i] = nullptr;
+        }
+    }
+    for (int i = 0; i < 10; ++i) {
+        if (defused[i] == nullptr) { break; }
+        else {
+            for (int j = 0; j < 50; ++j) {
+                if (corpses[j] == nullptr) {
+                    corpses[j] = defused[i]->mybody;
+                    break;
+                }
+                
+            }
+            explosions.remove(defused[i]);
+            defused[i] = nullptr;
         }
     }
 
@@ -272,6 +315,31 @@ void ModulePhysics::RayCast(RigidBody* c1) {
             }
         }
     }
+}
+
+bool ModulePhysics::IsRectangleIntersectingWithCircle(const SDL_Rect& rect, const SDL_Point& circleCenter, int circleRadius) {
+    // Find the closest point on the rectangle to the circle
+    int closestX, closestY;
+
+    if (circleCenter.x < rect.x)
+        closestX = rect.x;
+    else if (circleCenter.x > rect.x + rect.w)
+        closestX = rect.x + rect.w;
+    else
+        closestX = circleCenter.x;
+
+    if (circleCenter.y < rect.y)
+        closestY = rect.y;
+    else if (circleCenter.y > rect.y + rect.h)
+        closestY = rect.y + rect.h;
+    else
+        closestY = circleCenter.y;
+
+    // Calculate the distance between the closest point and the circle's center
+    int distance = std::sqrt(std::pow(circleCenter.x - closestX, 2) + std::pow(circleCenter.y - closestY, 2));
+
+    // If the distance is less than the circle's radius, they intersect
+    return distance < circleRadius;
 }
 
 RigidBody* ModulePhysics::createBouncer(int x, int y, int width, int height) 

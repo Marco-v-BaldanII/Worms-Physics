@@ -72,6 +72,10 @@ public:
 
 	}
 
+	virtual void OnExplosion(RigidBody* c1) {
+
+	}
+
 	virtual bool CleanUp() 
 	{ 
 		return true; 

@@ -41,6 +41,8 @@ public:
 
 	void AddTarget(SDL_Rect posRect, SDL_Rect collid);
 
+	void OnExplosion(RigidBody* c1);
+
 	int currentPlayer = 0;
 
 public:

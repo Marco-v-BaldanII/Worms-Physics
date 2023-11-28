@@ -74,6 +74,11 @@ update_status ModulePlayer::Update()
 	bool turntaken = false;
 
 	for (int i = 0; i < 2; ++i) {
+
+		myPlayers[i]->healthBar = { myPlayers[i]->rigid->posRect.x -20 , myPlayers[i]->rigid->posRect.y -20, myPlayers[i]->HP , 20 };
+		App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
+
+
 		if (turntaken) { break; }
 		if (myPlayers[i] == currentPlayer) {
 			if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
@@ -183,7 +188,7 @@ update_status ModulePlayer::Update()
 			App->renderer->Blit(player2, 850, 355);*/
 			//LOG(" \nXXXXXXXXXXXXXXXXXXXXXXXXXX : %f", rigid->velocity.x);
 
-			//myPlayers[i]->rigid->isGrounded = false;
+			myPlayers[i]->rigid->isGrounded = false;
 		}
 	}
 	return UPDATE_CONTINUE;
@@ -293,7 +298,21 @@ void ModulePlayer::MomentumController(Direction dir, Player* p) {
 
 void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 
-	if (c1->collider->type == ColliderType::GROUND || c1->collider->type == ColliderType::TESTGROUND && c2->collider->type == ColliderType::PLAYER) {
+
+	if (c2->collider->type == ColliderType::BULLET ) {
+		if ( c2->collider->made_explosion == false) {
+			c2->StopAllMotion();
+			LOG("\n EXPLODE \n");
+			Explosion* explode = new Explosion(c2->collider->data.x +(c2->collider->data.w/2), c2->collider->data.y + (c2->collider->data.h/2), 30);
+			App->physics->explosions.push_back(explode);
+			c2->collider->made_explosion = true;
+			explode->mybody = c2;
+
+		}
+	}
+
+
+	if ((c1->collider->type == ColliderType::GROUND || c1->collider->type == ColliderType::BREAKABLE)  && c2->collider->type == ColliderType::PLAYER) {
 		for (int i = 0; i < 2; ++i) {
 			
 
@@ -333,38 +352,7 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 		
 		
 	}
-	//if (c1->collider->type == ColliderType::BULLET && c2->collider->type == ColliderType::GROUND) {
-
-	//	c1->acceleration.x = 0;
-	//	c1->velocity.x = 0;
-
-	//	int feet = myPlayers[i]->rigid->collider->data.y + myPlayers[i]->rigid->collider->data.h - 6;
-	//	if (feet < c1->collider->data.y + 6)/*Above collider*/ {
-
-
-	//		c2->posRect.y = c1->posRect.y - c2->collider->data.h - 1;
-	//	}
-	//	else if (myPlayers[i]->rigid->collider->data.x < c1->collider->data.x) /*LEFT*/ {
-	//		c2->posRect.x -= c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds();
-	//		c2->velocity.x = (c2->velocity.x * 0.1f * 0);
-	//	}
-	//	else if (myPlayers[i]->rigid->collider->data.x > c1->collider->data.x)  /*RIGHT*/ {
-	//		c2->velocity.x = (c2->velocity.x * 0.1f) * 0;
-	//		c2->posRect.x += c2->velocity.x * App->deltaTime.getDeltaTimeInSeconds() + 3;
-	//		// Creo que el suelo esta interfiriendo apluicandole algo
-	//		c2->velocity.x = (c2->velocity.x * 0.1f) * 0;
-	//	}
-
-
-	//	if (myPlayers[i]->jumpingCnt <= 0) {
-
-	//		myPlayers[i]->isJumping = false;
-	//		myPlayers[i]->jumpingCnt = 70;
-	//	}
-
-	//}
-
-
+	
 	
 	if (*App->physics->currentCollisionMethod == CollisionDetection::TELEPORT) {
 
@@ -406,4 +394,16 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 	}
 
 	LOG("Collision");
+}
+
+void ModulePlayer::OnExplosion(RigidBody* c1) {
+
+
+	for (int i = 0; i < 2; ++i) {
+		if (c1 == myPlayers[i]->rigid) {
+			myPlayers[i]->HP -= 25;
+			
+		}
+	}
+
 }

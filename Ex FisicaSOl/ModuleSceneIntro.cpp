@@ -32,7 +32,7 @@ bool ModuleSceneIntro::Start()
 	App->physics->bodies.push_back(ground);
 
 	ground2 = new RigidBody(SDL_Rect{ 300,300,100,100 });
-	ground2->CreateCollider(SDL_Rect{ 300,300,100,100 }, ColliderType::GROUND, this);
+	ground2->CreateCollider(SDL_Rect{ 300,300,100,100 }, ColliderType::BREAKABLE, this);
 	App->physics->bodies.push_back(ground2);
 
 	//primer plataforma//
@@ -278,3 +278,16 @@ void AddTarget(SDL_Rect posRect, SDL_Rect collid) {
 
 }
 
+
+void ModuleSceneIntro::OnExplosion(RigidBody* c1)  {
+
+	if (c1->collider->type == ColliderType::BREAKABLE) {
+		for (int i = 0; i < 50; ++i) {
+			if (App->physics->corpses[i] == nullptr) {
+				App->physics->corpses[i] = c1;
+				break;
+			}
+		}
+	}
+
+}
