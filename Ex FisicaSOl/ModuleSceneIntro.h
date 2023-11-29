@@ -3,6 +3,7 @@
 #include "Animation.h"
 #include "p2DynArray.h"
 #include "Globals.h"
+#include "Anim.h"
 
 #define BOUNCER_TIME 200
 
@@ -44,6 +45,8 @@ public:
 	void OnExplosion(RigidBody* c1);
 
 	int currentPlayer = 0;
+
+	Anim rightFlying, leftFlying;
 
 public:
 

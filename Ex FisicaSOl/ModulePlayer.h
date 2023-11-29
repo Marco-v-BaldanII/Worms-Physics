@@ -101,6 +101,8 @@ public:
 	bool Start();
 	update_status Update();
 	bool CleanUp();
+	void InitAnims();
+	void AnimationLogic();
 	
 	Player* myPlayers[2];
 	Player* currentPlayer;

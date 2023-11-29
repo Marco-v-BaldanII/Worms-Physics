@@ -4,4 +4,9 @@
 #include "ModulePlayer.h"
 #include "Player.h"
 
+void initAnimsFirsPlayer()
+{
+
+}
+
 

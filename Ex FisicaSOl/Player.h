@@ -4,6 +4,7 @@
 #include "SDL/include/SDL.h"
 #include "ModulePhysics.h"
 #include "ModulePlayer.h"
+#include "Anim.h"
 
 class Weapon;
 enum class Direction;
@@ -42,7 +43,27 @@ public:
 	bool shoted = false;
 	bool moved = false;
 
+	Anim* currentAnim = nullptr;
 
+	Anim rightIdle, leftIdle;
+	Anim rightWalk, leftWalk;
+	Anim rightChargeJump, leftChargeJump;
+	Anim rightJump, leftJump;
+	Anim rightFall, leftFall;
+	Anim rightDeath, leftDeath;
+	Anim rightShoot, leftShoot;
+
+public:
+
+	void initAnimsFirstPlayer()
+	{
+		rightIdle.PushBack({ 0, 0, 64, 64 });
+		currentAnim = &rightIdle;
+	}
+
+	void initAnimsSecondPlayer();
+
+	void animationLogic();
 };
 
 
