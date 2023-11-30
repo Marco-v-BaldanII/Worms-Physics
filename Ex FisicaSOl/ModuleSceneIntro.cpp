@@ -27,8 +27,8 @@ bool ModuleSceneIntro::Start()
 
 
 
-	ground = new RigidBody(SDL_Rect{0, 400, 800, 800});
-	ground->CreateCollider(SDL_Rect{ 0,400,800,800 }, ColliderType::GROUND, this);
+	ground = new RigidBody(SDL_Rect{0, 500, 1800, 800});
+	ground->CreateCollider(SDL_Rect{ 0,400,1800,800 }, ColliderType::GROUND, this);
 	App->physics->bodies.push_back(ground);
 
 	ground2 = new RigidBody(SDL_Rect{ 300,300,100,100 });
