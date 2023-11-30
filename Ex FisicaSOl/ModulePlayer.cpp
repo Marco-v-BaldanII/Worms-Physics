@@ -39,7 +39,7 @@ bool ModulePlayer::Start()
 		if (i == 0) { myPlayers[i]->rigid->posRect.x = 50; }
 		else { myPlayers[i]->rigid->posRect.x = 1; }
 		myPlayers[i]->rigid->posRect.y = 200;
-		myPlayers[i]->rigid->CreateCollider(SDL_Rect{ 0,0,65,87 }, ColliderType::PLAYER, this);
+		myPlayers[i]->rigid->CreateCollider(SDL_Rect{ 0,0,64,64 }, ColliderType::PLAYER, this);
 
 	
 		myMovement[0] = Movement::POSITION;
@@ -455,6 +455,24 @@ update_status ModulePlayer::Update()
 					}
 				}
 
+				if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
+					myPlayers[i]->faseActual = Fase::Movimiento;
+					myPlayers[i]->myWeapons[0].MissileIncoming(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
+					turntaken = true;
+					preview = false;
+					//ranodm windforceX y windforceY entre los numeros del -1 y 1
+
+					std::random_device rd;
+					std::mt19937 gen(rd());
+					std::uniform_real_distribution<> dis(-1, 1);
+
+					windForceX = std::round(dis(gen) * 1e5) / 1e5;
+					windForceY = std::round(dis(gen) * 1e5) / 1e5;
+
+					//se pasa al siguiente turno
+				}
+
 				if (App->input->GetKey(SDL_SCANCODE_LEFT) != KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_RIGHT) != KEY_REPEAT) {
 					LOG("NOT MOVING");
 					myPlayers[i]->rigid->isMoving = false;
@@ -469,7 +487,7 @@ update_status ModulePlayer::Update()
 				break;
 			case Disparo:
 				preview = true;
-				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP) {
+				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 					myPlayers[i]->faseActual = Fase::Movimiento;
 					myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
@@ -486,6 +504,9 @@ update_status ModulePlayer::Update()
 
 					//se pasa al siguiente turno
 				}
+
+				
+
 				break;
 			}
 

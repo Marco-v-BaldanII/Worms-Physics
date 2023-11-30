@@ -215,6 +215,7 @@ public:
     bool IsRectangleIntersectingWithCircle(const SDL_Rect& rect, const SDL_Point& circleCenter, int circleRadius);
 
     std::list<RigidBody*> bodies;
+    std::list<RigidBody*> bombs;
     std::list<Explosion*> explosions;
     RigidBody* corpses[50] = { nullptr };
     Explosion* defused[10] = { nullptr };

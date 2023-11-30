@@ -56,7 +56,33 @@ enum class Direction {
 };
 
 
+class parachuteBomb : public RigidBody {
 
+	circle explosionArea;
+
+public:
+	Collider* explosionCollider;
+	SDL_Texture* texture = nullptr;
+
+	void SetExplosionRadius(int rad) { explosionArea.r = rad; }
+
+	parachuteBomb() :RigidBody() {
+		explosionArea.r = 2;
+		explosionArea.x = 0;
+		explosionArea.y = 0;
+	}
+
+	parachuteBomb(int radius) :RigidBody() {
+		explosionArea.r = radius;
+	}
+
+	void CollisionBehaviour(Module* listener) override {
+
+		/*SDL_Rect explosion = { collider->data.x, collider->data.y, collider->data.w * 2, collider->data.h * 2 };
+				explosionCollider = new Collider(explosion, ColliderType::GROUND, listener);*/
+	}
+
+};
 
 class Bullet : public RigidBody {
 
@@ -145,6 +171,27 @@ public:
 	const char* name;
 	Player* player;
 	std::list<Bullet*> bodies;
+	std::list<parachuteBomb*> bombs;
+
+	virtual void MissileIncoming(ModulePlayer* pManager, ModulePhysics* physics, int mouseX, int mouseY) {
+
+		parachuteBomb* bomb = new parachuteBomb;
+		bomb->isMoving = true;
+		bomb->posRect.x = mouseX;
+		bomb->posRect.y = 0;
+		bomb->posRect.w = 10;
+		bomb->posRect.h = 10;
+
+		float speed = 200;
+
+		bomb->velocity.y = speed;
+
+		bomb->acceleration = { 0,0 };
+		SDL_Rect r = { 0,0,40,40 };
+		bomb->CreateCollider(r, ColliderType::BULLET, pManager);
+		bomb->collider->made_explosion = false;
+		physics->bombs.push_back(bomb);
+	}
 
 	virtual void Shoot(ModulePlayer* pManager, ModulePhysics* physics, int mouseX, int mouseY) {
 

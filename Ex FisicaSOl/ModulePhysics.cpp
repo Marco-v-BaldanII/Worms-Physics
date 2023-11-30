@@ -79,6 +79,45 @@ update_status ModulePhysics::PreUpdate()
         *currentCollisionMethod = collisionMethod[index ];
     }
 
+    for (RigidBody* bomb : bombs)
+    {
+        if (bomb->collider->type == ColliderType::BULLET)
+        {
+            //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            ApplyWindForce(bomb, App->deltaTime.getDeltaTimeInSeconds());
+        }
+        
+        if (bomb->posRect.y >= 80)
+        {
+            bomb->velocity.y = 100;
+        }
+        else
+        {
+            bomb->velocity.y = 200;
+        }
+
+        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
+        {
+            IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
+        }
+
+        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
+        {
+            IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
+        }
+        else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_REPEAT)
+        {
+            IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
+        }
+        else
+        {
+            if (App->deltaTime.getDeltaTimeInSeconds() == 0) {
+                LOG("This should never happen");
+            }
+            IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
+        }
+    }
+
     for (RigidBody* bullet : bodies)
     {
         /*static char title[400];
@@ -87,11 +126,11 @@ update_status ModulePhysics::PreUpdate()
             App->deltaTime.delta, initialSpeed, angle * 180 / 3.1416, bullet->velocity.x, -(float)GRAVITY, bullet->posRect.x);
         App->window->SetTitle(title);*/
 
-        /*if (bullet->collider->type == ColliderType::BULLET)
+        if (bullet->collider->type == ColliderType::BULLET)
         {
-            ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
             ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
-        }*/
+        }
 
         for (RigidBody* bullet2 : bodies) {
 
@@ -195,6 +234,35 @@ update_status ModulePhysics::PostUpdate()
         }
         for (Explosion* explode : explosions) {
             App->renderer->DrawCircle(explode->shape.x, explode->shape.y, explode->shape.r, 80,80,0,OPACITY);
+        }
+        for (RigidBody* bomb : bombs)
+        {
+            App->renderer->Blit(bird, bomb->posRect.x, bomb->posRect.y);if (debug) {
+                if (bomb->collider != nullptr) {
+
+                    bomb->collider->data.x = bomb->posRect.x;
+                    bomb->collider->data.y = bomb->posRect.y;
+
+                    switch (bomb->collider->type) {
+
+                    case ColliderType::PLAYER:
+                        App->renderer->DrawQuad(bomb->collider->data, 0, 0, 255, OPACITY);
+                        break;
+                    case ColliderType::GROUND :
+                        App->renderer->DrawQuad(bomb->collider->data, 0, 255, 10, OPACITY);
+                        break;
+                    case ColliderType::BULLET:
+                        App->renderer->DrawQuad(bomb->collider->data, 255, 80, 70, OPACITY);
+                        break;
+                    case ColliderType::BOUNCER:
+                        App->renderer->DrawQuad(bomb->collider->data, 80, 0, 100, OPACITY);
+                        break;
+                    case ColliderType::BREAKABLE:
+                        App->renderer->DrawQuad(bomb->collider->data, 60, 150, 60, OPACITY);
+
+                    }
+                }
+            }
         }
     
     float gravity = GRAVITY;
@@ -376,8 +444,8 @@ void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)
     body->windForce.x = App->player->windForceX;
     body->windForce.y = App->player->windForceY;
 
-    body->acceleration.x += body->windForce.x * deltaTime;
-    body->acceleration.y += body->windForce.y * deltaTime;
+    body->velocity.x += body->windForce.x * deltaTime;
+    body->velocity.y += body->windForce.y * deltaTime;
 }
 
 // Called before quitting
