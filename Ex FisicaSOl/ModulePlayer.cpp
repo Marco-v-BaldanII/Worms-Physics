@@ -17,6 +17,7 @@
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
+
 }
 
 ModulePlayer::~ModulePlayer()
@@ -25,6 +26,10 @@ ModulePlayer::~ModulePlayer()
 // Load assets
 bool ModulePlayer::Start()
 {
+
+	char lookupTable[] = { "abcdefghijklmnopqrstuvwxyz0123456789" };
+	font = App->fonts->Load("Assets/images/my_font.png", lookupTable, 3);
+
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		myPlayers[i] = new Player();
 		myPlayers[i]->rigid = new RigidBody();
@@ -460,6 +465,11 @@ update_status ModulePlayer::Update()
 		
 		AnimationLogic();
 	}
+
+	if (App->debug) {
+		DebugText();
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -674,5 +684,30 @@ void ModulePlayer::OnExplosion(RigidBody* c1) {
 			
 		}
 	}
+
+}
+
+void ModulePlayer::DebugText() {
+
+	switch (*currentMovement) {
+
+	case ACCELERATION:
+		App->fonts->BlitText(0, 0, 0, "current movement is acceleration");
+		break;
+	case POSITION:
+		App->fonts->BlitText(0, 0, 0, "current movement is position");
+		break;
+	case MOMENTUM:
+		App->fonts->BlitText(0, 0, 0, "current movement is momentum");
+		break;
+	case IMPULSE:
+		App->fonts->BlitText(0, 0, 0, "current movement is impulse");
+		break;
+	case VELOCITY:
+		App->fonts->BlitText(0, 0, 0, "current movementis  velocity");
+		break;
+	}
+
+	
 
 }

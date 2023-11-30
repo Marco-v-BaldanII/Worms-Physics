@@ -27,6 +27,11 @@ enum CollisionDetection {
     RAYCAST
 };
 
+enum Integrators {
+    EULER,
+    SIMPLETIC_EULER,
+    VERLET
+};
 
 struct vec2 {
     float x;
@@ -212,6 +217,8 @@ public:
     void ApplyAerodynamics(RigidBody* body, float deltaTime);
     void ApplyWindForce(RigidBody* body, float deltaTime);
 
+    void ShowDebug();
+
     bool IsRectangleIntersectingWithCircle(const SDL_Rect& rect, const SDL_Point& circleCenter, int circleRadius);
 
     std::list<RigidBody*> bodies;
@@ -223,9 +230,10 @@ public:
     CollisionDetection collisionMethod[3];
     CollisionDetection* currentCollisionMethod;
 
+    Integrators currentIntegrator;
 
-
-    int c = 2;
+    int c = 0;
+    int in = 0;
 
 private:
     vec2 canon = {10, 150};

@@ -16,6 +16,7 @@
 #include "ModulePlayer.h"
 #include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
+#include "ModuleFonts.h"
 
 const int FPS = 60;
 const float FRAME_TARGET_TIME = 1.0f / FPS;
@@ -76,12 +77,15 @@ public:
 	ModulePlayer* player;
 	ModuleSceneIntro* scene_intro;
 	ModulePhysics* physics;
+    ModuleFonts* fonts;
 
 private:
 
 	p2List<Module*> list_modules;
 
 public:
+
+    bool debug = false;
 
 	Application();
 	~Application();

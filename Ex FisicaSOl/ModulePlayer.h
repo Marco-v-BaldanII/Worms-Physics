@@ -131,6 +131,7 @@ public:
 	
 	Player* myPlayers[2];
 	Player* currentPlayer;
+	int font;
 
 public:
 	// Movement
@@ -144,6 +145,8 @@ public:
 	void MomentumController(Direction dir, Player* p);
 	void OnCollision(RigidBody* c1, RigidBody* c2);
 	void OnExplosion(RigidBody* c1);
+
+	void DebugText();
 
 	void Shoot();
 	int turno = 0;

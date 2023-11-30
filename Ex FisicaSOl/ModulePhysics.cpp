@@ -5,6 +5,7 @@
 #include <list>
 #include "ModulePlayer.h"
 #include "Timer.h"
+#include "ModuleFonts.h"
 
 
 #define OPACITY 80
@@ -28,7 +29,9 @@ bool ModulePhysics::Start()
     collisionMethod[0] = CollisionDetection::ITERATIVE;
     collisionMethod[1] = CollisionDetection::TELEPORT;
     collisionMethod[2] = CollisionDetection::RAYCAST;
-    currentCollisionMethod = &collisionMethod[1];
+    currentCollisionMethod = &collisionMethod[0];
+
+    currentIntegrator = EULER;
 
     return true;
 }
@@ -76,7 +79,34 @@ update_status ModulePhysics::PreUpdate()
     if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
         c++;
         int index = c % 3;
-        *currentCollisionMethod = collisionMethod[index ];
+        switch (index) {
+        case 0:
+            *currentCollisionMethod = CollisionDetection::ITERATIVE;
+            break;
+        case 1:
+            *currentCollisionMethod = CollisionDetection::RAYCAST;
+            break;
+        case 2:
+            *currentCollisionMethod = CollisionDetection::TELEPORT;
+            break;
+        }
+    }
+
+    // F2 HotKey to change Integrator
+    if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+        in++;
+        int index = in % 3;
+        switch (index) {
+        case 0:
+            currentIntegrator = EULER;
+            break;
+        case 1:
+            currentIntegrator = SIMPLETIC_EULER;
+            break;
+        case 2:
+            currentIntegrator = VERLET;
+            break;
+        }
     }
 
     for (RigidBody* bomb : bombs)
@@ -96,16 +126,16 @@ update_status ModulePhysics::PreUpdate()
             bomb->velocity.y = 200;
         }
 
-        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
+        if (currentIntegrator == EULER)
         {
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
         }
 
-        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
+        else if (currentIntegrator == SIMPLETIC_EULER)
         {
             IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
         }
-        else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_REPEAT)
+        else if (currentIntegrator == VERLET)
         {
             IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
         }
@@ -198,72 +228,77 @@ update_status ModulePhysics::PostUpdate()
     LOG("\n\n  %d num bodies \n",bodies.size());
     
 
-    if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-        debug = !debug;
-
+   
     
         for (const RigidBody* bullet : bodies)
         {
             App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y);
-            if (debug) {
+            
                 if (bullet->collider != nullptr) {
 
                     bullet->collider->data.x = bullet->posRect.x;
                     bullet->collider->data.y = bullet->posRect.y;
+                    if (App->debug) {
+                        switch (bullet->collider->type) {
 
-                    switch (bullet->collider->type) {
+                        case ColliderType::PLAYER:
+                            App->renderer->DrawQuad(bullet->collider->data, 0, 0, 255, OPACITY);
+                            break;
+                        case ColliderType::GROUND:
+                            App->renderer->DrawQuad(bullet->collider->data, 0, 255, 10, OPACITY);
+                            break;
+                        case ColliderType::BULLET:
+                            App->renderer->DrawQuad(bullet->collider->data, 255, 80, 70, OPACITY);
+                            break;
+                        case ColliderType::BOUNCER:
+                            App->renderer->DrawQuad(bullet->collider->data, 80, 0, 100, OPACITY);
+                            break;
+                        case ColliderType::BREAKABLE:
+                            App->renderer->DrawQuad(bullet->collider->data, 60, 150, 60, OPACITY);
 
-                    case ColliderType::PLAYER:
-                        App->renderer->DrawQuad(bullet->collider->data, 0, 0, 255, OPACITY);
-                        break;
-                    case ColliderType::GROUND :
-                        App->renderer->DrawQuad(bullet->collider->data, 0, 255, 10, OPACITY);
-                        break;
-                    case ColliderType::BULLET:
-                        App->renderer->DrawQuad(bullet->collider->data, 255, 80, 70, OPACITY);
-                        break;
-                    case ColliderType::BOUNCER:
-                        App->renderer->DrawQuad(bullet->collider->data, 80, 0, 100, OPACITY);
-                        break;
-                    case ColliderType::BREAKABLE:
-                        App->renderer->DrawQuad(bullet->collider->data, 60, 150, 60, OPACITY);
-
+                        }
                     }
                 }
+            
+        }
+        if (App->debug) {
+            for (Explosion* explode : explosions) {
+                App->renderer->DrawCircle(explode->shape.x, explode->shape.y, explode->shape.r, 80, 80, 0, OPACITY);
             }
         }
-        for (Explosion* explode : explosions) {
-            App->renderer->DrawCircle(explode->shape.x, explode->shape.y, explode->shape.r, 80,80,0,OPACITY);
-        }
+    
         for (RigidBody* bomb : bombs)
         {
-            App->renderer->Blit(bird, bomb->posRect.x, bomb->posRect.y);if (debug) {
+            App->renderer->Blit(bird, bomb->posRect.x, bomb->posRect.y); if (debug) {
                 if (bomb->collider != nullptr) {
 
                     bomb->collider->data.x = bomb->posRect.x;
                     bomb->collider->data.y = bomb->posRect.y;
+                    if (App->debug) {
 
-                    switch (bomb->collider->type) {
+                        switch (bomb->collider->type) {
 
-                    case ColliderType::PLAYER:
-                        App->renderer->DrawQuad(bomb->collider->data, 0, 0, 255, OPACITY);
-                        break;
-                    case ColliderType::GROUND :
-                        App->renderer->DrawQuad(bomb->collider->data, 0, 255, 10, OPACITY);
-                        break;
-                    case ColliderType::BULLET:
-                        App->renderer->DrawQuad(bomb->collider->data, 255, 80, 70, OPACITY);
-                        break;
-                    case ColliderType::BOUNCER:
-                        App->renderer->DrawQuad(bomb->collider->data, 80, 0, 100, OPACITY);
-                        break;
-                    case ColliderType::BREAKABLE:
-                        App->renderer->DrawQuad(bomb->collider->data, 60, 150, 60, OPACITY);
+                        case ColliderType::PLAYER:
+                            App->renderer->DrawQuad(bomb->collider->data, 0, 0, 255, OPACITY);
+                            break;
+                        case ColliderType::GROUND:
+                            App->renderer->DrawQuad(bomb->collider->data, 0, 255, 10, OPACITY);
+                            break;
+                        case ColliderType::BULLET:
+                            App->renderer->DrawQuad(bomb->collider->data, 255, 80, 70, OPACITY);
+                            break;
+                        case ColliderType::BOUNCER:
+                            App->renderer->DrawQuad(bomb->collider->data, 80, 0, 100, OPACITY);
+                            break;
+                        case ColliderType::BREAKABLE:
+                            App->renderer->DrawQuad(bomb->collider->data, 60, 150, 60, OPACITY);
 
+                        }
                     }
                 }
             }
         }
+    
     
     float gravity = GRAVITY;
     for (RigidBody* bullet : bodies)
@@ -316,8 +351,9 @@ update_status ModulePhysics::PostUpdate()
         App->deltaTime.toggleDeltaTimeMode();
     }
 
-    if (!debug)
-        return UPDATE_CONTINUE;
+    if (App->debug) {
+        ShowDebug();
+    }
 
     return UPDATE_CONTINUE;
 }
@@ -347,12 +383,8 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
             
             willCollide = true;
             if (c2->collider->type != ColliderType::PLAYER && c1->collider->type == ColliderType::BULLET) {
-                App->renderer->DrawQuad(fake_posRect, 80, 80, 80, 255, true);
-                c1->isMoving = false;
-                //SDL_Delay(3000);
-                c1->acceleration.y = 0;
-                c1->velocity.y = 0;
-                c1->velocity.x = 0;
+                
+                App->player->OnCollision(c1, c2);
             }
             break;
         }
@@ -453,4 +485,34 @@ bool ModulePhysics::CleanUp()
 {
     LOG("Destroying physics world");
     return true;
+}
+
+void ModulePhysics::ShowDebug() {
+
+    switch (*currentCollisionMethod) {
+
+
+    case CollisionDetection::ITERATIVE:
+        App->fonts->BlitText(0, 30, 0, "iterative collision detection");
+        break;
+    case CollisionDetection::RAYCAST:
+        App->fonts->BlitText(0, 30, 0, "raycast collision detection");
+        break;
+    case CollisionDetection::TELEPORT:
+        App->fonts->BlitText(0, 30, 0, "teleporting collision detection");
+        break;
+    }
+    switch (currentIntegrator) {
+    case EULER:
+        App->fonts->BlitText(0, 60, 0, "euler integrator");
+        break;
+    case SIMPLETIC_EULER:
+        App->fonts->BlitText(0, 60, 0, "simpletic euler integrator");
+        break;
+    case VERLET:
+        App->fonts->BlitText(0, 60, 0, "verlet integrator");
+        break;
+    }
+
+
 }
