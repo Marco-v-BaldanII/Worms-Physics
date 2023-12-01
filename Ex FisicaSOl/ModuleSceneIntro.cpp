@@ -26,7 +26,6 @@ bool ModuleSceneIntro::Start()
 	//AddTarget(Trect1, Trect1);
 
 
-
 	/*ground = new RigidBody(SDL_Rect{0, 500, 1800, 800});
 	ground->CreateCollider(SDL_Rect{ 0,400,1800,800 }, ColliderType::GROUND, this);
 	App->physics->bodies.push_back(ground);*/
@@ -136,9 +135,10 @@ bool ModuleSceneIntro::CleanUp()
 update_status ModuleSceneIntro::Update()
 {
 	//metodo para cambiar para jugadrres
-
 	
 	App->renderer->Blit(backgound, 0, 0);
+	
+	
 
 	return UPDATE_CONTINUE;
 }

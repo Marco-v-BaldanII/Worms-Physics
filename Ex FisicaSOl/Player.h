@@ -53,17 +53,7 @@ public:
 	Anim rightDeath, leftDeath;
 	Anim rightShoot, leftShoot;
 
-public:
-
-	void initAnimsFirstPlayer()
-	{
-		rightIdle.PushBack({ 0, 0, 64, 64 });
-		currentAnim = &rightIdle;
-	}
-
-	void initAnimsSecondPlayer();
-
-	void animationLogic();
+	
 };
 
 

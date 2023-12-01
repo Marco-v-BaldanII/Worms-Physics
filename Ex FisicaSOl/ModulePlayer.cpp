@@ -112,8 +112,8 @@ bool ModulePlayer::Start()
 		myPlayers[i]->rightShoot.PushBack({ 512,128,64,64 });
 		myPlayers[i]->rightShoot.PushBack({ 576,128,64,64 });
 		myPlayers[i]->rightShoot.PushBack({ 640,128,64,64 });
-		myPlayers[i]->rightShoot.speed = 0.2f; //provisional
-		myPlayers[i]->rightShoot.loop = false;
+		myPlayers[i]->rightShoot.speed = 0.1f; //provisional
+		myPlayers[i]->rightShoot.loop = true;
 
 		myPlayers[i]->leftShoot.PushBack({ 0,  192,64,64 });
 		myPlayers[i]->leftShoot.PushBack({ 64, 192,64,64 });
@@ -126,8 +126,8 @@ bool ModulePlayer::Start()
 		myPlayers[i]->leftShoot.PushBack({ 512,192,64,64 });
 		myPlayers[i]->leftShoot.PushBack({ 576,192,64,64 });
 		myPlayers[i]->leftShoot.PushBack({ 640,192,64,64 });
-		myPlayers[i]->leftShoot.speed = 0.2f; //provisional
-		myPlayers[i]->leftShoot.loop = false;
+		myPlayers[i]->leftShoot.speed = 0.1f; //provisional
+		myPlayers[i]->leftShoot.loop = true;
 
 		myPlayers[i]->rightWalk.PushBack({ 0,  256,64,64 });
 		myPlayers[i]->rightWalk.PushBack({ 64, 256,64,64 });
@@ -226,98 +226,121 @@ bool ModulePlayer::CleanUp() { return true; };
 
 void ModulePlayer::AnimationLogic()
 {
+
+
 	for (int i = 0; i < 2; ++i)
 	{
+	 
 		myPlayers[i]->currentAnim->Update();
-
-		if (myPlayers[i]->currentAnim != nullptr)
+		
+		if (currentPlayer->currentAnim != nullptr)
 		{
 			App->renderer->Blit(myPlayers[0]->player1, myPlayers[0]->rigid->posRect.x, myPlayers[0]->rigid->posRect.y, &(myPlayers[0]->currentAnim->GetCurrentFrame()));
 			App->renderer->Blit(myPlayers[1]->player2, myPlayers[1]->rigid->posRect.x, myPlayers[1]->rigid->posRect.y, &(myPlayers[1]->currentAnim->GetCurrentFrame()));
 		}
 		
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT && !myPlayers[0]->isJumping)
+		if (currentPlayer->faseActual == Fase::Movimiento)
 		{
-			if (myPlayers[0]->isJumping == false)
-			{
-				myPlayers[0]->currentAnim = &myPlayers[0]->rightWalk;
-			}
-		}
 
-		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT && !myPlayers[1]->isJumping)
-		{
-			if (myPlayers[1]->isJumping == false)
-			{
-				myPlayers[1]->currentAnim = &myPlayers[1]->rightWalk;
-			}
-		}
 
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT && !myPlayers[0]->isJumping)
-		{
-			if (myPlayers[0]->isJumping == false)
+			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT && !currentPlayer->isJumping)
 			{
-				myPlayers[0]->currentAnim = &myPlayers[0]->leftWalk;
-			}
-		}
-
-		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT && !myPlayers[1]->isJumping)
-		{
-			if (myPlayers[1]->isJumping == false)
-			{
-				myPlayers[1]->currentAnim = &myPlayers[1]->leftWalk;
-			}
-		}
-
-		if (myPlayers[0]->isJumping == true)
-		{
-			if (myPlayers[0]->currentAnim == &myPlayers[0]->rightIdle || myPlayers[0]->currentAnim == &myPlayers[0]->rightWalk || (myPlayers[0]->currentAnim == &myPlayers[0]->leftJump && App->input->GetKey(SDL_SCANCODE_RIGHT)==KEY_REPEAT))
-			{
-				if ( myPlayers[0]->rigid->velocity.y < 0)
+				if (currentPlayer->isJumping == false)
 				{
-					myPlayers[0]->currentAnim = &myPlayers[0]->rightJump;
+					currentPlayer->currentAnim = &currentPlayer->rightWalk;
+				}
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT && !currentPlayer->isJumping)
+			{
+				if (currentPlayer->isJumping == false)
+				{
+					currentPlayer->currentAnim = &currentPlayer->rightWalk;
+				}
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT && !currentPlayer->isJumping)
+			{
+				if (currentPlayer->isJumping == false)
+				{
+					currentPlayer->currentAnim = &currentPlayer->leftWalk;
+				}
+			}
+
+			if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT && !currentPlayer->isJumping)
+			{
+				if (currentPlayer->isJumping == false)
+				{
+					currentPlayer->currentAnim = &currentPlayer->leftWalk;
+				}
+			}
+		}
+
+		if (currentPlayer->isJumping == true)
+		{
+			if (currentPlayer->currentAnim == &currentPlayer->rightIdle || currentPlayer->currentAnim == &currentPlayer->rightWalk || (currentPlayer->currentAnim == &currentPlayer->leftJump && App->input->GetKey(SDL_SCANCODE_RIGHT)==KEY_REPEAT))
+			{
+				if ( currentPlayer->rigid->velocity.y < 0)
+				{
+					currentPlayer->currentAnim = &currentPlayer->rightJump;
 				}
 			}
 		
-			if (myPlayers[0]->currentAnim == &myPlayers[0]->leftIdle || myPlayers[0]->currentAnim == &myPlayers[0]->leftWalk || (myPlayers[0]->currentAnim == &myPlayers[0]->rightJump && App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT))
+			if (currentPlayer->currentAnim == &currentPlayer->leftIdle || currentPlayer->currentAnim == &currentPlayer->leftWalk || (currentPlayer->currentAnim == &currentPlayer->rightJump && App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT))
 			{
-				if (myPlayers[0]->rigid->velocity.y < 0)
+				if (currentPlayer->rigid->velocity.y < 0)
 				{
-					myPlayers[0]->currentAnim = &myPlayers[0]->leftJump;
+					currentPlayer->currentAnim = &currentPlayer->leftJump;
 				}
 			}
 		}
 
-		if (myPlayers[0]->faseActual != Movimiento && App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && myPlayers[0]->currentAnim == &myPlayers[0]->rightIdle)
+
+		if (currentPlayer->faseActual == Fase::Disparo)
 		{
-			myPlayers[0]->currentAnim == &myPlayers[0]->rightShoot;
+
+			if (App->input->GetMouseX() >= currentPlayer->rigid->posRect.x)
+			{
+				currentPlayer->currentAnim = &currentPlayer->rightIdle;
+			}
+
+			if (App->input->GetMouseX() < currentPlayer->rigid->posRect.x)
+			{
+				currentPlayer->currentAnim = &currentPlayer->leftIdle;
+			}
 		}
 
-		if (myPlayers[0]->faseActual != Movimiento && App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && myPlayers[0]->currentAnim == &myPlayers[0]->leftIdle)
+		if (currentPlayer->HP <= 0 && currentPlayer->currentAnim == &currentPlayer->rightIdle)
 		{
-			myPlayers[0]->currentAnim == &myPlayers[0]->leftShoot;
+			currentPlayer->currentAnim = &currentPlayer->rightDeath;
 		}
 
-		if (myPlayers[0]->HP <= 0 && myPlayers[0]->currentAnim == &myPlayers[0]->rightIdle)
+		if (currentPlayer->HP <= 0 && currentPlayer->currentAnim == &currentPlayer->leftIdle)
 		{
-			myPlayers[0]->currentAnim = &myPlayers[0]->rightDeath;
+			currentPlayer->currentAnim = &currentPlayer->leftDeath;
 		}
 
-		if (myPlayers[0]->HP <= 0 && myPlayers[0]->currentAnim == &myPlayers[0]->leftIdle)
+		if (currentPlayer->rigid->velocity.x == 0 && (currentPlayer->currentAnim == &currentPlayer->rightWalk) || (currentPlayer->currentAnim == &currentPlayer->rightJump && currentPlayer->isJumping == false))
 		{
-			myPlayers[0]->currentAnim = &myPlayers[0]->leftDeath;
+			currentPlayer->currentAnim = &currentPlayer->rightIdle;
 		}
 
-		if (myPlayers[0]->rigid->velocity.x == 0 && (myPlayers[0]->currentAnim == &myPlayers[0]->rightWalk) || (myPlayers[0]->currentAnim == &myPlayers[0]->rightJump && myPlayers[0]->isJumping == false))
+		if ((currentPlayer->rigid->velocity.x == 0 && currentPlayer->currentAnim == &currentPlayer->leftWalk) || (currentPlayer->currentAnim == &currentPlayer->leftJump && currentPlayer->isJumping == false))
+		{
+			currentPlayer->currentAnim = &currentPlayer->leftIdle;
+		}
+
+		if (myPlayers[0] == currentPlayer)
+		{
+			myPlayers[1]->currentAnim = &myPlayers[1]->rightIdle;
+		}
+
+		if (myPlayers[1] == currentPlayer)
 		{
 			myPlayers[0]->currentAnim = &myPlayers[0]->rightIdle;
 		}
-
-		if ((myPlayers[0]->rigid->velocity.x == 0 && myPlayers[0]->currentAnim == &myPlayers[0]->leftWalk) || (myPlayers[0]->currentAnim == &myPlayers[0]->leftJump && myPlayers[0]->isJumping == false))
-		{
-			myPlayers[0]->currentAnim = &myPlayers[0]->leftIdle;
-		}
-
 	}
+		
 }
 
 update_status ModulePlayer::Update()

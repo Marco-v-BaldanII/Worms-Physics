@@ -6,6 +6,7 @@
 #include "ModulePlayer.h"
 #include "Timer.h"
 #include "ModuleFonts.h"
+#include "Anim.h"
 
 
 #define OPACITY 80
@@ -24,7 +25,27 @@ bool ModulePhysics::Start()
 {
     LOG("Creating Physics 2D environment");
     //aqui esta los pajaros de todos los colliders change//
-    bird = App->textures->Load("Assets/images/triangulo.png");
+    bird = App->textures->Load("Assets/images/BebeMarco-Sheet.png");
+    MarcoPeligro = App->textures->Load("Assets/images/MarcoEnPeligro.png");
+
+    //Pushbacks bebé
+
+    bebeRight.PushBack({ 0,0,32,32 });
+    /*bebeRight.PushBack({ 32,0,32,32 });
+    bebeRight.PushBack({ 64,0,32,32 });
+    bebeRight.PushBack({ 96,0,32,32 });
+    bebeRight.PushBack({ 128,0,32,32 });*/
+    bebeRight.loop = true;
+    bebeRight.speed = 0.05f;
+
+    bebeLeft.PushBack({ 0,32,32,32 });
+    /*bebeLeft.PushBack({ 32,32,32,32 });
+    bebeLeft.PushBack({ 64,32,32,32 });
+    bebeLeft.PushBack({ 96,32,32,32 });
+    bebeLeft.PushBack({ 128,32,32,32 });*/
+    bebeLeft.loop = true;
+    bebeLeft.speed = 0.05f;
+ 
 
     collisionMethod[0] = CollisionDetection::ITERATIVE;
     collisionMethod[1] = CollisionDetection::TELEPORT;
@@ -73,8 +94,28 @@ void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velo
 
 }
 
+void ModulePhysics::AnimationLogic()
+{
+    for (const RigidBody* bullet : bodies)
+    {
+
+        if (bullet->velocity.x >= 0)
+        {
+            currentAnim = &bebeRight;
+        }
+        else
+        {
+            currentAnim = &bebeLeft;
+        }
+
+        currentAnim->Update();
+        App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y, &(currentAnim->GetCurrentFrame()));
+    }
+}
+
 update_status ModulePhysics::PreUpdate()
 {
+
     // ---------C HotKey Changes the current Collision method-----------//
     if (App->input->GetKey(SDL_SCANCODE_C) == KEY_DOWN) {
         c++;
@@ -150,6 +191,7 @@ update_status ModulePhysics::PreUpdate()
 
     for (RigidBody* bullet : bodies)
     {
+
         /*static char title[400];
 
         sprintf_s(title, 400, "Actual integrator: EULER -- Deltatime: %f, InSpeed: %0.1f, InAngle: %0.1f, CurrSpeed: %0.1f, CurrAcceleration: %0.1f, CurrentPos: %0.1f",
@@ -226,18 +268,16 @@ update_status ModulePhysics::PreUpdate()
 update_status ModulePhysics::PostUpdate()
 {
     LOG("\n\n  %d num bodies \n",bodies.size());
-    
 
-   
     
         for (const RigidBody* bullet : bodies)
         {
-            App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y);
+            
             
                 if (bullet->collider != nullptr) {
-
                     bullet->collider->data.x = bullet->posRect.x;
                     bullet->collider->data.y = bullet->posRect.y;
+                    AnimationLogic();
                     if (App->debug) {
                         switch (bullet->collider->type) {
 
@@ -269,7 +309,7 @@ update_status ModulePhysics::PostUpdate()
     
         for (RigidBody* bomb : bombs)
         {
-            App->renderer->Blit(bird, bomb->posRect.x, bomb->posRect.y); 
+            App->renderer->Blit(MarcoPeligro, bomb->posRect.x, bomb->posRect.y); 
             if (debug) {
                 if (bomb->collider != nullptr) {
 

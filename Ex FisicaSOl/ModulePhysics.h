@@ -4,6 +4,7 @@
 #include <list>
 #include "Timer.h"
 #include "ModulePlayer.h"
+#include "Anim.h"
 
 
 enum ColliderType {
@@ -208,6 +209,7 @@ public:
     //void UpdateBullets(list<RigidBody>bullets);
 
     bool Start();
+    void AnimationLogic();
     update_status PreUpdate();
     update_status PostUpdate();
     bool CleanUp();
@@ -239,4 +241,11 @@ private:
     vec2 canon = {10, 150};
     bool debug;
     SDL_Texture* bird;
+    SDL_Texture* MarcoPeligro;
+
+    Anim* currentAnim;
+    Anim bebeRight;
+    Anim bebeLeft;
+
+
 };
