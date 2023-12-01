@@ -209,6 +209,10 @@ update_status ModulePhysics::PreUpdate()
             }
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         } 
+        for (int i = 0; i < NUM_PLAYERS; ++i) {
+           App->player->myPlayers[i]->posDif = abs(App->player->myPlayers[i]->rigid->posRect.x) - abs(App->player->myPlayers[i]->oldPosX);
+            App->player->myPlayers[i]->movement -= App->player->myPlayers[i]->posDif ;
+        }
     }
     // Add finished explosions to the "defused" list of explosions to be deleted
     for (Explosion* _explosion : explosions) {

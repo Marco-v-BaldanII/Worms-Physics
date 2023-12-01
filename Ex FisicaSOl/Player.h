@@ -23,8 +23,11 @@ public:
 
 
 	SDL_Rect healthBar;
+	SDL_Rect movementBar;
 	int HP = 100;
+	int movement = 400;
 	
+	float oldPosX; float posDif;
 
 	Weapon* myWeapons;
 

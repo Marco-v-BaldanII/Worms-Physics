@@ -166,6 +166,7 @@ public:
 	float windForceX = 0.1f;
 	float windForceY = 0.1f;
 
+
 	float CalculateMomentum(Player* p);
 };
 

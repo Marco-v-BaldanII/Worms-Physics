@@ -339,9 +339,15 @@ update_status ModulePlayer::Update()
 
 			myPlayers[i]->healthBar = { myPlayers[i]->rigid->posRect.x - 20 , myPlayers[i]->rigid->posRect.y - 20, myPlayers[i]->HP , 20 };
 			App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
+			myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/4, 20 };
+			App->renderer->DrawQuad(myPlayers[i]->movementBar, 50, 50, 200, 255);
 
 
-			if (turntaken) { break; }
+			if (turntaken) { 
+				myPlayers[i]->movement = 400;
+				break;
+
+			}
 			if (myPlayers[i] == currentPlayer) {
 				if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
 					if (myPlayers[i]->faseActual == Movimiento) {
@@ -353,6 +359,7 @@ update_status ModulePlayer::Update()
 						myPlayers[i]->faseActual = Fase::Movimiento;
 					}
 				}
+				
 
 				switch (myPlayers[i]->faseActual) {
 				case Movimiento:
@@ -386,7 +393,9 @@ update_status ModulePlayer::Update()
 						moved = true;
 						if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
 					}
-					if (moved) {
+
+					myPlayers[i]->oldPosX = myPlayers[i]->rigid->posRect.x;
+					if (moved && myPlayers[i]->movement >= 0) {
 						switch (*currentMovement) {
 						case Movement::POSITION:
 							PositionController(myPlayers[i]->myDirection, myPlayers[i]);
@@ -405,6 +414,8 @@ update_status ModulePlayer::Update()
 							break;
 						}
 					}
+
+					
 
 					if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
 						myPlayers[i]->faseActual = Fase::Movimiento;
