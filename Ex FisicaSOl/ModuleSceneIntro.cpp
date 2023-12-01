@@ -73,6 +73,9 @@ bool ModuleSceneIntro::Start()
 	ground12->CreateCollider(SDL_Rect{ 0,282,100,15 }, ColliderType::GROUND, this);
 
 	
+
+
+
 	App->physics->bodies.push_back(ground);
 	App->physics->bodies.push_back(ground2);
 	App->physics->bodies.push_back(ground3);
@@ -116,8 +119,13 @@ bool ModuleSceneIntro::Start()
 	
 
 
-	bouncer1 = App->physics->createBouncer(10, 10, 10, 10);
+	bouncer1 = App->physics->createBouncer(450,690, 120, 200);
 	App->physics->bodies.push_back(bouncer1);
+
+	bouncer2 = App->physics->createBouncer(970, 575, 230, 200);
+	App->physics->bodies.push_back(bouncer2);
+
+
 	currentPlayer = 0;
 
 	return ret;

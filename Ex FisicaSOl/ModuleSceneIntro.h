@@ -75,6 +75,8 @@ public:
 
 
 	RigidBody* bouncer1;
+	RigidBody* bouncer2;
+
 
 	SDL_Texture* backgound;
 	SDL_Texture* graphics;
