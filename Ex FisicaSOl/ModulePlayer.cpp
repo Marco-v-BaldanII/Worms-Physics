@@ -46,7 +46,7 @@ bool ModulePlayer::Start()
 		if (i == 0) { myPlayers[i]->rigid->posRect.x = 50; }
 		else { myPlayers[i]->rigid->posRect.x = 1520; }
 		myPlayers[i]->rigid->posRect.y = 270;
-		myPlayers[i]->rigid->CreateCollider(SDL_Rect{ 20,20,44,44 }, ColliderType::PLAYER, this);
+		myPlayers[i]->rigid->CreateCollider(SDL_Rect{ 0,0,64,64 }, ColliderType::PLAYER, this);
 
 	
 		myMovement[0] = Movement::POSITION;
