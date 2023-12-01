@@ -5,6 +5,9 @@
 #include "Timer.h"
 #include "ModulePlayer.h"
 
+#define METERS_TO_PIXELS(meters) ((int)((meters) * 50)) // Assuming 1 meter = 50 pixels
+#define PIXELS_TO_METERS(pixels) ((float)(pixels) / 50)
+
 
 enum ColliderType {
 
