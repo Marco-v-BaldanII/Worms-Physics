@@ -14,7 +14,7 @@ enum Fase { Movimiento, Disparo };
 class Player {
 public:
 
-	
+	bool dead = false;
 
 	SDL_Texture* playertex;
 	SDL_Rect player;

@@ -133,6 +133,8 @@ public:
 	Player* currentPlayer;
 	int font;
 
+	void ResetMatch();
+
 public:
 	// Movement
 	

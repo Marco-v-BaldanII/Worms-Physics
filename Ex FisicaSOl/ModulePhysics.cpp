@@ -269,7 +269,8 @@ update_status ModulePhysics::PostUpdate()
     
         for (RigidBody* bomb : bombs)
         {
-            App->renderer->Blit(bird, bomb->posRect.x, bomb->posRect.y); if (debug) {
+            App->renderer->Blit(bird, bomb->posRect.x, bomb->posRect.y); 
+            if (debug) {
                 if (bomb->collider != nullptr) {
 
                     bomb->collider->data.x = bomb->posRect.x;

@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "ModulePlayer.h"
 #include "ModulePhysics.h"
+#include "ModuleWinScreen.h"
 #include "Animation.h"
 #include "ModuleRender.h"
 #include "Player.h"
@@ -322,153 +323,178 @@ void ModulePlayer::AnimationLogic()
 update_status ModulePlayer::Update()
 {
 
-	bool turntaken = false;
+	for (int i = 0; i < NUM_PLAYERS; ++i) {
+		if (myPlayers[i]->HP <= 0) myPlayers[i]->dead = true;
+	}
 
-	for (int i = 0; i < 2; ++i) {
-		
-		myPlayers[i]->healthBar = { myPlayers[i]->rigid->posRect.x -20 , myPlayers[i]->rigid->posRect.y -20, myPlayers[i]->HP , 20 };
-		App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
+	if (myPlayers[1]->dead == false && myPlayers[0]->dead == false) {
+		bool turntaken = false;
+
+		for (int i = 0; i < 2; ++i) {
+
+			myPlayers[i]->healthBar = { myPlayers[i]->rigid->posRect.x - 20 , myPlayers[i]->rigid->posRect.y - 20, myPlayers[i]->HP , 20 };
+			App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
 
 
-		if (turntaken) { break; }
-		if (myPlayers[i] == currentPlayer) {
-			if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-				if (myPlayers[i]->faseActual == Movimiento) {
-					myPlayers[i]->rigid->velocity.x = 0;
-					myPlayers[i]->faseActual = Fase::Disparo;
-				}
-				else {
-					preview = false;
-					myPlayers[i]->faseActual = Fase::Movimiento;
-				}
-			}
-
-			switch (myPlayers[i]->faseActual) {
-			case Movimiento:
-				myPlayers[i]->rigid->velocity;
-				/*App->renderer->Blit(player1, 50, 200);*/
-
-				if (myPlayers[i]->rigid->isGrounded == false) {
-					myPlayers[i]->rigid->acceleration.y = 500;
-				}
-
-				if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
-					m++;
-					currentMovement = &myMovement[(m % 5)];
-				}
-
-				if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && myPlayers[i]->rigid->isGrounded) {
-					myPlayers[i]->rigid->velocity.y -= JUMP_FORCE;
-					myPlayers[i]->rigid->isGrounded = false;
-					myPlayers[i]->isJumping = true;
-
-				}
-
-				if (myPlayers[i]->isJumping) { myPlayers[i]->jumpingCnt--; }
-
-				// Movement "tp"
-				if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
-					moved = true;
-					if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
-				}
-				if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
-					moved = true;
-					if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
-				}
-				if (moved) {
-					switch (*currentMovement) {
-					case Movement::POSITION:
-						PositionController(myPlayers[i]->myDirection, myPlayers[i]);
-						break;
-					case Movement::VELOCITY:
-						VelocityController(myPlayers[i]->myDirection, myPlayers[i]);
-						break;
-					case Movement::ACCELERATION:
-						AccelerationController(myPlayers[i]->myDirection, myPlayers[i]);
-						break;
-					case Movement::MOMENTUM:
-						MomentumController(myPlayers[i]->myDirection, myPlayers[i]);
-						break;
-					case Movement::IMPULSE:
-						ImpulseController(myPlayers[i]->myDirection, myPlayers[i]);
-						break;
+			if (turntaken) { break; }
+			if (myPlayers[i] == currentPlayer) {
+				if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+					if (myPlayers[i]->faseActual == Movimiento) {
+						myPlayers[i]->rigid->velocity.x = 0;
+						myPlayers[i]->faseActual = Fase::Disparo;
+					}
+					else {
+						preview = false;
+						myPlayers[i]->faseActual = Fase::Movimiento;
 					}
 				}
 
-				if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
-					myPlayers[i]->faseActual = Fase::Movimiento;
-					myPlayers[i]->myWeapons[0].MissileIncoming(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
-					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
-					turntaken = true;
-					preview = false;
-					//ranodm windforceX y windforceY entre los numeros del -1 y 1
+				switch (myPlayers[i]->faseActual) {
+				case Movimiento:
+					myPlayers[i]->rigid->velocity;
+					/*App->renderer->Blit(player1, 50, 200);*/
 
-					std::random_device rd;
-					std::mt19937 gen(rd());
-					std::uniform_real_distribution<> dis(-1, 1);
+					if (myPlayers[i]->rigid->isGrounded == false) {
+						myPlayers[i]->rigid->acceleration.y = 500;
+					}
 
-					windForceX = std::round(dis(gen) * 1e5) / 1e5;
-					windForceY = std::round(dis(gen) * 1e5) / 1e5;
+					if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
+						m++;
+						currentMovement = &myMovement[(m % 5)];
+					}
 
-					//se pasa al siguiente turno
+					if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && myPlayers[i]->rigid->isGrounded) {
+						myPlayers[i]->rigid->velocity.y -= JUMP_FORCE;
+						myPlayers[i]->rigid->isGrounded = false;
+						myPlayers[i]->isJumping = true;
+
+					}
+
+					if (myPlayers[i]->isJumping) { myPlayers[i]->jumpingCnt--; }
+
+					// Movement "tp"
+					if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
+						moved = true;
+						if (myPlayers[i]->myDirection != Direction::RIGHT) { ChangeDir(*myPlayers[i]); }
+					}
+					if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
+						moved = true;
+						if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
+					}
+					if (moved) {
+						switch (*currentMovement) {
+						case Movement::POSITION:
+							PositionController(myPlayers[i]->myDirection, myPlayers[i]);
+							break;
+						case Movement::VELOCITY:
+							VelocityController(myPlayers[i]->myDirection, myPlayers[i]);
+							break;
+						case Movement::ACCELERATION:
+							AccelerationController(myPlayers[i]->myDirection, myPlayers[i]);
+							break;
+						case Movement::MOMENTUM:
+							MomentumController(myPlayers[i]->myDirection, myPlayers[i]);
+							break;
+						case Movement::IMPULSE:
+							ImpulseController(myPlayers[i]->myDirection, myPlayers[i]);
+							break;
+						}
+					}
+
+					if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
+						myPlayers[i]->faseActual = Fase::Movimiento;
+						myPlayers[i]->myWeapons[0].MissileIncoming(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+						currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
+						turntaken = true;
+						preview = false;
+						//ranodm windforceX y windforceY entre los numeros del -1 y 1
+
+						std::random_device rd;
+						std::mt19937 gen(rd());
+						std::uniform_real_distribution<> dis(-1, 1);
+
+						windForceX = std::round(dis(gen) * 1e5) / 1e5;
+						windForceY = std::round(dis(gen) * 1e5) / 1e5;
+
+						//se pasa al siguiente turno
+					}
+
+					if (App->input->GetKey(SDL_SCANCODE_LEFT) != KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_RIGHT) != KEY_REPEAT) {
+						LOG("NOT MOVING");
+						myPlayers[i]->rigid->isMoving = false;
+					}
+
+
+					if (moved == false) {
+						myPlayers[i]->rigid->velocity.x = 0;
+						myPlayers[i]->rigid->isMoving;
+					}
+					moved = false;
+					break;
+				case Disparo:
+					preview = true;
+					if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+						myPlayers[i]->faseActual = Fase::Movimiento;
+						myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+						currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
+						turntaken = true;
+						preview = false;
+						//ranodm windforceX y windforceY entre los numeros del -1 y 1
+
+						std::random_device rd;
+						std::mt19937 gen(rd());
+						std::uniform_real_distribution<> dis(-1, 1);
+
+						windForceX = std::round(dis(gen) * 1e5) / 1e5;
+						windForceY = std::round(dis(gen) * 1e5) / 1e5;
+
+						//se pasa al siguiente turno
+					}
+
+
+
+					break;
 				}
 
-				if (App->input->GetKey(SDL_SCANCODE_LEFT) != KEY_REPEAT && App->input->GetKey(SDL_SCANCODE_RIGHT) != KEY_REPEAT) {
-					LOG("NOT MOVING");
-					myPlayers[i]->rigid->isMoving = false;
-				}
-				
-
-				if (moved == false) {
-					myPlayers[i]->rigid->velocity.x = 0;
-					myPlayers[i]->rigid->isMoving;
-				}
-				moved = false;
-				break;
-			case Disparo:
-				preview = true;
-				if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
-					myPlayers[i]->faseActual = Fase::Movimiento;
-					myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
-					currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
-					turntaken = true;
-					preview = false;
-					//ranodm windforceX y windforceY entre los numeros del -1 y 1
-					
-					std::random_device rd;
-					std::mt19937 gen(rd());
-					std::uniform_real_distribution<> dis(-1, 1);
-
-					windForceX = std::round(dis(gen) * 1e5) / 1e5;
-					windForceY = std::round(dis(gen) * 1e5) / 1e5;
-
-					//se pasa al siguiente turno
+				if (preview)
+				{
+					myPlayers[i]->myWeapons[0].PreviewShot(App->input->GetMouseX(), App->input->GetMouseY(), App->renderer->renderer, App->deltaTime.getDeltaTimeInSeconds());
 				}
 
-				
+				//App->renderer->Blit(player2, 230, 355);
+				/*App->renderer->Blit(player2, 530, 355);
+				App->renderer->Blit(player2, 850, 355);*/
+				//LOG(" \nXXXXXXXXXXXXXXXXXXXXXXXXXX : %f", rigid->velocity.x);
 
-				break;
+				myPlayers[i]->rigid->isGrounded = false;
 			}
 
-			if (preview)
-			{
-				myPlayers[i]->myWeapons[0].PreviewShot(App->input->GetMouseX(), App->input->GetMouseY(), App->renderer->renderer, App->deltaTime.getDeltaTimeInSeconds());
-			}
-
-			//App->renderer->Blit(player2, 230, 355);
-			/*App->renderer->Blit(player2, 530, 355);
-			App->renderer->Blit(player2, 850, 355);*/
-			//LOG(" \nXXXXXXXXXXXXXXXXXXXXXXXXXX : %f", rigid->velocity.x);
-
-			myPlayers[i]->rigid->isGrounded = false;
+			AnimationLogic();
 		}
-		
-		AnimationLogic();
+
+		if (App->debug) {
+			DebugText();
+		}
 	}
 
-	if (App->debug) {
-		DebugText();
+	else if (myPlayers[0]->dead == true ){
+
+	    App->winScreen->Player1Wins();
+		
+		
+
 	}
+	else if (myPlayers[1]->dead == true) {
+
+		App->winScreen->Player2Wins();
+		
+	}
+
+
+
+
+
+
 
 	return UPDATE_CONTINUE;
 }
@@ -538,7 +564,7 @@ float ModulePlayer::CalculateMomentum(Player* p) {
 	float mass = 1; 
 	vec2 velocity = p->rigid->velocity;
 
-	float momentum = mass * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2));
+	float momentum = mass * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2)) ;
 
 	LOG(" \n MOmentum %f", momentum);
 	return momentum;
@@ -548,8 +574,8 @@ void ModulePlayer::MomentumController(Direction dir, Player* p) {
 	p->rigid->isMoving = true;
 	float momentum = CalculateMomentum(p);
 
-	float initialVelocity = 0.5;
-	float maxVelocity = 80;
+	float initialVelocity = 10;
+	float maxVelocity = 240;
 
 	p->rigid->acceleration.x = momentum;
 
@@ -709,5 +735,16 @@ void ModulePlayer::DebugText() {
 	}
 
 	
+
+}
+
+void ModulePlayer::ResetMatch() {
+
+	// Poner aqui las posiciones iniciales de los jugadores
+	for (int i = 0; i < NUM_PLAYERS; ++i) {
+		myPlayers[i]->HP = 100;
+		myPlayers[i]->dead = false;
+	}
+
 
 }

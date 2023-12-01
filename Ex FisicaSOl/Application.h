@@ -17,6 +17,7 @@
 #include "ModulePhysics.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleFonts.h"
+#include "ModuleWinScreen.h"
 
 const int FPS = 60;
 const float FRAME_TARGET_TIME = 1.0f / FPS;
@@ -78,6 +79,7 @@ public:
 	ModuleSceneIntro* scene_intro;
 	ModulePhysics* physics;
     ModuleFonts* fonts;
+    ModuleWinScreen* winScreen;
 
 private:
 
