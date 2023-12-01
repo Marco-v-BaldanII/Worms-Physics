@@ -9,6 +9,7 @@
 #include "Animation.h"
 #include "ModuleRender.h"
 #include "Player.h"
+#include <string.h>
 
 #define GRAVITY 10;
 #define ACCELERATION_VALUE 1,8; 
@@ -221,7 +222,7 @@ bool ModulePlayer::Start()
 	}
 	currentPlayer = myPlayers[0];
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
-		myPlayers[i]->rigid->posRect.y = 5;
+		myPlayers[i]->rigid->posRect.y = 300;
 	}
 
 	return true;
@@ -338,13 +339,25 @@ update_status ModulePlayer::Update()
 		for (int i = 0; i < 2; ++i) {
 
 			myPlayers[i]->healthBar = { myPlayers[i]->rigid->posRect.x - 20 , myPlayers[i]->rigid->posRect.y - 20, myPlayers[i]->HP , 20 };
+			SDL_Rect bottomBar = { myPlayers[i]->rigid->posRect.x - 20 , myPlayers[i]->rigid->posRect.y - 20, 100 , 20 };
+			App->renderer->DrawQuad(bottomBar, 200, 50, 10, 255);
 			App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
-			myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/4, 20 };
+			
+
+			myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/7, 20 };
 			App->renderer->DrawQuad(myPlayers[i]->movementBar, 50, 50, 200, 255);
+			int remaining_meters = PIXELS_TO_METERS(myPlayers[i]->movement);
+			std::string uy = std::to_string(remaining_meters); uy += 'm';
+			App->fonts->BlitText(myPlayers[i]->rigid->posRect.x +20 , myPlayers[i]->rigid->posRect.y - 45, 0, uy.c_str());
+
+			if (myPlayers[i]->movement < 0) { 
+				myPlayers[i]->movement = 0;
+				myPlayers[i]->rigid->velocity.x = 0;
+			}
 
 
 			if (turntaken) { 
-				myPlayers[i]->movement = 400;
+				myPlayers[i]->movement = 700;
 				break;
 
 			}
@@ -395,7 +408,7 @@ update_status ModulePlayer::Update()
 					}
 
 					myPlayers[i]->oldPosX = myPlayers[i]->rigid->posRect.x;
-					if (moved && myPlayers[i]->movement >= 0) {
+					if (moved && myPlayers[i]->movement > 0) {
 						switch (*currentMovement) {
 						case Movement::POSITION:
 							PositionController(myPlayers[i]->myDirection, myPlayers[i]);
@@ -454,6 +467,7 @@ update_status ModulePlayer::Update()
 						myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 						currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
 						turntaken = true;
+						myPlayers[i]->movement = 700;
 						preview = false;
 						//ranodm windforceX y windforceY entre los numeros del -1 y 1
 
