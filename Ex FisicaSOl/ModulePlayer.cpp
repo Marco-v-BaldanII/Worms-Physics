@@ -46,7 +46,7 @@ bool ModulePlayer::Start()
 
 
 		if (i == 0) { myPlayers[i]->rigid->posRect.x = 50; }
-		else { myPlayers[i]->rigid->posRect.x = 1; }
+		else { myPlayers[i]->rigid->posRect.x = 1500; }
 		myPlayers[i]->rigid->posRect.y = 5;
 		myPlayers[i]->rigid->CreateCollider(SDL_Rect{ 0,0,64,64 }, ColliderType::PLAYER, this);
 
@@ -223,7 +223,7 @@ bool ModulePlayer::Start()
 	}
 	currentPlayer = myPlayers[0];
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
-		myPlayers[i]->rigid->posRect.y = 300;
+		myPlayers[i]->rigid->posRect.y = 270;
 		myPlayers[i]->movement = 700;
 	}
 
