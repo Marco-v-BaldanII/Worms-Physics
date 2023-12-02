@@ -205,7 +205,7 @@ update_status ModulePhysics::PreUpdate()
         if (bullet->collider->type == ColliderType::BULLET)
         {
             ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
-            ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            //ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
         }
 
         for (RigidBody* bullet2 : bodies) {
@@ -530,8 +530,8 @@ void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)
     body->windForce.x = App->player->windForceX;
     body->windForce.y = App->player->windForceY;
 
-    body->velocity.x += body->windForce.x * deltaTime;
-    body->velocity.y += body->windForce.y * deltaTime;
+    body->posRect.x += body->windForce.x;
+    body->velocity.y += body->windForce.y;
 }
 
 // Called before quitting

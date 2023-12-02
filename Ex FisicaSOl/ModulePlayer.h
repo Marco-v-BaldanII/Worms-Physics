@@ -156,6 +156,7 @@ public:
 	Movement myMovement[5];
 	Movement* currentMovement;
 
+	void ChangeTurn();
 
 	int m = 2;
 
@@ -163,9 +164,10 @@ public:
 	bool moved = false;
 	bool preview = false;
 
-	float windForceX = 0.1f;
-	float windForceY = 0.1f;
+	float windForceX = 1.1f;
+	float windForceY = 1.1f;
 
+	const float vell = 0.05;
 
 	float CalculateMomentum(Player* p);
 };
@@ -192,7 +194,7 @@ public:
 		bomb->velocity.y = speed;
 
 		bomb->acceleration = { 0,0 };
-		SDL_Rect r = { 0,0,40,40 };
+		SDL_Rect r = { 0,0,64,64 };
 		bomb->CreateCollider(r, ColliderType::BULLET, pManager);
 		bomb->collider->made_explosion = false;
 		physics->bombs.push_back(bomb);
