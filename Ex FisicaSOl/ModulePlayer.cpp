@@ -9,10 +9,12 @@
 #include "Animation.h"
 #include "ModuleRender.h"
 #include "Player.h"
+#include <string.h>
 
-#define ACCELERATION_VALUE 90;
-#define JUMP_FORCE 300;
-#define MaxSpeed 4;
+#define GRAVITY 10;
+#define ACCELERATION_VALUE 1,8; 
+#define JUMP_FORCE 6;
+#define MaxSpeed 0,8;
 
 
 
@@ -44,10 +46,11 @@ bool ModulePlayer::Start()
 
 
 		if (i == 0) { myPlayers[i]->rigid->posRect.x = 50; }
-		else { myPlayers[i]->rigid->posRect.x = 1520; }
-		myPlayers[i]->rigid->posRect.y = 270;
+		else { myPlayers[i]->rigid->posRect.x = 1; }
+		myPlayers[i]->rigid->posRect.y = 5;
 		myPlayers[i]->rigid->CreateCollider(SDL_Rect{ 0,0,64,64 }, ColliderType::PLAYER, this);
 
+		
 	
 		myMovement[0] = Movement::POSITION;
 		myMovement[1] = Movement::VELOCITY;
@@ -72,7 +75,7 @@ bool ModulePlayer::Start()
 		myPlayers[i]->shoted = false;
 
 
-		//Esto está aquí porque si no no compila
+		//Esto estÃ¡ aquÃ­ porque si no no compila
 		myPlayers[i]->rightIdle.PushBack({ 0,  0,64,64 });
 		myPlayers[i]->rightIdle.PushBack({ 64, 0,64,64 });
 		myPlayers[i]->rightIdle.PushBack({ 128,0,64,64 });
@@ -218,6 +221,9 @@ bool ModulePlayer::Start()
 		myPlayers[i]->leftJump.loop = true;
 	}
 	currentPlayer = myPlayers[0];
+	for (int i = 0; i < NUM_PLAYERS; ++i) {
+		myPlayers[i]->rigid->posRect.y = 300;
+	}
 
 	return true;
 }
@@ -356,10 +362,28 @@ update_status ModulePlayer::Update()
 		for (int i = 0; i < 2; ++i) {
 
 			myPlayers[i]->healthBar = { myPlayers[i]->rigid->posRect.x - 20 , myPlayers[i]->rigid->posRect.y - 20, myPlayers[i]->HP , 20 };
+			SDL_Rect bottomBar = { myPlayers[i]->rigid->posRect.x - 20 , myPlayers[i]->rigid->posRect.y - 20, 100 , 20 };
+			App->renderer->DrawQuad(bottomBar, 200, 50, 10, 255);
 			App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
+			
+
+			myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/7, 20 };
+			App->renderer->DrawQuad(myPlayers[i]->movementBar, 50, 50, 200, 255);
+			int remaining_meters = PIXELS_TO_METERS(myPlayers[i]->movement);
+			std::string uy = std::to_string(remaining_meters); uy += 'm';
+			App->fonts->BlitText(myPlayers[i]->rigid->posRect.x +20 , myPlayers[i]->rigid->posRect.y - 45, 0, uy.c_str());
+
+			if (myPlayers[i]->movement < 0) { 
+				myPlayers[i]->movement = 0;
+				myPlayers[i]->rigid->velocity.x = 0;
+			}
 
 
-			if (turntaken) { break; }
+			if (turntaken) { 
+				myPlayers[i]->movement = 700;
+				break;
+
+			}
 			if (myPlayers[i] == currentPlayer) {
 				if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
 					if (myPlayers[i]->faseActual == Movimiento) {
@@ -371,6 +395,7 @@ update_status ModulePlayer::Update()
 						myPlayers[i]->faseActual = Fase::Movimiento;
 					}
 				}
+				
 
 				switch (myPlayers[i]->faseActual) {
 				case Movimiento:
@@ -378,7 +403,7 @@ update_status ModulePlayer::Update()
 					/*App->renderer->Blit(player1, 50, 200);*/
 
 					if (myPlayers[i]->rigid->isGrounded == false) {
-						myPlayers[i]->rigid->acceleration.y = 500;
+						myPlayers[i]->rigid->acceleration.y = GRAVITY;
 					}
 
 					if (App->input->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
@@ -404,7 +429,9 @@ update_status ModulePlayer::Update()
 						moved = true;
 						if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
 					}
-					if (moved) {
+
+					myPlayers[i]->oldPosX = myPlayers[i]->rigid->posRect.x;
+					if (moved && myPlayers[i]->movement > 0) {
 						switch (*currentMovement) {
 						case Movement::POSITION:
 							PositionController(myPlayers[i]->myDirection, myPlayers[i]);
@@ -423,6 +450,8 @@ update_status ModulePlayer::Update()
 							break;
 						}
 					}
+
+					
 
 					if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
 						myPlayers[i]->faseActual = Fase::Movimiento;
@@ -461,6 +490,7 @@ update_status ModulePlayer::Update()
 						myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 						currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
 						turntaken = true;
+						myPlayers[i]->movement = 700;
 						preview = false;
 						//ranodm windforceX y windforceY entre los numeros del -1 y 1
 
@@ -535,7 +565,7 @@ void ModulePlayer::AccelerationController(Direction dir, Player* p) {
 	if (dir == Direction::RIGHT) {
 		p->rigid->acceleration.x = ACCELERATION_VALUE;
 
-		if (p->rigid->velocity.x < 200) {
+		if (p->rigid->velocity.x < 200/10/5) {
 			p->rigid->velocity.x += p->rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}
 
@@ -544,7 +574,7 @@ void ModulePlayer::AccelerationController(Direction dir, Player* p) {
 	else if (dir == Direction::LEFT) {
 		p->rigid->acceleration.x = -ACCELERATION_VALUE;
 
-		if (p->rigid->velocity.x > -200) {
+		if (p->rigid->velocity.x > -200/10/5) {
 			p->rigid->velocity.x += p->rigid->acceleration.x * App->deltaTime.getDeltaTimeInSeconds();
 		}	
 	}
@@ -553,10 +583,10 @@ void ModulePlayer::AccelerationController(Direction dir, Player* p) {
 void ModulePlayer::PositionController(Direction dir, Player* p) {
 
 	if (dir == Direction::RIGHT) {
-		p->rigid->posRect.x = p->rigid->posRect.x + 10;
+		p->rigid->posRect.x = p->rigid->posRect.x + 8;
 	}
 	else if (dir == Direction::LEFT) {		
-		p->rigid->posRect.x = p->rigid->posRect.x -10;
+		p->rigid->posRect.x = p->rigid->posRect.x -8;
 	}
 }
 
@@ -565,21 +595,21 @@ void ModulePlayer::VelocityController(Direction dir, Player* p)
 {
 	if (dir == Direction::RIGHT) 
 	{
-		p->rigid->velocity.x = 200 ;
+		p->rigid->velocity.x = 300/50;
 	}
 	else if (dir == Direction::LEFT) 
 	{
-		p->rigid->velocity.x = -200 ;
+		p->rigid->velocity.x = -300/50;
 	}
 }
 
 void ModulePlayer::ImpulseController(Direction dir, Player* p) {
 
 	if (dir == Direction::RIGHT) {
-		p->rigid->velocity.x = p->rigid->velocity.x + 20;
+		p->rigid->velocity.x = p->rigid->velocity.x + 1;
 	}
 	else if (dir == Direction::LEFT) {
-		p->rigid->velocity.x = p->rigid->velocity.x - 20;
+		p->rigid->velocity.x = p->rigid->velocity.x -1 ;
 	}
 }
 
@@ -587,7 +617,7 @@ float ModulePlayer::CalculateMomentum(Player* p) {
 	float mass = 1; 
 	vec2 velocity = p->rigid->velocity;
 
-	float momentum = mass * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2)) ;
+	float momentum = mass * sqrt(pow(velocity.x, 2) + pow(velocity.y, 2))/50 ;
 
 	LOG(" \n MOmentum %f", momentum);
 	return momentum;

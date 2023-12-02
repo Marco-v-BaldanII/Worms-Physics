@@ -9,12 +9,16 @@
 #include "Anim.h"
 
 
+
+
 #define OPACITY 80
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
     debug = true;
 }
+
+
 
 // Destructor
 ModulePhysics::~ModulePhysics()
@@ -62,9 +66,9 @@ void ModulePhysics::IntegratorEuler(float deltaTime, SDL_Rect& rect, vec2& veloc
     if (deltaTime != 0) {
         
         LOG("\n position X = %d + %lf * %lf", rect.x, velocity.x, deltaTime);
-        rect.x += velocity.x * deltaTime;
+        rect.x += METERS_TO_PIXELS(velocity.x) * deltaTime;
        
-        rect.y += velocity.y * deltaTime;
+        rect.y += METERS_TO_PIXELS(velocity.y) * deltaTime;
         velocity.x += acceleration.x * deltaTime;
         velocity.y += acceleration.y * deltaTime;
     }
@@ -78,10 +82,10 @@ void ModulePhysics::IntegratorEuler2(float deltaTime, SDL_Rect& rect, vec2& velo
     vec2 oldVelocity = velocity;
     velocity.x += acceleration.x * deltaTime;
     velocity.y += acceleration.y * deltaTime;
-    rect.x += (oldVelocity.x + velocity.x) / 2 * deltaTime;
-    rect.y += (oldVelocity.y + velocity.y) / 2 * deltaTime;
-    rect.x += velocity.x * deltaTime;
-    rect.y += velocity.y * deltaTime;
+    rect.x += METERS_TO_PIXELS((oldVelocity.x + velocity.x) / 2 )* deltaTime;
+    rect.y += METERS_TO_PIXELS((oldVelocity.y + velocity.y) / 2 )* deltaTime;
+    rect.x += METERS_TO_PIXELS(velocity.x) * deltaTime;
+    rect.y += METERS_TO_PIXELS(velocity.y) * deltaTime;
 }
 
 void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration)
@@ -89,8 +93,8 @@ void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velo
     vec2 oldVelocity = velocity;
     velocity.x += acceleration.x * deltaTime;
     velocity.y += acceleration.y * deltaTime;
-    rect.x += ((oldVelocity.x + velocity.x) / 2) * deltaTime + 1 / 2 * (acceleration.x * deltaTime * deltaTime);
-    rect.y += ((oldVelocity.y + velocity.y) / 2) * deltaTime + 1 / 2 * (acceleration.y * deltaTime * deltaTime);
+    rect.x += ((METERS_TO_PIXELS(oldVelocity.x + velocity.x) / 2)) * deltaTime + 1 / 2 * (METERS_TO_PIXELS(acceleration.x) * deltaTime * deltaTime);
+    rect.y += ((METERS_TO_PIXELS(oldVelocity.y + velocity.y) / 2)) * deltaTime + 1 / 2 * (METERS_TO_PIXELS(acceleration.y) * deltaTime * deltaTime);
 
 }
 
@@ -247,6 +251,10 @@ update_status ModulePhysics::PreUpdate()
             }
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         } 
+        for (int i = 0; i < NUM_PLAYERS; ++i) {
+           App->player->myPlayers[i]->posDif =  abs(App->player->myPlayers[i]->oldPosX) - abs(App->player->myPlayers[i]->rigid->posRect.x);
+            App->player->myPlayers[i]->movement -= abs(App->player->myPlayers[i]->posDif) ;
+        }
     }
     // Add finished explosions to the "defused" list of explosions to be deleted
     for (Explosion* _explosion : explosions) {

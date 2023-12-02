@@ -166,6 +166,7 @@ public:
 	float windForceX = 0.1f;
 	float windForceY = 0.1f;
 
+
 	float CalculateMomentum(Player* p);
 };
 
@@ -210,8 +211,8 @@ public:
 		float dy = bullet->posRect.y - mouseY + 50;
 		float mag = std::sqrt(dx * dx + dy * dy);
 
-		float speed = std::sqrt(2 * 981 * mag);
-		float maxSpeed = 1000;
+		float speed = std::sqrt(2 * PIXELS_TO_METERS(981) * mag);
+		float maxSpeed = PIXELS_TO_METERS(1000);
 		if (speed > maxSpeed) {
 			speed = maxSpeed;
 		}
@@ -220,7 +221,7 @@ public:
 		bullet->velocity.x = speed * std::cos(angle);
 		bullet->velocity.y = -speed * std::sin(angle);
 
-		bullet->acceleration = { 0,981 };
+		bullet->acceleration = { 0, PIXELS_TO_METERS(981) };
 		SDL_Rect r = { 0,0,40,40 };
 		bullet->CreateCollider(r, ColliderType::BULLET, pManager);
 		bullet->collider->made_explosion = false;
