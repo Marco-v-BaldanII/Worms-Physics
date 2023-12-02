@@ -92,10 +92,10 @@ bool ModuleSceneIntro::Start()
 
 	////segunda plataforma//
 
-	aground = new RigidBody(SDL_Rect{1530,330,171,261}); 
+	aground = new RigidBody(SDL_Rect{1530,335,171,261}); 
 	aground->CreateCollider(SDL_Rect{ 0,282,272,80 }, ColliderType::GROUND, this);
 
-	aground1= new RigidBody(SDL_Rect{ 1465,395,171,261 });
+	aground1= new RigidBody(SDL_Rect{ 1465,400,171,261 });
 	aground1->CreateCollider(SDL_Rect{ 0,282,80 ,100 }, ColliderType::GROUND, this);
 
 	aground2 = new RigidBody(SDL_Rect{ 1370,475,171,261 });
@@ -119,10 +119,10 @@ bool ModuleSceneIntro::Start()
 	
 
 
-	bouncer1 = App->physics->createBouncer(450,690, 120, 200);
+	bouncer1 = App->physics->createBouncer(450,700, 120, 200);
 	App->physics->bodies.push_back(bouncer1);
 
-	bouncer2 = App->physics->createBouncer(970, 575, 230, 200);
+	bouncer2 = App->physics->createBouncer(970, 585, 230, 200);
 	App->physics->bodies.push_back(bouncer2);
 
 
