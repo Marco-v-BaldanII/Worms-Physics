@@ -2,6 +2,8 @@
 
 Github: https://github.com/Marco-v-BaldanII/Worms-Physics
 
+Embrace yourself in battle sending to the other side your most hated archenemy, Dabomb. 
+
 Group:
 - Marco Baldan
 - Marco Di Modica
