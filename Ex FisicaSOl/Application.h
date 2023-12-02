@@ -27,6 +27,7 @@ struct Clock
     uint64_t last_tick_time = 0;
     float delta = 0;
     bool fixedDeltaTime = false;
+    bool semiFixedDeltaTime = false;
 
     Clock()
     {
@@ -50,6 +51,7 @@ struct Clock
             // Semi-fixed delta time
             if (delta < FRAME_TARGET_TIME)
             {
+                semiFixedDeltaTime = true;
                 SDL_Delay((FRAME_TARGET_TIME - delta) * 1000.0f);
                 delta = FRAME_TARGET_TIME;
             }

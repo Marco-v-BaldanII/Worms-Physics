@@ -5,6 +5,8 @@
 #include "Timer.h"
 #include "ModulePlayer.h"
 #include "Anim.h"
+#include <chrono>
+using namespace std::chrono;
 
 #define METERS_TO_PIXELS(meters) ((int)((meters) * 50)) // Assuming 1 meter = 50 pixels
 #define PIXELS_TO_METERS(pixels) ((float)(pixels) / 50)
@@ -240,9 +242,15 @@ public:
     int c = 0;
     int in = 0;
 
+    microseconds elapsedCycle;
+    microseconds elapsedFrame;
+    int targetFPS = 60;
+    double FPS;
+
 private:
     vec2 canon = {10, 150};
     bool debug;
+
     SDL_Texture* bird;
     SDL_Texture* MarcoPeligro;
 
