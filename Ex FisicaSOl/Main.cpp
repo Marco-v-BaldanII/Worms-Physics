@@ -93,7 +93,7 @@ int main(int argc, char ** argv)
 			App->physics->elapsedCycle = duration_cast<microseconds>(endCycle - start);
 
 			//Time per frame in microseconds acording to taget FPS
-			int microSecCheck = (int)((1.0f / (float)App->physics->targetFPS) * 1E6);
+			int microSecCheck = (int)((1.0f / (float)App->physics->targetFPS) * 1E5);
 
 			//This is to cap FPS, the diplaying of FPS on screen is calculated underneath
 			if (App->physics->elapsedCycle < std::chrono::microseconds(microSecCheck))
@@ -106,18 +106,9 @@ int main(int argc, char ** argv)
 			App->physics->elapsedFrame = duration_cast<microseconds>(endFrame - start);
 
 			//Calculate FPSs
-			App->physics->FPS = 1 / ((double)App->physics->elapsedFrame.count() * 10E-7);
+			App->physics->FPS = 1 / ((double)App->physics->elapsedFrame.count() * 10E-6);
 		}
-		else if (App->debug /* && fixed o variable delta time*/)
-		{
-			//Time per cycles
-			high_resolution_clock::time_point endCycle = high_resolution_clock::now();
-			App->physics->elapsedCycle = duration_cast<microseconds>(endCycle - start);
-			App->physics->elapsedFrame = App->physics->elapsedCycle;
-
-			//Calculate FPSs
-			App->physics->FPS = 1 / ((double)App->physics->elapsedFrame.count() * 10E-7);
-		}
+	
 	}
 
 	delete App;

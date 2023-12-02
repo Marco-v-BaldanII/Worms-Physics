@@ -271,6 +271,19 @@ update_status ModulePhysics::PreUpdate()
         
     }
 
+    if (App->debug)
+    {
+        if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN && targetFPS < 120)
+        {
+            targetFPS += 10;
+        }
+
+        if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN && targetFPS > 10);
+        {
+            targetFPS -= 10;
+        }
+    }
+
     return UPDATE_CONTINUE;
 }
 update_status ModulePhysics::PostUpdate()
@@ -313,6 +326,8 @@ update_status ModulePhysics::PostUpdate()
             for (Explosion* explode : explosions) {
                 App->renderer->DrawCircle(explode->shape.x, explode->shape.y, explode->shape.r, 80, 80, 0, OPACITY);
             }
+
+          
         }
     
         for (RigidBody* bomb : bombs)
