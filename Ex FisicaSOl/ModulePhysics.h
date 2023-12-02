@@ -4,6 +4,7 @@
 #include <list>
 #include "Timer.h"
 #include "ModulePlayer.h"
+#include "Anim.h"
 
 #define METERS_TO_PIXELS(meters) ((int)((meters) * 50)) // Assuming 1 meter = 50 pixels
 #define PIXELS_TO_METERS(pixels) ((float)(pixels) / 50)
@@ -211,6 +212,7 @@ public:
     //void UpdateBullets(list<RigidBody>bullets);
 
     bool Start();
+    void AnimationLogic();
     update_status PreUpdate();
     update_status PostUpdate();
     bool CleanUp();
@@ -242,4 +244,11 @@ private:
     vec2 canon = {10, 150};
     bool debug;
     SDL_Texture* bird;
+    SDL_Texture* MarcoPeligro;
+
+    Anim* currentAnim;
+    Anim bebeRight;
+    Anim bebeLeft;
+
+
 };
