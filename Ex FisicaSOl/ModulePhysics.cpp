@@ -77,15 +77,11 @@ void ModulePhysics::IntegratorEuler(float deltaTime, SDL_Rect& rect, vec2& veloc
 
 void ModulePhysics::IntegratorEuler2(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration)
 {
-    /*velocity.x += acceleration.x * deltaTime;
-    velocity.y += acceleration.y * deltaTime;*/
     vec2 oldVelocity = velocity;
     velocity.x += acceleration.x * deltaTime;
     velocity.y += acceleration.y * deltaTime;
-    rect.x += METERS_TO_PIXELS((oldVelocity.x + velocity.x) / 2 )* deltaTime;
-    rect.y += METERS_TO_PIXELS((oldVelocity.y + velocity.y) / 2 )* deltaTime;
-    rect.x += METERS_TO_PIXELS(velocity.x) * deltaTime;
-    rect.y += METERS_TO_PIXELS(velocity.y) * deltaTime;
+    rect.x += METERS_TO_PIXELS((oldVelocity.x + velocity.x) / 2) * deltaTime;
+    rect.y += METERS_TO_PIXELS((oldVelocity.y + velocity.y) / 2) * deltaTime;
 }
 
 void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velocity, vec2& acceleration)
@@ -95,8 +91,8 @@ void ModulePhysics::IntegratorVerlet(float deltaTime, SDL_Rect& rect, vec2& velo
     velocity.y += acceleration.y * deltaTime;
     rect.x += ((METERS_TO_PIXELS(oldVelocity.x + velocity.x) / 2)) * deltaTime + 1 / 2 * (METERS_TO_PIXELS(acceleration.x) * deltaTime * deltaTime);
     rect.y += ((METERS_TO_PIXELS(oldVelocity.y + velocity.y) / 2)) * deltaTime + 1 / 2 * (METERS_TO_PIXELS(acceleration.y) * deltaTime * deltaTime);
-
 }
+
 
 void ModulePhysics::AnimationLogic()
 {
@@ -113,7 +109,11 @@ void ModulePhysics::AnimationLogic()
         }
 
         currentAnim->Update();
-        App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y, &(currentAnim->GetCurrentFrame()));
+        if (bullet->collider->type == ColliderType::BULLET)
+        {
+            App->renderer->Blit(bird, bullet->posRect.x, bullet->posRect.y, &(currentAnim->GetCurrentFrame()));
+        }
+        
     }
 }
 
@@ -158,17 +158,17 @@ update_status ModulePhysics::PreUpdate()
     {
         if (bomb->collider->type == ColliderType::BULLET)
         {
-            //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            ApplyAerodynamics(bomb, App->deltaTime.getDeltaTimeInSeconds());
             ApplyWindForce(bomb, App->deltaTime.getDeltaTimeInSeconds());
         }
         
-        if (bomb->posRect.y >= 80)
+        if (bomb->posRect.y >= 150)
         {
-            bomb->velocity.y = 100;
+            bomb->velocity.y = 2;
         }
         else
         {
-            bomb->velocity.y = 200;
+            bomb->velocity.y = 8;
         }
 
         if (currentIntegrator == EULER)
@@ -204,7 +204,7 @@ update_status ModulePhysics::PreUpdate()
 
         if (bullet->collider->type == ColliderType::BULLET)
         {
-            //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
             ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
         }
 
@@ -507,17 +507,22 @@ void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime)
 {
     //The formula for aerodynamic drag is: Drag = 0.5 * airDensity * velocity^2 * dragCoefficient * area
     //airDensity = 1.225 (at sea level and at 15 °C), and area = 1 for simplicity
-    body->dragCoefficient = 0.47f;
+    body->dragCoefficient = 0.1f;
     float airDensity = 1.225f;
     float area = 1.0f;
-    float dragForce = 0.5f * airDensity * body->velocity.LengthSquared() * body->dragCoefficient * area;
+
+    float dragForceX = 0.5f * airDensity * body->velocity.x * body->velocity.x * body->dragCoefficient * area;
+    float dragForceY = 0.5f * airDensity * body->velocity.y * body->velocity.y * body->dragCoefficient * area;
 
     vec2 dragDirection = body->velocity.Normalize();
     dragDirection.x *= -1;
     dragDirection.y *= -1;
 
-    body->acceleration.x += dragForce * dragDirection.x * deltaTime;
-    body->acceleration.y += dragForce * dragDirection.y * deltaTime;
+    if (body->velocity.x != 0) {
+        body->acceleration.x += dragForceX * dragDirection.x * deltaTime;
+    }
+
+    body->acceleration.y += dragForceY * dragDirection.y * deltaTime;
 }
 
 void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)

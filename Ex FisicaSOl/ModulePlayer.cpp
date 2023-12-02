@@ -59,6 +59,7 @@ bool ModulePlayer::Start()
 		myMovement[4] = Movement::MOMENTUM;
 
 		myPlayers[i]->myDirection = Direction::RIGHT;
+		
 
 		currentMovement = &myMovement[3];
 
@@ -223,6 +224,7 @@ bool ModulePlayer::Start()
 	currentPlayer = myPlayers[0];
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		myPlayers[i]->rigid->posRect.y = 300;
+		myPlayers[i]->movement = 700;
 	}
 
 	return true;
@@ -378,12 +380,6 @@ update_status ModulePlayer::Update()
 				myPlayers[i]->rigid->velocity.x = 0;
 			}
 
-
-			if (turntaken) { 
-				myPlayers[i]->movement = 700;
-				break;
-
-			}
 			if (myPlayers[i] == currentPlayer) {
 				if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
 					if (myPlayers[i]->faseActual == Movimiento) {
@@ -455,9 +451,10 @@ update_status ModulePlayer::Update()
 
 					if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
 						myPlayers[i]->faseActual = Fase::Movimiento;
-						myPlayers[i]->myWeapons[0].MissileIncoming(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+						myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 						currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
 						turntaken = true;
+						myPlayers[i]->movement = 700;
 						preview = false;
 						//ranodm windforceX y windforceY entre los numeros del -1 y 1
 
@@ -595,11 +592,11 @@ void ModulePlayer::VelocityController(Direction dir, Player* p)
 {
 	if (dir == Direction::RIGHT) 
 	{
-		p->rigid->velocity.x = 300/50;
+		p->rigid->velocity.x = 300/40;
 	}
 	else if (dir == Direction::LEFT) 
 	{
-		p->rigid->velocity.x = -300/50;
+		p->rigid->velocity.x = -300/40;
 	}
 }
 
@@ -734,6 +731,7 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 			c2->isMoving = false;
 		}
 	}
+
 	if (c1->collider->type == ColliderType::BOUNCER && (c2->collider->type == ColliderType::PLAYER || c2->collider->type == ColliderType::BULLET)) {
 		float c1_center_x = c1->posRect.x + c1->collider->data.w / 2;
 		float c1_center_y = c1->posRect.y + c1->collider->data.h / 2;
@@ -743,13 +741,11 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 		float dx = c2_center_x - c1_center_x;
 		float dy = c2_center_y - c1_center_y;
 
-		if (abs(dx) > abs(dy)) {
-			c2->velocity.x *= -1;
-		}
-		else {
-			c2->velocity.y *= -1;
+		if (abs(dy) > abs(dx)) {
+			c2->acceleration.y *= -0.9; // reduce the velocity by 10% on each bounce
 		}
 	}
+
 
 	LOG("Collision");
 }

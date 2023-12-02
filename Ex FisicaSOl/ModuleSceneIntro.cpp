@@ -30,9 +30,9 @@ bool ModuleSceneIntro::Start()
 	ground->CreateCollider(SDL_Rect{ 0,400,1800,800 }, ColliderType::GROUND, this);
 	App->physics->bodies.push_back(ground);*/
 
-	ground2 = new RigidBody(SDL_Rect{ 300,300,100,100 });
+	/*ground2 = new RigidBody(SDL_Rect{ 300,300,100,100 });
 	ground2->CreateCollider(SDL_Rect{ 300,300,100,100 }, ColliderType::BREAKABLE, this);
-	App->physics->bodies.push_back(ground2);
+	App->physics->bodies.push_back(ground2);*/
 
 	//primer plataforma//
 	ground = new RigidBody(SDL_Rect{ 0,480,171,261 });

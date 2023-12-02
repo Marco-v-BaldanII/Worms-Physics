@@ -187,7 +187,7 @@ public:
 		bomb->posRect.w = 10;
 		bomb->posRect.h = 10;
 
-		float speed = 200;
+		float speed = 2;
 
 		bomb->velocity.y = speed;
 
@@ -202,8 +202,23 @@ public:
 
 		Bullet* bullet = new Bullet;
 		bullet->isMoving = true;
-		bullet->posRect.x = player->rigid->posRect.x;
-		bullet->posRect.y = player->rigid->posRect.y-50;
+
+		float x;
+		float y;
+
+		if (mouseX > player->rigid->posRect.x)
+		{
+			x = player->rigid->posRect.x + 70;
+			y = player->rigid->posRect.y + 10;
+		}
+		else
+		{
+			x = player->rigid->posRect.x - 6;
+			y = player->rigid->posRect.y + 10;
+		}
+
+		bullet->posRect.x = x;
+		bullet->posRect.y = y;
 		bullet->posRect.w = 10;
 		bullet->posRect.h = 10;
 
@@ -227,13 +242,23 @@ public:
 		bullet->collider->made_explosion = false;
 		physics->bodies.push_back(bullet);
 
-		static char title[400];
 	}
 
 	virtual void PreviewShot(int mouseX, int mouseY, SDL_Renderer* renderer, float delta) {
 
-		float x = player->rigid->posRect.x;
-		float y = player->rigid->posRect.y;
+		float x;
+		float y;
+		
+		if (mouseX > player->rigid->posRect.x)
+		{
+			x = player->rigid->posRect.x + 70;
+			y = player->rigid->posRect.y + 10;
+		}
+		else
+		{
+			x = player->rigid->posRect.x - 6;
+			y = player->rigid->posRect.y + 10;
+		}
 
 		float dx = mouseX - x;
 		float dy = y - mouseY + 30;
@@ -264,7 +289,7 @@ public:
 				fallingSteps++;
 			}
 
-			if (fallingSteps > 5) {
+			if (fallingSteps > 3) {
 				break;
 			}
 
