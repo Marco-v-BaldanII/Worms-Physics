@@ -242,11 +242,6 @@ public:
     int c = 0;
     int in = 0;
 
-    microseconds elapsedCycle;
-    microseconds elapsedFrame;
-    int targetFPS = 60;
-    double FPS;
-
 private:
     vec2 canon = {10, 150};
     bool debug;

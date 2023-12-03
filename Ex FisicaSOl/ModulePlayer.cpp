@@ -767,7 +767,7 @@ void ModulePlayer::DebugText() {
 		break;
 	}
 	char buffer[50];
-	sprintf_s(buffer, "current wind is negativ%d", windForceX);
+	sprintf_s(buffer, "current wind is %d", windForceX);
 	App->fonts->BlitText(500, 0, 0, buffer);
 	
 }

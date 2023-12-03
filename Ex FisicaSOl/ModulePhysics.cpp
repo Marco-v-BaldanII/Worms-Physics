@@ -196,12 +196,6 @@ update_status ModulePhysics::PreUpdate()
     for (RigidBody* bullet : bodies)
     {
 
-        /*static char title[400];
-
-        sprintf_s(title, 400, "Actual integrator: EULER -- Deltatime: %f, InSpeed: %0.1f, InAngle: %0.1f, CurrSpeed: %0.1f, CurrAcceleration: %0.1f, CurrentPos: %0.1f",
-            App->deltaTime.delta, initialSpeed, angle * 180 / 3.1416, bullet->velocity.x, -(float)GRAVITY, bullet->posRect.x);
-        App->window->SetTitle(title);*/
-
         if (bullet->collider->type == ColliderType::BULLET)
         {
             ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
@@ -231,16 +225,16 @@ update_status ModulePhysics::PreUpdate()
             };
         }
 
-        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_REPEAT)
+        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
         {
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
 
-        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_REPEAT)
+        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
         {
             IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
-        else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_REPEAT)
+        else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
         {
             IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
@@ -269,19 +263,6 @@ update_status ModulePhysics::PreUpdate()
             }
         }
         
-    }
-
-    if (App->debug)
-    {
-        if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN && targetFPS < 120)
-        {
-            targetFPS += 10;
-        }
-
-        if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN && targetFPS > 10);
-        {
-            targetFPS -= 10;
-        }
     }
 
     return UPDATE_CONTINUE;

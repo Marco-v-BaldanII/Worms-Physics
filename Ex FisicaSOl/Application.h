@@ -19,8 +19,7 @@
 #include "ModuleFonts.h"
 #include "ModuleWinScreen.h"
 
-const int FPS = 60;
-const float FRAME_TARGET_TIME = 1.0f / FPS;
+
 
 struct Clock
 {
@@ -28,6 +27,8 @@ struct Clock
     float delta = 0;
     bool fixedDeltaTime = false;
     bool semiFixedDeltaTime = false;
+    float FPS = 60;
+    float FRAME_TARGET_TIME = 1.0f / FPS;
 
     Clock()
     {
@@ -67,6 +68,12 @@ struct Clock
     {
         fixedDeltaTime = !fixedDeltaTime;
     }
+
+    void ChangeFPS(int fps)
+    {
+		FPS = fps;
+		FRAME_TARGET_TIME = 1.0f / FPS;
+	}
 };
 
 class Application

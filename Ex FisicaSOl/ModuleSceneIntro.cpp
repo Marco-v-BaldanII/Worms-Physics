@@ -107,18 +107,12 @@ bool ModuleSceneIntro::Start()
 	aground4 = new RigidBody(SDL_Rect{1190 ,575,171,261 });
 	aground4->CreateCollider(SDL_Rect{ 0,282,100,31 }, ColliderType::GROUND, this);
 
-	
-
-
-
 	App->physics->bodies.push_back(aground);
 	App->physics->bodies.push_back(aground1);
 	App->physics->bodies.push_back(aground2);
 	App->physics->bodies.push_back(aground3);
 	App->physics->bodies.push_back(aground4);
 	
-
-
 	bouncer1 = App->physics->createBouncer(450,700, 120, 200);
 	App->physics->bodies.push_back(bouncer1);
 
@@ -143,24 +137,32 @@ bool ModuleSceneIntro::CleanUp()
 update_status ModuleSceneIntro::Update()
 {
 	//metodo para cambiar para jugadrres
+
+	if (App->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	{
+		App->deltaTime.ChangeFPS(15);
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	{
+		App->deltaTime.ChangeFPS(30);
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+	{
+		App->deltaTime.ChangeFPS(60);
+	}
 	
+	static char title[400];
+
+	sprintf_s(title, 400, "Deltatime: %f  FPS: %f",
+	App->deltaTime.delta, App->deltaTime.FPS);
+	App->window->SetTitle(title);
+
 	App->renderer->Blit(backgound, 0, 0);
 	
-	
-
 	return UPDATE_CONTINUE;
 }
 
-
-void AddTarget(SDL_Rect posRect, SDL_Rect collid) {
-
-
-
-
-
-
-}
-
+void AddTarget(SDL_Rect posRect, SDL_Rect collid) {}
 
 void ModuleSceneIntro::OnExplosion(RigidBody* c1)  {
 
