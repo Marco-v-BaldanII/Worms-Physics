@@ -58,6 +58,8 @@ bool ModulePhysics::Start()
 
     currentIntegrator = EULER;
 
+    startCounting.Start();
+
     return true;
 }
 
@@ -245,9 +247,16 @@ update_status ModulePhysics::PreUpdate()
             }
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         } 
-        for (int i = 0; i < NUM_PLAYERS; ++i) {
-           App->player->myPlayers[i]->posDif =  abs(App->player->myPlayers[i]->oldPosX) - abs(App->player->myPlayers[i]->rigid->posRect.x);
-            App->player->myPlayers[i]->movement -= abs(App->player->myPlayers[i]->posDif) ;
+        if (startCounting.ReadMSec() > 500) {
+            for (int i = 0; i < NUM_PLAYERS; ++i) {
+                if (App->player->myPlayers[i]->posDif == -1571) {
+                    App->player->myPlayers[i]->posDif = 0;
+                    App->player->myPlayers[i]->movement = 700;
+                }
+                App->player->myPlayers[i]->posDif = abs(App->player->myPlayers[i]->oldPosX) - abs(App->player->myPlayers[i]->rigid->posRect.x);
+                App->player->myPlayers[i]->movement -= abs(App->player->myPlayers[i]->posDif);
+            }
+            
         }
     }
     // Add finished explosions to the "defused" list of explosions to be deleted

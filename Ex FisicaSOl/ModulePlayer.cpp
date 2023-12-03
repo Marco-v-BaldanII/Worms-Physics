@@ -45,11 +45,20 @@ bool ModulePlayer::Start()
 		myPlayers[i]->player = { 10,10,10,10 };
 
 
-		if (i == 0) { myPlayers[i]->rigid->posRect.x = 50; }
+		/*if (i == 0) { myPlayers[i]->rigid->posRect.x = 50; }
 		else { myPlayers[i]->rigid->posRect.x = 1500; }
-		myPlayers[i]->rigid->posRect.y = 5;
+		myPlayers[i]->rigid->posRect.y = 5;*/
+
+		
+
 		myPlayers[i]->rigid->CreateCollider(SDL_Rect{ 0,0,64,64 }, ColliderType::PLAYER, this);
 
+		if (i == 0) {
+			myPlayers[i]->rigid->posRect.x = 33; myPlayers[i]->rigid->posRect.y = 421;
+		}
+		else if (i == 1) {
+			myPlayers[i]->rigid->posRect.x = 1571; myPlayers[i]->rigid->posRect.y = 282;
+		}
 		
 	
 		myMovement[0] = Movement::POSITION;
@@ -356,6 +365,12 @@ void ModulePlayer::AnimationLogic()
 
 update_status ModulePlayer::Update()
 {
+	if (!firstTurn) {
+		for (int i = 0; i < NUM_PLAYERS; ++i) {
+			myPlayers[i]->movement = 700;
+			firstTurn = true;
+		}
+	}
 
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		if (myPlayers[i]->HP <= 0) myPlayers[i]->dead = true;
@@ -372,16 +387,16 @@ update_status ModulePlayer::Update()
 			App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
 			
 
-			/*myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/7, 20 };
+			myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/7, 20 };
 			App->renderer->DrawQuad(myPlayers[i]->movementBar, 50, 50, 200, 255);
 			int remaining_meters = PIXELS_TO_METERS(myPlayers[i]->movement);
 			std::string uy = std::to_string(remaining_meters); uy += 'm';
-			App->fonts->BlitText(myPlayers[i]->rigid->posRect.x +20 , myPlayers[i]->rigid->posRect.y - 45, 0, uy.c_str());*/
+			App->fonts->BlitText(myPlayers[i]->rigid->posRect.x +20 , myPlayers[i]->rigid->posRect.y - 45, 0, uy.c_str());
 
-			/*if (myPlayers[i]->movement < 0) { 
+			if (myPlayers[i]->movement <= 0) { 
 				myPlayers[i]->movement = 0;
 				myPlayers[i]->rigid->velocity.x = 0;
-			}*/
+			}
 
 			if (myPlayers[i] == currentPlayer) {
 				if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
@@ -428,9 +443,10 @@ update_status ModulePlayer::Update()
 						moved = true;
 						if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
 					}
-
-					myPlayers[i]->oldPosX = myPlayers[i]->rigid->posRect.x;
-					if (moved /*&& myPlayers[i]->movement > 0*/) {
+					if (App->physics->startCounting.ReadMSec() > 400) {
+						myPlayers[i]->oldPosX = myPlayers[i]->rigid->posRect.x;
+					}
+					if (moved && myPlayers[i]->movement > 0) {
 						switch (*currentMovement) {
 						case Movement::POSITION:
 							PositionController(myPlayers[i]->myDirection, myPlayers[i]);

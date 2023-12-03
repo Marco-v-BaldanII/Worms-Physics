@@ -164,6 +164,8 @@ public:
 	bool moved = false;
 	bool preview = false;
 
+	bool firstTurn = false;
+
 	float windForceX = 1.1f;
 	float windForceY = 1.1f;
 

@@ -239,6 +239,8 @@ public:
 
     Integrators currentIntegrator;
 
+    Timer startCounting;
+
     int c = 0;
     int in = 0;
 
