@@ -164,11 +164,11 @@ update_status ModulePhysics::PreUpdate()
             ApplyWindForce(bomb, App->deltaTime.getDeltaTimeInSeconds());
         }
         
-        if (bomb->posRect.y >= 150)
+        if (bomb->posRect.y >= 150 && bomb->isMoving)
         {
             bomb->velocity.y = 2;
         }
-        else
+        else if(bomb->isMoving)
         {
             bomb->velocity.y = 8;
         }
@@ -348,10 +348,26 @@ update_status ModulePhysics::PostUpdate()
                             break;
                         case ColliderType::BREAKABLE:
                             App->renderer->DrawQuad(bomb->collider->data, 255, 140, 0, OPACITY);
+                            break;
+                        
+                        case ColliderType::AID:
+                            App->renderer->DrawQuad(bomb->collider->data, 255, 140, 0, OPACITY);
 
                         }
                     }
                 }
+            }
+            for (RigidBody* bullet : bodies) {
+
+                
+
+                    if (bullet->collider->Intersects(&bomb->collider->data)) {
+
+                        LOG("\n \nColllision\n");
+
+                        bomb->collider->listener->OnCollision(bomb, bullet);
+                    }
+                
             }
         }
     
@@ -384,10 +400,13 @@ update_status ModulePhysics::PostUpdate()
         if (corpses[i] == nullptr) { break; }
         else {
             bodies.remove(corpses[i]);
+            bombs.remove(corpses[i]);
             //App->textures->Unload(corpses[i]->bird);
             corpses[i] = nullptr;
         }
+
     }
+   
     for (int i = 0; i < 10; ++i) {
         if (defused[i] == nullptr) { break; }
         else {

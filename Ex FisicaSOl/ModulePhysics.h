@@ -19,7 +19,8 @@ enum ColliderType {
     PLAYER,
     BOUNCER,
     TESTGROUND,
-    BREAKABLE
+    BREAKABLE,
+    AID
 
 };
 enum ColliderShape {

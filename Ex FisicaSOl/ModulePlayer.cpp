@@ -677,7 +677,7 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 	}
 
 
-	if ((c1->collider->type == ColliderType::GROUND || c1->collider->type == ColliderType::BREAKABLE)  && c2->collider->type == ColliderType::PLAYER) {
+	if ((c1->collider->type == ColliderType::GROUND || c1->collider->type == ColliderType::BREAKABLE)  && c2->collider->type == ColliderType::PLAYER ) {
 		for (int i = 0; i < 2; ++i) {
 			
 
@@ -760,6 +760,26 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 			if (App->physics->corpses[i] == nullptr) {
 				App->physics->corpses[i] = c1;
 				break;
+			}
+		}
+	}
+
+	if (c1->collider->type == ColliderType::AID) {
+		c1->StopAllMotion();
+	}
+	if (c1->collider->type == ColliderType::AID && c2->collider->type == ColliderType::PLAYER) {
+		bool deleted = false;
+		for (int i = 0; i < 50 && deleted == false; ++i) {
+			if (App->physics->corpses[i] == nullptr) { 
+				App->physics->corpses[i] = c1; deleted = true; 
+			}
+		}
+		for (int i = 0; i < NUM_PLAYERS; ++i) {
+			if (myPlayers[i]->rigid == c2) {
+				if (myPlayers[i]->HP < 80) {
+					myPlayers[i]->HP += 20;
+				}
+				else { myPlayers[i]->HP = 100; }
 			}
 		}
 	}

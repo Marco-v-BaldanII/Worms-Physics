@@ -199,7 +199,7 @@ public:
 
 		bomb->acceleration = { 0,0 };
 		SDL_Rect r = { 0,0,64,64 };
-		bomb->CreateCollider(r, ColliderType::BULLET, pManager);
+		bomb->CreateCollider(r, ColliderType::AID, pManager);
 		bomb->collider->made_explosion = false;
 		physics->bombs.push_back(bomb);
 	}
