@@ -153,6 +153,10 @@ update_status ModuleSceneIntro::Update()
 	{
 		App->deltaTime.ChangeFPS(60);
 	}
+	else if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	{
+		App->deltaTime.toggleDeltaTimeMode();
+	}
 	
 	static char title[400];
 
