@@ -22,7 +22,7 @@ Embrace yourself in battle sending to the other side your most hated archenemy, 
 - F6 - Change FPS to 15;
 - F7 - Change FPS to 30;
 - F8 - Change FPS to 60;
-- () - Change between FIXED/SEMIFIXED.
+- F9 - Toggle between FIXED/SEMIFIXED delta time.
 
 ## Other features:
 - Random windforces to difficult your aim.
