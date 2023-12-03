@@ -179,6 +179,8 @@ public:
 	Player* player;
 	std::list<Bullet*> bodies;
 	std::list<parachuteBomb*> bombs;
+	float apuntarx;
+	float apuntary;
 
 	virtual void MissileIncoming(ModulePlayer* pManager, ModulePhysics* physics, int mouseX, int mouseY) {
 
@@ -205,27 +207,24 @@ public:
 		Bullet* bullet = new Bullet;
 		bullet->isMoving = true;
 
-		float x;
-		float y;
-
 		if (mouseX > player->rigid->posRect.x)
 		{
-			x = player->rigid->posRect.x + 70;
-			y = player->rigid->posRect.y + 10;
+			apuntarx = player->rigid->posRect.x + 70;
+			apuntary = player->rigid->posRect.y - 5;
 		}
-		else
+		else if (mouseX < player->rigid->posRect.x)
 		{
-			x = player->rigid->posRect.x - 6;
-			y = player->rigid->posRect.y + 10;
+			apuntarx = player->rigid->posRect.x - 50;
+			apuntary = player->rigid->posRect.y - 5;
 		}
 
-		bullet->posRect.x = x;
-		bullet->posRect.y = y;
+		bullet->posRect.x = apuntarx;
+		bullet->posRect.y = apuntary;
 		bullet->posRect.w = 10;
 		bullet->posRect.h = 10;
 
-		float dx = mouseX - bullet->posRect.x;
-		float dy = bullet->posRect.y - mouseY + 50;
+		float dx = mouseX - apuntarx;
+		float dy = apuntary - mouseY + 50;
 		float mag = std::sqrt(dx * dx + dy * dy);
 
 		float speed = std::sqrt(2 * PIXELS_TO_METERS(981) * mag);
@@ -239,7 +238,7 @@ public:
 		bullet->velocity.y = -speed * std::sin(angle);
 
 		bullet->acceleration = { 0, PIXELS_TO_METERS(981) };
-		SDL_Rect r = { 0,0,40,40 };
+		SDL_Rect r = { 0,0,32,32 };
 		bullet->CreateCollider(r, ColliderType::BULLET, pManager);
 		bullet->collider->made_explosion = false;
 		physics->bodies.push_back(bullet);
@@ -248,22 +247,19 @@ public:
 
 	virtual void PreviewShot(int mouseX, int mouseY, SDL_Renderer* renderer, float delta) {
 
-		float x;
-		float y;
-		
 		if (mouseX > player->rigid->posRect.x)
 		{
-			x = player->rigid->posRect.x + 70;
-			y = player->rigid->posRect.y + 10;
+			apuntarx = player->rigid->posRect.x + 70;
+			apuntary = player->rigid->posRect.y + 10;
 		}
 		else
 		{
-			x = player->rigid->posRect.x - 6;
-			y = player->rigid->posRect.y + 10;
+			apuntarx = player->rigid->posRect.x - 6;
+			apuntary = player->rigid->posRect.y + 10;
 		}
 
-		float dx = mouseX - x;
-		float dy = y - mouseY + 30;
+		float dx = mouseX - apuntarx;
+		float dy = apuntary - mouseY + 30;
 		float mag = std::sqrt(dx * dx + dy * dy);
 		float speed = std::sqrt(2 * 981 * mag);
 		float maxSpeed = 1000;
@@ -282,8 +278,8 @@ public:
 		int fallingSteps = 0;
 
 		for (int i = 0; i < 1000; i++) {
-			x += vx * dt;
-			y += vy * dt;
+			apuntarx += vx * dt;
+			apuntary += vy * dt;
 			vx += ax * dt;
 			vy += ay * dt;
 
@@ -298,7 +294,7 @@ public:
 			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 			for (int dx = -1; dx <= 1; dx++) {
 				for (int dy = -1; dy <= 1; dy++) {
-					SDL_RenderDrawPoint(renderer, x + dx, y + dy);
+					SDL_RenderDrawPoint(renderer, apuntarx + dx, apuntary + dy);
 				}
 			}
 		}
