@@ -522,14 +522,14 @@ update_status ModulePlayer::Update()
 
 	else if (myPlayers[0]->dead == true ){
 
-	    App->winScreen->Player1Wins();
+	    App->winScreen->Player2Wins();
 		
 		
 
 	}
 	else if (myPlayers[1]->dead == true) {
 
-		App->winScreen->Player2Wins();
+		App->winScreen->Player1Wins();
 		
 	}
 
@@ -822,7 +822,14 @@ void ModulePlayer::DebugText() {
 	char buffer[50];
 	sprintf_s(buffer, "current wind is %d", windForceX);
 	App->fonts->BlitText(500, 0, 0, buffer);
-	
+	if (App->deltaTime.fixedDeltaTime)
+	{
+		App->fonts->BlitText(500, 30, 0, "current deltatime method fixed");
+	}
+	else
+	{
+		App->fonts->BlitText(500, 30, 0, "current deltatime method semifixed");
+	}
 }
 
 void ModulePlayer::ResetMatch() {
