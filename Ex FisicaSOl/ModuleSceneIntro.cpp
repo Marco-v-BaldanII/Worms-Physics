@@ -159,7 +159,6 @@ update_status ModuleSceneIntro::Update()
 	sprintf_s(title, 400, "Deltatime: %f  FPS: %f",
 	App->deltaTime.delta, App->deltaTime.FPS);
 	App->window->SetTitle(title);
-
 	App->renderer->Blit(backgound, 0, 0);
 	if (!box1->rigid->destroyed) { App->renderer->Blit(box1->rigid->bird, box1->rigid->posRect.x, box1->rigid->posRect.y); }
 	if (!box2->rigid->destroyed) { App->renderer->Blit(box2->rigid->bird, box2->rigid->posRect.x, box2->rigid->posRect.y); }

@@ -522,14 +522,14 @@ update_status ModulePlayer::Update()
 
 	else if (myPlayers[0]->dead == true ){
 
-	    App->winScreen->Player1Wins();
+	    App->winScreen->Player2Wins();
 		
 		
 
 	}
 	else if (myPlayers[1]->dead == true) {
 
-		App->winScreen->Player2Wins();
+		App->winScreen->Player1Wins();
 		
 	}
 
