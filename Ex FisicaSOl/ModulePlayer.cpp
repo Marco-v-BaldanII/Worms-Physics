@@ -367,7 +367,7 @@ update_status ModulePlayer::Update()
 {
 	if (!firstTurn) {
 		for (int i = 0; i < NUM_PLAYERS; ++i) {
-			myPlayers[i]->movement = 700;
+			myPlayers[i]->movement = 500;
 			firstTurn = true;
 		}
 	}
@@ -390,7 +390,7 @@ update_status ModulePlayer::Update()
 			App->renderer->DrawQuad(myPlayers[i]->healthBar, 100, 200, 10, 255);
 			
 
-			myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/7, 20 };
+			myPlayers[i]->movementBar = { myPlayers[i]->rigid->posRect.x - 20, myPlayers[i]->rigid->posRect.y - 45, myPlayers[i]->movement/5, 20 };
 			App->renderer->DrawQuad(myPlayers[i]->movementBar, 50, 50, 200, 255);
 			int remaining_meters = PIXELS_TO_METERS(myPlayers[i]->movement);
 			std::string uy = std::to_string(remaining_meters); uy += 'm';
@@ -540,7 +540,7 @@ void ModulePlayer::ChangeTurn() {
 	
 	
 	currentPlayer->faseActual = Fase::Movimiento;
-	currentPlayer->movement = 700;
+	currentPlayer->movement = 500;
 	preview = false;
 	//ranodm windforceX y windforceY entre los numeros del -1 y 1
 
@@ -831,6 +831,7 @@ void ModulePlayer::ResetMatch() {
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		myPlayers[i]->HP = 100;
 		myPlayers[i]->dead = false;
+		myPlayers[i]->movement = 500;
 		if (i == 0) {
 			myPlayers[i]->rigid->posRect.x = 33; myPlayers[i]->rigid->posRect.y = 421;
 		}
