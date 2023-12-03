@@ -145,6 +145,7 @@ public:
     vec2 acceleration;
     SDL_Texture* bird;
     
+    bool destroyed = false;
     bool isMoving = false;
 
     bool isGrounded = true;
@@ -184,7 +185,9 @@ public:
 
     }
     
-    
+    ~RigidBody() {
+      
+    }
 
   
 };

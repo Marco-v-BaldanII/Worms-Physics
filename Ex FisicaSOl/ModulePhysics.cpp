@@ -227,16 +227,16 @@ update_status ModulePhysics::PreUpdate()
             };
         }
 
-        if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+        if (currentIntegrator == EULER)
         {
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
 
-        else if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+        else if (currentIntegrator == SIMPLETIC_EULER)
         {
             IntegratorEuler2(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
-        else if (App->input->GetKey(SDL_SCANCODE_F4) == KEY_DOWN)
+        else if (currentIntegrator == VERLET)
         {
             IntegratorVerlet(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
         }
@@ -246,10 +246,10 @@ update_status ModulePhysics::PreUpdate()
                 LOG("This should never happen");
             }
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bullet->posRect, bullet->velocity, bullet->acceleration);
-        } 
+        }
         if (startCounting.ReadMSec() > 500) {
             for (int i = 0; i < NUM_PLAYERS; ++i) {
-                if (App->player->myPlayers[i]->posDif == -1571) {
+                if (App->player->myPlayers[i]->posDif ==-1571 ) {
                     App->player->myPlayers[i]->posDif = 0;
                     App->player->myPlayers[i]->movement = 700;
                 }
@@ -258,6 +258,8 @@ update_status ModulePhysics::PreUpdate()
             }
             
         }
+
+
     }
     // Add finished explosions to the "defused" list of explosions to be deleted
     for (Explosion* _explosion : explosions) {
@@ -305,7 +307,7 @@ update_status ModulePhysics::PostUpdate()
                             App->renderer->DrawQuad(bullet->collider->data, 80, 0, 100, OPACITY);
                             break;
                         case ColliderType::BREAKABLE:
-                            App->renderer->DrawQuad(bullet->collider->data, 60, 150, 60, OPACITY);
+                            App->renderer->DrawQuad(bullet->collider->data, 255, 140, 0, OPACITY);
 
                         }
                     }
@@ -345,7 +347,7 @@ update_status ModulePhysics::PostUpdate()
                             App->renderer->DrawQuad(bomb->collider->data, 80, 0, 100, OPACITY);
                             break;
                         case ColliderType::BREAKABLE:
-                            App->renderer->DrawQuad(bomb->collider->data, 60, 150, 60, OPACITY);
+                            App->renderer->DrawQuad(bomb->collider->data, 255, 140, 0, OPACITY);
 
                         }
                     }
@@ -382,6 +384,7 @@ update_status ModulePhysics::PostUpdate()
         if (corpses[i] == nullptr) { break; }
         else {
             bodies.remove(corpses[i]);
+            //App->textures->Unload(corpses[i]->bird);
             corpses[i] = nullptr;
         }
     }

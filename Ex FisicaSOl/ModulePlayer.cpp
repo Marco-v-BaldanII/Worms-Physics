@@ -11,7 +11,7 @@
 #include "Player.h"
 #include <string.h>
 
-#define GRAVITY 10;
+#define GRAVITY 9,8;
 #define ACCELERATION_VALUE 1,5; 
 #define JUMP_FORCE 6;
 #define MaxSpeed 0,8;
@@ -374,6 +374,9 @@ update_status ModulePlayer::Update()
 
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		if (myPlayers[i]->HP <= 0) myPlayers[i]->dead = true;
+		if (App->physics->startCounting.ReadMSec() > 400) {
+			myPlayers[i]->oldPosX = myPlayers[i]->rigid->posRect.x;
+		}
 	}
 
 	if (myPlayers[1]->dead == false && myPlayers[0]->dead == false) {
@@ -443,9 +446,7 @@ update_status ModulePlayer::Update()
 						moved = true;
 						if (myPlayers[i]->myDirection != Direction::LEFT) { ChangeDir(*myPlayers[i]); }
 					}
-					if (App->physics->startCounting.ReadMSec() > 400) {
-						myPlayers[i]->oldPosX = myPlayers[i]->rigid->posRect.x;
-					}
+					
 					if (moved && myPlayers[i]->movement > 0) {
 						switch (*currentMovement) {
 						case Movement::POSITION:
@@ -716,8 +717,13 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 		
 		
 	}
-	
-	
+
+	if ((c1->collider->type == ColliderType::GROUND || c1->collider->type == ColliderType::BREAKABLE) && c2->collider->type == ColliderType::BREAKABLE)
+	{
+		c2->StopAllMotion();
+	}
+
+
 	if (*App->physics->currentCollisionMethod == CollisionDetection::TELEPORT) {
 
 		if (c2->collider->type == ColliderType::BULLET && c1->collider->type != ColliderType::PLAYER && c2->isMoving) {
@@ -746,6 +752,17 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 		c2->velocity.y *= 0.5f;
 	}
 
+	if (c2->collider->type == ColliderType::BULLET && c1->collider->type == ColliderType::BREAKABLE) {
+		LOG("bullet has hit a box");
+		c1->destroyed = true;
+		
+		for (int i = 0; i < 50; ++i) {
+			if (App->physics->corpses[i] == nullptr) {
+				App->physics->corpses[i] = c1;
+				break;
+			}
+		}
+	}
 
 	LOG("Collision");
 }
@@ -794,7 +811,13 @@ void ModulePlayer::ResetMatch() {
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		myPlayers[i]->HP = 100;
 		myPlayers[i]->dead = false;
+		if (i == 0) {
+			myPlayers[i]->rigid->posRect.x = 33; myPlayers[i]->rigid->posRect.y = 421;
+		}
+		else if (i == 1) {
+			myPlayers[i]->rigid->posRect.x = 1571; myPlayers[i]->rigid->posRect.y = 282;
+		}
 	}
-
-
+	App->physics->startCounting.Start();
+	App->scene_intro->PlaceBoxes();
 }

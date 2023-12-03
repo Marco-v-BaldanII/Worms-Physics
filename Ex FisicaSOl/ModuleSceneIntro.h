@@ -30,6 +30,19 @@ struct Light
 	int x, y;
 };
 
+struct Box {
+
+	
+	RigidBody* rigid;
+
+	Box(SDL_Texture* text, SDL_Rect rect) {
+		
+		rigid = new RigidBody(rect);
+		rigid->bird = text;
+	}
+
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -43,6 +56,8 @@ public:
 	void AddTarget(SDL_Rect posRect, SDL_Rect collid);
 
 	void OnExplosion(RigidBody* c1);
+
+	void PlaceBoxes();
 
 	int currentPlayer = 0;
 
@@ -70,8 +85,16 @@ public:
 	RigidBody* aground3;
 	RigidBody* aground4;
 	
+	Box* box1;
+	Box* box2;
+	Box* box3;
+	Box* box4;
+	Box* box5;
+	Box* box6;
+	Box* box7;
+	Box* box8;
 
-
+	SDL_Texture* box_texture = nullptr;
 
 
 	RigidBody* bouncer1;

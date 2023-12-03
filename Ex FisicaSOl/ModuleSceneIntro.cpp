@@ -19,6 +19,7 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 	backgound = App->textures->Load("Assets/images/fondo.png");
+	box_texture = App->textures->Load("Assets/images/BloquePhys-Sheet.png");
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	//pigTexture = App->textures->Load("Assets/images/PIG.png");
 
@@ -73,8 +74,7 @@ bool ModuleSceneIntro::Start()
 	ground12->CreateCollider(SDL_Rect{ 0,282,100,15 }, ColliderType::GROUND, this);
 
 	
-
-
+	
 
 	App->physics->bodies.push_back(ground);
 	App->physics->bodies.push_back(ground2);
@@ -88,6 +88,7 @@ bool ModuleSceneIntro::Start()
 	App->physics->bodies.push_back(ground10);
 	App->physics->bodies.push_back(ground11);
 	App->physics->bodies.push_back(ground12);
+
 
 
 	////segunda plataforma//
@@ -121,6 +122,8 @@ bool ModuleSceneIntro::Start()
 
 
 	currentPlayer = 0;
+
+	PlaceBoxes();
 
 	return ret;
 }
@@ -158,6 +161,14 @@ update_status ModuleSceneIntro::Update()
 	App->window->SetTitle(title);
 
 	App->renderer->Blit(backgound, 0, 0);
+	if (!box1->rigid->destroyed) { App->renderer->Blit(box1->rigid->bird, box1->rigid->posRect.x, box1->rigid->posRect.y); }
+	if (!box2->rigid->destroyed) { App->renderer->Blit(box2->rigid->bird, box2->rigid->posRect.x, box2->rigid->posRect.y); }
+	if (!box3->rigid->destroyed) { App->renderer->Blit(box3->rigid->bird, box3->rigid->posRect.x, box3->rigid->posRect.y); }
+	if (!box4->rigid->destroyed) { App->renderer->Blit(box4->rigid->bird, box4->rigid->posRect.x, box4->rigid->posRect.y); }
+	if (!box5->rigid->destroyed) { App->renderer->Blit(box5->rigid->bird, box5->rigid->posRect.x, box5->rigid->posRect.y); }
+	if (!box6->rigid->destroyed) { App->renderer->Blit(box6->rigid->bird, box6->rigid->posRect.x, box6->rigid->posRect.y); }
+	if (!box7->rigid->destroyed) { App->renderer->Blit(box7->rigid->bird, box7->rigid->posRect.x, box7->rigid->posRect.y); }
+	
 	
 	return UPDATE_CONTINUE;
 }
@@ -175,4 +186,34 @@ void ModuleSceneIntro::OnExplosion(RigidBody* c1)  {
 		}
 	}
 
+}
+
+void ModuleSceneIntro::PlaceBoxes() {
+	
+	box1 = new Box(box_texture, SDL_Rect{ 951, 530, 32, 32 });
+	box1->rigid->CreateCollider(SDL_Rect{ 951, 530, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box2 = new Box(box_texture, SDL_Rect{ 951, 498, 32, 32 });
+	box2->rigid->CreateCollider(SDL_Rect{ 951, 498, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box3 = new Box(box_texture, SDL_Rect{ 951, 498 -32, 32, 32 });
+	box3->rigid->CreateCollider(SDL_Rect{ 951, 498 -32, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box4 = new Box(box_texture, SDL_Rect{ 951, 498 - 64, 32, 32 });
+	box4->rigid->CreateCollider(SDL_Rect{ 951, 498 - 64, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box5 = new Box(box_texture, SDL_Rect{ 216, 471, 32, 32 });
+	box5->rigid->CreateCollider(SDL_Rect{ 216, 471, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box6 = new Box(box_texture, SDL_Rect{ 216, 471-32, 32, 32 });
+	box6->rigid->CreateCollider(SDL_Rect{ 216, 471-32, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box7 = new Box(box_texture, SDL_Rect{ 951-32, 530 , 32, 32 });
+	box7->rigid->CreateCollider(SDL_Rect{ 951-32, 530 , 32, 32 }, ColliderType::BREAKABLE, App->player);
+	
+	//box1->rigid->acceleration.y = GRAVITY; box2->rigid->acceleration.y = GRAVITY; box3->rigid->acceleration.y = GRAVITY; box4->rigid->acceleration.y = GRAVITY;
+
+	// boxes
+	App->physics->bodies.push_back(box1->rigid);
+	App->physics->bodies.push_back(box2->rigid);
+	App->physics->bodies.push_back(box3->rigid);
+	App->physics->bodies.push_back(box4->rigid);
+	App->physics->bodies.push_back(box5->rigid);
+	App->physics->bodies.push_back(box6->rigid);
+	App->physics->bodies.push_back(box7->rigid);
+	
 }
