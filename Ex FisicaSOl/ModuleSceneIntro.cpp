@@ -114,7 +114,7 @@ bool ModuleSceneIntro::Start()
 	App->physics->bodies.push_back(aground3);
 	App->physics->bodies.push_back(aground4);
 	
-	bouncer1 = App->physics->createBouncer(450,700, 120, 200);
+	bouncer1 = App->physics->createBouncer(450,690, 120, 200);
 	App->physics->bodies.push_back(bouncer1);
 
 	bouncer2 = App->physics->createBouncer(970, 585, 230, 200);
