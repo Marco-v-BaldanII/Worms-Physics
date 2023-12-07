@@ -210,7 +210,7 @@ update_status ModulePhysics::PreUpdate()
 
         if (bullet->collider->type == ColliderType::BULLET)
         {
-            ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
             //ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
         }
 
