@@ -166,6 +166,7 @@ public:
 class RigidBody {
 
 public:
+    Anim* currentAnim = nullptr;
 
     RigidBody(SDL_Rect posRect) {
         this->posRect = posRect;
@@ -222,6 +223,9 @@ public:
       
     }
 
+    virtual void Update() {
+
+    }
   
 };
 

@@ -14,7 +14,7 @@
 #include "Timer.h"
 
 
-#define NUM_WEAPONS 1
+#define NUM_WEAPONS 2
 
 class Weapon;
 
@@ -62,18 +62,30 @@ class parachuteBomb : public RigidBody {
 
 public:
 	Collider* explosionCollider;
-	SDL_Texture* texture = nullptr;
+	
+	
+	Anim normalAnim;
+	Anim parachuteAnim;
 
 	void SetExplosionRadius(int rad) { explosionArea.r = rad; }
 
-	parachuteBomb() :RigidBody() {
+	parachuteBomb(SDL_Texture* parachuteTex) :RigidBody() {
 		explosionArea.r = 2;
 		explosionArea.x = 0;
 		explosionArea.y = 0;
+		
+		normalAnim.PushBack({ 0,0,64,64 });
+		parachuteAnim.PushBack({ 65,0,64,64 });
+		currentAnim = &normalAnim;
+
 	}
 
-	parachuteBomb(int radius) :RigidBody() {
+	parachuteBomb(int radius, SDL_Texture* parachuteTex, Anim normal, Anim parachute) :RigidBody() {
 		explosionArea.r = radius;
+		
+		normalAnim = normal;
+		parachuteAnim = parachute;
+		currentAnim = &normalAnim;
 	}
 
 	void CollisionBehaviour(Module* listener) override {
@@ -82,6 +94,17 @@ public:
 				explosionCollider = new Collider(explosion, ColliderType::GROUND, listener);*/
 	}
 
+	void Update() override {
+		if (posRect.y <= 200 && isMoving)
+		{
+			currentAnim = &normalAnim;
+		}
+		else if (isMoving)
+		{
+			currentAnim = &parachuteAnim;
+		}
+		currentAnim->Update();
+	}
 };
 
 class Bullet : public RigidBody {
@@ -186,9 +209,14 @@ public:
 	float apuntarx;
 	float apuntary;
 
+	SDL_Texture* ParachuteTexture = nullptr;
+
+	Anim normalAnim;
+	Anim parachuteAnim;
+
 	virtual void MissileIncoming(ModulePlayer* pManager, ModulePhysics* physics, int mouseX, int mouseY) {
 
-		parachuteBomb* bomb = new parachuteBomb;
+		parachuteBomb* bomb = new parachuteBomb(ParachuteTexture);
 		bomb->isMoving = true;
 		bomb->posRect.x = mouseX;
 		bomb->posRect.y = 0;
@@ -305,6 +333,55 @@ public:
 			}
 		}
 	}
+
+	
+};
+
+class BoxGun : public Weapon {
+
+public:
+	void Shoot(ModulePlayer* pManager, ModulePhysics* physics, int mouseX, int mouseY) override {
+		Bullet* bullet = new Bullet;
+		bullet->isMoving = true;
+
+		if (mouseX > player->rigid->posRect.x)
+		{
+			apuntarx = player->rigid->posRect.x + 70;
+			apuntary = player->rigid->posRect.y - 5;
+		}
+		else if (mouseX < player->rigid->posRect.x)
+		{
+			apuntarx = player->rigid->posRect.x - 50;
+			apuntary = player->rigid->posRect.y - 5;
+		}
+
+		bullet->posRect.x = apuntarx;
+		bullet->posRect.y = apuntary;
+		bullet->posRect.w = 10;
+		bullet->posRect.h = 10;
+
+		float dx = mouseX - apuntarx;
+		float dy = apuntary - mouseY + 50;
+		float mag = std::sqrt(dx * dx + dy * dy);
+
+		float speed = std::sqrt(2 * PIXELS_TO_METERS(981) * mag);
+		float maxSpeed = PIXELS_TO_METERS(1000);
+		if (speed > maxSpeed) {
+			speed = maxSpeed;
+		}
+		float angle = std::atan2(dy, dx);
+
+		bullet->velocity.x = speed * std::cos(angle);
+		bullet->velocity.y = -speed * std::sin(angle);
+
+		bullet->acceleration = { 0, PIXELS_TO_METERS(981) };
+		SDL_Rect r = { 0,0,32,32 };
+		bullet->CreateCollider(r, ColliderType::BREAKABLE, pManager);
+		bullet->collider->made_explosion = false;
+		physics->bodies.push_back(bullet);
+	}
+
+
 };
 
 #endif

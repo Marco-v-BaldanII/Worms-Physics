@@ -29,7 +29,9 @@ public:
 	
 	float oldPosX; float posDif;
 
-	Weapon* myWeapons;
+	Weapon* currentWeapon = nullptr;
+
+	Weapon* myWeapons[2] = { nullptr };
 
 	bool isJumping = false;
 	int jumpingCnt = 70;

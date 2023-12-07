@@ -41,6 +41,7 @@ bool ModulePlayer::Start()
 		LOG("Loading player");
 		myPlayers[i]->player1 = App->textures->Load("Assets/images/Dabomb-Sheet.png");
 		myPlayers[i]->player2 = App->textures->Load("Assets/images/DabombOther-Sheet.png");
+		SDL_Texture* parachute = App->textures->Load("Assets/images/MarcoEnPeligro.png");
 		//myPlayers[i]player2 = App->textures->Load("Assets/images/PIG.png");
 		myPlayers[i]->player = { 10,10,10,10 };
 
@@ -72,11 +73,22 @@ bool ModulePlayer::Start()
 
 		currentMovement = &myMovement[3];
 
-		Weapon weapon1; weapon1.name = "birdBazooka";
-		myPlayers[i]->myWeapons = new Weapon[NUM_WEAPONS];
+		Weapon* weapon1;  weapon1 = new Weapon();
+		weapon1->name = "birdBazooka";
+		BoxGun* weapon2;  weapon2 = new BoxGun();
+		weapon2->name = "boxGun";
+
+		myPlayers[i]->myWeapons[0] = weapon1;
+		myPlayers[i]->myWeapons[1] = weapon2;
+	
+		for (int j = 0; j < NUM_WEAPONS; ++j) {
+			myPlayers[i]->myWeapons[j]->ParachuteTexture = parachute;
+		}
 		
 		myPlayers[i]->myWeapons[0] = weapon1;
-		myPlayers[i]->myWeapons[0].player = myPlayers[i];
+		myPlayers[i]->myWeapons[0]->player = myPlayers[i];
+		myPlayers[i]->myWeapons[1] = weapon2;
+		myPlayers[i]->myWeapons[1]->player = myPlayers[i];
 
 		App->physics->bodies.push_back(myPlayers[i]->rigid);
 		myPlayers[i]->rigid->acceleration.y = 0;
@@ -402,7 +414,10 @@ update_status ModulePlayer::Update()
 			}
 
 			if (myPlayers[i] == currentPlayer) {
-				if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+				if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)  {
+					if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[0]; }
+					if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[1]; }
+					if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[1]; }
 					if (myPlayers[i]->faseActual == Movimiento) {
 						myPlayers[i]->rigid->velocity.x = 0;
 						myPlayers[i]->faseActual = Fase::Disparo;
@@ -470,7 +485,7 @@ update_status ModulePlayer::Update()
 					
 
 					if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
-						myPlayers[i]->myWeapons[0].MissileIncoming(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+						myPlayers[i]->myWeapons[0]->MissileIncoming(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 						ChangeTurn();
 						turntaken = true;
 						//currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
@@ -491,7 +506,7 @@ update_status ModulePlayer::Update()
 				case Disparo:
 					preview = true;
 					if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
-						myPlayers[i]->myWeapons[0].Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+						myPlayers[i]->currentWeapon->Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 						ChangeTurn();
 						turntaken = true;
 						currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
@@ -501,7 +516,7 @@ update_status ModulePlayer::Update()
 
 				if (preview)
 				{
-					myPlayers[i]->myWeapons[0].PreviewShot(App->input->GetMouseX(), App->input->GetMouseY(), App->renderer->renderer, App->deltaTime.getDeltaTimeInSeconds());
+					myPlayers[i]->myWeapons[0]->PreviewShot(App->input->GetMouseX(), App->input->GetMouseY(), App->renderer->renderer, App->deltaTime.getDeltaTimeInSeconds());
 				}
 
 				//App->renderer->Blit(player2, 230, 355);

@@ -196,26 +196,26 @@ void ModuleSceneIntro::OnExplosion(RigidBody* c1)  {
 void ModuleSceneIntro::PlaceBoxes() {
 	
 	box1 = new Box(box_texture, SDL_Rect{ 951, 530, 32, 32 });
-	box1->rigid->CreateCollider(SDL_Rect{ 951, 530, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box1->rigid->CreateCollider(SDL_Rect{ 951, 530, 32, 28 }, ColliderType::BREAKABLE, App->player);
 	box2 = new Box(box_texture, SDL_Rect{ 951, 498, 32, 32 });
-	box2->rigid->CreateCollider(SDL_Rect{ 951, 498, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box2->rigid->CreateCollider(SDL_Rect{ 951, 498, 32, 28 }, ColliderType::BREAKABLE, App->player);
 	box3 = new Box(box_texture, SDL_Rect{ 951, 498 -32, 32, 32 });
-	box3->rigid->CreateCollider(SDL_Rect{ 951, 498 -32, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box3->rigid->CreateCollider(SDL_Rect{ 951, 498 -32, 28, 32 }, ColliderType::BREAKABLE, App->player);
 	box4 = new Box(box_texture, SDL_Rect{ 951, 498 - 64, 32, 32 });
-	box4->rigid->CreateCollider(SDL_Rect{ 951, 498 - 64, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box4->rigid->CreateCollider(SDL_Rect{ 951, 498 - 64, 28, 32 }, ColliderType::BREAKABLE, App->player);
 	box5 = new Box(box_texture, SDL_Rect{ 216, 471, 32, 32 });
-	box5->rigid->CreateCollider(SDL_Rect{ 216, 471, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box5->rigid->CreateCollider(SDL_Rect{ 216, 471, 28, 32 }, ColliderType::BREAKABLE, App->player);
 	box6 = new Box(box_texture, SDL_Rect{ 216, 471-32, 32, 32 });
-	box6->rigid->CreateCollider(SDL_Rect{ 216, 471-32, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box6->rigid->CreateCollider(SDL_Rect{ 216, 471-32, 28, 32 }, ColliderType::BREAKABLE, App->player);
 	box7 = new Box(box_texture, SDL_Rect{ 951-40, 530 , 32, 32 });
-	box7->rigid->CreateCollider(SDL_Rect{ 951-40, 530 , 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box7->rigid->CreateCollider(SDL_Rect{ 951-40, 530 , 28, 32 }, ColliderType::BREAKABLE, App->player);
 
 	/*box8 = new Box(box_texture, SDL_Rect{  951,  498 - 96, 32 });
 	box8->rigid->CreateCollider(SDL_Rect{  951,  498 - 96, 32 }, ColliderType::BREAKABLE, App->player);*/
 	box9 = new Box(box_texture, SDL_Rect{  951,  498 - 96-33, 32, 32 });
-	box9->rigid->CreateCollider(SDL_Rect{  951,  498 - 96-33, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box9->rigid->CreateCollider(SDL_Rect{  951,  498 - 96-33, 28, 32 }, ColliderType::BREAKABLE, App->player);
 	box10 = new Box(box_texture, SDL_Rect{ 951,  498 - 96 - 65 , 32, 32 });
-	box10->rigid->CreateCollider(SDL_Rect{ 951,  498 - 96 - 65 , 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box10->rigid->CreateCollider(SDL_Rect{ 951,  498 - 96 - 65 , 28, 32 }, ColliderType::BREAKABLE, App->player);
 	
 	box1->rigid->acceleration.y = 9.81; box2->rigid->acceleration.y = 9.81; box3->rigid->acceleration.y = 9.81; box4->rigid->acceleration.y = 9.81;
 	box5->rigid->acceleration.y = 9.81; box6->rigid->acceleration.y = 9.81; box7->rigid->acceleration.y = 9.81; 

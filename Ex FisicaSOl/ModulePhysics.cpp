@@ -170,7 +170,6 @@ update_status ModulePhysics::PreUpdate()
     {
         
         if (bomb->isMoving) {
-            
 
             if (bomb->posRect.y <= 200 && bomb->isMoving)
             {
@@ -180,12 +179,9 @@ update_status ModulePhysics::PreUpdate()
             {
                 ApplyAerodynamics(bomb, App->deltaTime.getDeltaTimeInSeconds(),30.0f);
             }
-            
-            
+           
         }
         
-
-
         if (currentIntegrator == EULER)
         {
             IntegratorEuler(App->deltaTime.getDeltaTimeInSeconds(), bomb->posRect, bomb->velocity, bomb->acceleration);
@@ -216,22 +212,23 @@ update_status ModulePhysics::PreUpdate()
             //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
             //ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
         }
+        
 
         for (RigidBody* bullet2 : bodies) {
 
             if (bullet != bullet2) {
-
-                if (bullet->collider->type != ColliderType::BREAKABLE && bullet->collider->Intersects(&bullet2->collider->data)) {
+                if (bullet->collider->type == ColliderType::BREAKABLE && bullet2->collider->type != ColliderType::PLAYER) {
+                    if (bullet->collider->Feet_Intersects(&bullet2->collider->data) && !bullet2->destroyed) {
+                        bullet->collider->listener->OnCollision(bullet, bullet2);
+                    }
+                }
+                else if ( bullet2->collider->type != ColliderType::BREAKABLE && bullet->collider->Intersects(&bullet2->collider->data)) {
 
                     LOG("\n \nColllision\n");
                     
                     bullet2->collider->listener->OnCollision(bullet, bullet2);
                 }
-                else if (bullet->collider->type == ColliderType::BREAKABLE) {
-                    if (bullet->collider->Feet_Intersects(&bullet2->collider->data) && !bullet2->destroyed) {
-                        bullet->collider->listener->OnCollision(bullet, bullet2);
-                    }
-                }
+               
             }
         }
         for (Explosion* _explosion : explosions) {
@@ -312,6 +309,9 @@ update_status ModulePhysics::PostUpdate()
         for (const RigidBody* bullet : bodies)
         {
             
+            if (bullet->collider->type == ColliderType::BREAKABLE) {
+                App->renderer->Blit(App->scene_intro->box_texture, bullet->posRect.x, bullet->posRect.y);
+            }
             
                 if (bullet->collider != nullptr) {
                     bullet->collider->data.x = bullet->posRect.x;
@@ -348,9 +348,13 @@ update_status ModulePhysics::PostUpdate()
           
         }
     
+        // ------------Update all Parachute objects----------------//
         for (RigidBody* bomb : bombs)
         {
-            App->renderer->Blit(MarcoPeligro, bomb->posRect.x, bomb->posRect.y); 
+            bomb->Update();
+            App->renderer->Blit(MarcoPeligro, bomb->posRect.x, bomb->posRect.y, &bomb->currentAnim->GetCurrentFrame());
+            //App->renderer->Blit(MarcoPeligro, bomb->posRect.x, bomb->posRect.y);
+            
             if (debug) {
                 if (bomb->collider != nullptr) {
 
