@@ -9,10 +9,13 @@ Embrace yourself in battle sending to the other side your most hated archenemy, 
 - LEFT ARROW - Move left.
 - RIGHT ARROW - Move right.
 - Z - Jump.
-- P - Enter/Exit shooting mode.
+
+- Shooting ( 1 , 2 , 3)
 - MOVE MOUSE (WHILE IN SHOOTING MODE) - Aim.
 - SPACE (WHILE IN SHOOTING MODE) - Shoot.
-- B (WHILE IN SHOOTING MODE) - Shoot parachute unit in mouse position.
+- 1 - EXPLOSIVE BABY (explodes on impact , destroys boxes and damages rival)
+- 2 - DROPS PRISONER IN MOUSE POSITION (Prisoner oppens parachute and increases surface area)
+- 3 - BOX GUN (SHOOTS BOX THAT CAN LAND AND ACT AS PLATFORM)
 
 ## Other Controls:
 - F1 - Enter debug mode.

@@ -582,12 +582,14 @@ void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime, float ar
     dragDirection.x *= -1;
     dragDirection.y *= -1;
 
-    if (body->collider->type == ColliderType::AID) {
-        if (body->velocity.x != 0) {
-            body->acceleration.x += dragForceX * dragDirection.x * deltaTime;
-        }
+    body->acceleration.y += (dragForceY * dragDirection.y * deltaTime)/ MASS;
 
-        body->acceleration.y += (dragForceY * dragDirection.y * deltaTime) + (9.81f * deltaTime);
+    if (body->velocity.x != 0) {
+        body->acceleration.x += dragForceX * dragDirection.x * deltaTime/ MASS;
+
+    }
+    if (body->collider->type == ColliderType::AID) {
+       
         if (body->velocity.y < 0) {
             body->velocity.y = 3.5f; // Minimum air velocity so that drag doesn't lift the object
         }
