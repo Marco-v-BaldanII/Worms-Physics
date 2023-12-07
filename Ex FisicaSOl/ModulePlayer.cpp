@@ -32,11 +32,12 @@ bool ModulePlayer::Start()
 
 	char lookupTable[] = { "abcdefghijklmnopqrstuvwxyz0123456789" };
 	font = App->fonts->Load("Assets/images/my_font.png", lookupTable, 3);
+	SDL_Texture* Gun_Selection = App->textures->Load("Assets/images/GunSelection-Sheet.png");
 
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		myPlayers[i] = new Player();
 		myPlayers[i]->rigid = new RigidBody();
-
+		myPlayers[i]->GunSelection = Gun_Selection;
 
 		LOG("Loading player");
 		myPlayers[i]->player1 = App->textures->Load("Assets/images/Dabomb-Sheet.png");
@@ -80,6 +81,8 @@ bool ModulePlayer::Start()
 
 		myPlayers[i]->myWeapons[0] = weapon1;
 		myPlayers[i]->myWeapons[1] = weapon2;
+
+		myPlayers[i]->currentWeapon = weapon1;
 	
 		for (int j = 0; j < NUM_WEAPONS; ++j) {
 			myPlayers[i]->myWeapons[j]->ParachuteTexture = parachute;
@@ -96,6 +99,11 @@ bool ModulePlayer::Start()
 		myPlayers[i]->rigid->isGrounded = false;
 		myPlayers[i]->shoted = false;
 
+		myPlayers[i]->parachuteSelected.PushBack({ 227, 1, 224, 97 });
+		myPlayers[i]->BoxSelected.PushBack({ 679,1,224,97 });
+		myPlayers[i]->BabySelected.PushBack({ 453,1,224,97 });
+		myPlayers[i]->noneSelected.PushBack({ 1,1,224,97 });
+		myPlayers[i]->currentSelection = &myPlayers[i]->noneSelected;
 
 		//Esto está aquí porque si no no compila
 		myPlayers[i]->rightIdle.PushBack({ 0,  0,64,64 });
@@ -414,18 +422,26 @@ update_status ModulePlayer::Update()
 			}
 
 			if (myPlayers[i] == currentPlayer) {
-				if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)  {
-					if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[0]; }
-					if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[1]; }
-					if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[1]; }
-					if (myPlayers[i]->faseActual == Movimiento) {
-						myPlayers[i]->rigid->velocity.x = 0;
-						myPlayers[i]->faseActual = Fase::Disparo;
-					}
-					else {
+				if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN  || App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)  {
+
+					if (myPlayers[i]->faseActual == Fase::Disparo && currentPlayer->currentWeapon == currentPlayer->myWeapons[0] && App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
 						preview = false;
 						myPlayers[i]->faseActual = Fase::Movimiento;
 					}
+					else if (myPlayers[i]->faseActual == Fase::Disparo && currentPlayer->currentWeapon == currentPlayer->myWeapons[1] && App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN) {
+						preview = false;
+						myPlayers[i]->faseActual = Fase::Movimiento;
+					}
+					else  {
+						myPlayers[i]->rigid->velocity.x = 0;
+						myPlayers[i]->faseActual = Fase::Disparo;
+						if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[0]; }
+						
+						if (App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN) { currentPlayer->currentWeapon = currentPlayer->myWeapons[1]; }
+					}
+					
+					
+					
 				}
 				
 
@@ -484,7 +500,7 @@ update_status ModulePlayer::Update()
 
 					
 
-					if (App->input->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
+					if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN) {
 						myPlayers[i]->myWeapons[0]->MissileIncoming(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
 						ChangeTurn();
 						turntaken = true;
@@ -527,6 +543,16 @@ update_status ModulePlayer::Update()
 				myPlayers[i]->rigid->isGrounded = false;
 			}
 
+			if (myPlayers[i]->faseActual == Fase::Movimiento) { myPlayers[i]->currentSelection = &myPlayers[i]->noneSelected; }
+			else if (myPlayers[i]->currentWeapon->name == "birdBazooka") { 
+				myPlayers[i]->currentSelection = &myPlayers[i]->BabySelected; 
+			}
+			else if (myPlayers[i]->currentWeapon->name == "boxGun") { 
+				myPlayers[i]->currentSelection = &myPlayers[i]->BoxSelected;
+			}
+
+			if(i == 0)App->renderer->Blit(myPlayers[i]->GunSelection, 35, 600, &myPlayers[i]->currentSelection->GetCurrentFrame());
+			if(i == 1)App->renderer->Blit(myPlayers[i]->GunSelection, 1400, 600, &myPlayers[i]->currentSelection->GetCurrentFrame());
 			AnimationLogic();
 		}
 
@@ -699,11 +725,12 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 			if (myPlayers[i]->rigid == c2) /*Comprobar que el player es el correcto*/ {
 				if (!myPlayers[i]->isJumping && myPlayers[i]->rigid->collider->data.y < c1->collider->data.y) {
 					myPlayers[i]->rigid->isGrounded = true;
+					
 					c2->velocity.y = 0;
 					c2->acceleration.y = 0;
 					// Negar movimiento vertical en seguida que choca con algo
 				}
-
+				myPlayers[i]->rigid->bounceCount = 4;
 				int feet = myPlayers[i]->rigid->collider->data.y + myPlayers[i]->rigid->collider->data.h    - 6;
 				if (feet < c1->collider->data.y+6)/*Above collider*/ {
 					

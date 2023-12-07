@@ -20,6 +20,7 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 	backgound = App->textures->Load("Assets/images/fondo.png");
 	box_texture = App->textures->Load("Assets/images/BloquePhys-Sheet.png");
+
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	//pigTexture = App->textures->Load("Assets/images/PIG.png");
 
@@ -174,6 +175,11 @@ update_status ModuleSceneIntro::Update()
 	if (!box9->rigid->destroyed) { App->renderer->Blit(box9->rigid->bird, box9->rigid->posRect.x, box9->rigid->posRect.y); box9->rigid->acceleration.y = 9.81; }
 	if (!box10->rigid->destroyed) { App->renderer->Blit(box10->rigid->bird, box10->rigid->posRect.x, box10->rigid->posRect.y); box10->rigid->acceleration.y = 9.81; }
 	
+	
+	/*if (App->player->currentPlayer->currentWeapon->name == "birdBazooka") {
+		App->renderer->Blit(GunSelection, 100, 700);
+
+	}*/
 	
 	return UPDATE_CONTINUE;
 }

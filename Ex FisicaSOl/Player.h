@@ -58,7 +58,12 @@ public:
 	Anim rightDeath, leftDeath;
 	Anim rightShoot, leftShoot;
 
-	
+	SDL_Texture* GunSelection = nullptr;
+	Anim* currentSelection = nullptr;
+	Anim BabySelected;
+	Anim BoxSelected;
+	Anim parachuteSelected;
+	Anim noneSelected;
 };
 
 
