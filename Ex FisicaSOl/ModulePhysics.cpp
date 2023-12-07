@@ -208,11 +208,16 @@ update_status ModulePhysics::PreUpdate()
 
             if (bullet != bullet2) {
 
-                if (bullet->collider->Intersects(&bullet2->collider->data)) {
+                if (bullet->collider->type != ColliderType::BREAKABLE && bullet->collider->Intersects(&bullet2->collider->data)) {
 
                     LOG("\n \nColllision\n");
                     
                     bullet2->collider->listener->OnCollision(bullet, bullet2);
+                }
+                else if (bullet->collider->type == ColliderType::BREAKABLE) {
+                    if (bullet->collider->Feet_Intersects(&bullet2->collider->data) && !bullet2->destroyed) {
+                        bullet->collider->listener->OnCollision(bullet, bullet2);
+                    }
                 }
             }
         }
@@ -225,6 +230,9 @@ update_status ModulePhysics::PreUpdate()
                     _explosion->done = true;
                 }
             };
+        }
+        if (bullet->collider->type == ColliderType::BREAKABLE) {
+            LOG("breakable box");
         }
 
         if (currentIntegrator == EULER)

@@ -59,6 +59,8 @@ public:
 
 	void PlaceBoxes();
 
+	void OnCollision(RigidBody* c1, RigidBody* c2);
+
 	int currentPlayer = 0;
 
 	Anim rightFlying, leftFlying;
@@ -93,6 +95,11 @@ public:
 	Box* box6;
 	Box* box7;
 	Box* box8;
+
+	Box* box9;
+	Box* box10;
+	Box* box11;
+	Box* box12;
 
 	SDL_Texture* box_texture = nullptr;
 

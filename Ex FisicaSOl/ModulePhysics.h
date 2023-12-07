@@ -103,8 +103,24 @@ public:
                 return false;
             }
         }
-        else {
+    }
 
+    bool Feet_Intersects(SDL_Rect* r) {
+
+        SDL_Rect box_feet = { data.x, (data.y + data.h - 1), data.w, 2 };
+        if (r != nullptr && &box_feet != nullptr) {
+            
+                // returns true if there has been an intersection
+                return (box_feet.x < r->x + r->w &&
+                    box_feet.x + box_feet.w > r->x &&
+                    box_feet.y < r->y + r->h &&
+                    box_feet.h + box_feet.y > r->y);
+            
+        }
+
+
+        else {
+            return false;
         }
     }
 

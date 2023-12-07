@@ -718,9 +718,10 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 		
 	}
 
-	if ((c1->collider->type == ColliderType::GROUND || c1->collider->type == ColliderType::BREAKABLE) && c2->collider->type == ColliderType::BREAKABLE)
+	if (( c1->collider->type == ColliderType::BREAKABLE) && (c2->collider->type == ColliderType::BREAKABLE || c2->collider->type == ColliderType::GROUND))
 	{
-		c2->StopAllMotion();
+		
+		c1->StopAllMotion();
 	}
 
 

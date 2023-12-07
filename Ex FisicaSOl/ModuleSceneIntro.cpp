@@ -164,13 +164,15 @@ update_status ModuleSceneIntro::Update()
 	App->deltaTime.delta, App->deltaTime.FPS);
 	App->window->SetTitle(title);
 	App->renderer->Blit(backgound, 0, 0);
-	if (!box1->rigid->destroyed) { App->renderer->Blit(box1->rigid->bird, box1->rigid->posRect.x, box1->rigid->posRect.y); }
-	if (!box2->rigid->destroyed) { App->renderer->Blit(box2->rigid->bird, box2->rigid->posRect.x, box2->rigid->posRect.y); }
-	if (!box3->rigid->destroyed) { App->renderer->Blit(box3->rigid->bird, box3->rigid->posRect.x, box3->rigid->posRect.y); }
-	if (!box4->rigid->destroyed) { App->renderer->Blit(box4->rigid->bird, box4->rigid->posRect.x, box4->rigid->posRect.y); }
-	if (!box5->rigid->destroyed) { App->renderer->Blit(box5->rigid->bird, box5->rigid->posRect.x, box5->rigid->posRect.y); }
-	if (!box6->rigid->destroyed) { App->renderer->Blit(box6->rigid->bird, box6->rigid->posRect.x, box6->rigid->posRect.y); }
-	if (!box7->rigid->destroyed) { App->renderer->Blit(box7->rigid->bird, box7->rigid->posRect.x, box7->rigid->posRect.y); }
+	if (!box1->rigid->destroyed) { App->renderer->Blit(box1->rigid->bird, box1->rigid->posRect.x, box1->rigid->posRect.y); box1->rigid->acceleration.y = 9.81;}
+	if (!box2->rigid->destroyed) { App->renderer->Blit(box2->rigid->bird, box2->rigid->posRect.x, box2->rigid->posRect.y); box2->rigid->acceleration.y = 9.81;}
+	if (!box3->rigid->destroyed) { App->renderer->Blit(box3->rigid->bird, box3->rigid->posRect.x, box3->rigid->posRect.y); box3->rigid->acceleration.y = 9.81;}
+	if (!box4->rigid->destroyed) { App->renderer->Blit(box4->rigid->bird, box4->rigid->posRect.x, box4->rigid->posRect.y); box4->rigid->acceleration.y = 9.81;}
+	if (!box5->rigid->destroyed) { App->renderer->Blit(box5->rigid->bird, box5->rigid->posRect.x, box5->rigid->posRect.y); box5->rigid->acceleration.y = 9.81;}
+	if (!box6->rigid->destroyed) { App->renderer->Blit(box6->rigid->bird, box6->rigid->posRect.x, box6->rigid->posRect.y); box6->rigid->acceleration.y = 9.81;}
+	if (!box7->rigid->destroyed) { App->renderer->Blit(box7->rigid->bird, box7->rigid->posRect.x, box7->rigid->posRect.y); box7->rigid->acceleration.y = 9.81;}
+	if (!box9->rigid->destroyed) { App->renderer->Blit(box9->rigid->bird, box9->rigid->posRect.x, box9->rigid->posRect.y); box9->rigid->acceleration.y = 9.81; }
+	if (!box10->rigid->destroyed) { App->renderer->Blit(box10->rigid->bird, box10->rigid->posRect.x, box10->rigid->posRect.y); box10->rigid->acceleration.y = 9.81; }
 	
 	
 	return UPDATE_CONTINUE;
@@ -205,10 +207,19 @@ void ModuleSceneIntro::PlaceBoxes() {
 	box5->rigid->CreateCollider(SDL_Rect{ 216, 471, 32, 32 }, ColliderType::BREAKABLE, App->player);
 	box6 = new Box(box_texture, SDL_Rect{ 216, 471-32, 32, 32 });
 	box6->rigid->CreateCollider(SDL_Rect{ 216, 471-32, 32, 32 }, ColliderType::BREAKABLE, App->player);
-	box7 = new Box(box_texture, SDL_Rect{ 951-32, 530 , 32, 32 });
-	box7->rigid->CreateCollider(SDL_Rect{ 951-32, 530 , 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box7 = new Box(box_texture, SDL_Rect{ 951-40, 530 , 32, 32 });
+	box7->rigid->CreateCollider(SDL_Rect{ 951-40, 530 , 32, 32 }, ColliderType::BREAKABLE, App->player);
+
+	/*box8 = new Box(box_texture, SDL_Rect{  951,  498 - 96, 32 });
+	box8->rigid->CreateCollider(SDL_Rect{  951,  498 - 96, 32 }, ColliderType::BREAKABLE, App->player);*/
+	box9 = new Box(box_texture, SDL_Rect{  951,  498 - 96-33, 32, 32 });
+	box9->rigid->CreateCollider(SDL_Rect{  951,  498 - 96-33, 32, 32 }, ColliderType::BREAKABLE, App->player);
+	box10 = new Box(box_texture, SDL_Rect{ 951,  498 - 96 - 65 , 32, 32 });
+	box10->rigid->CreateCollider(SDL_Rect{ 951,  498 - 96 - 65 , 32, 32 }, ColliderType::BREAKABLE, App->player);
 	
-	//box1->rigid->acceleration.y = GRAVITY; box2->rigid->acceleration.y = GRAVITY; box3->rigid->acceleration.y = GRAVITY; box4->rigid->acceleration.y = GRAVITY;
+	box1->rigid->acceleration.y = 9.81; box2->rigid->acceleration.y = 9.81; box3->rigid->acceleration.y = 9.81; box4->rigid->acceleration.y = 9.81;
+	box5->rigid->acceleration.y = 9.81; box6->rigid->acceleration.y = 9.81; box7->rigid->acceleration.y = 9.81; 
+	box9->rigid->acceleration.y = 9.81; box10->rigid->acceleration.y = 9.81;
 
 	// boxes
 	App->physics->bodies.push_back(box1->rigid);
@@ -218,5 +229,24 @@ void ModuleSceneIntro::PlaceBoxes() {
 	App->physics->bodies.push_back(box5->rigid);
 	App->physics->bodies.push_back(box6->rigid);
 	App->physics->bodies.push_back(box7->rigid);
+	//App->physics->bodies.push_back(box8->rigid);
+	App->physics->bodies.push_back(box9->rigid);
+	App->physics->bodies.push_back(box10->rigid);
 	
+}
+
+void ModuleSceneIntro::OnCollision(RigidBody* c1, RigidBody* c2) {
+
+	/*if (c1->collider->type == ColliderType::BREAKABLE && c2->collider->type != ColliderType::PLAYER) {
+		c1->acceleration.y = 0;
+	}
+	if (c2->collider->type == ColliderType::BREAKABLE && c1->collider->type != ColliderType::PLAYER) {
+		c2->acceleration.y = 0;
+	}*/
+
+
+
+
+
+
 }
