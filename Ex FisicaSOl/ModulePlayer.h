@@ -192,6 +192,7 @@ public:
 		bomb->posRect.y = 0;
 		bomb->posRect.w = 10;
 		bomb->posRect.h = 10;
+		
 
 		float speed = 2;
 
@@ -201,6 +202,7 @@ public:
 		SDL_Rect r = { 0,0,64,64 };
 		bomb->CreateCollider(r, ColliderType::AID, pManager);
 		bomb->collider->made_explosion = false;
+		bomb->acceleration.y = 9.81;
 		physics->bombs.push_back(bomb);
 	}
 
