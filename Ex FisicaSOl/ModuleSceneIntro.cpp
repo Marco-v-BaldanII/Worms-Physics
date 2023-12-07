@@ -22,7 +22,7 @@ bool ModuleSceneIntro::Start()
 	box_texture = App->textures->Load("Assets/images/BloquePhys-Sheet.png");
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	//pigTexture = App->textures->Load("Assets/images/PIG.png");
-
+	App->audio->PlayMusic("Assets/sounds/battlefield.ogg");
 	SDL_Rect Trect1 = { 200,200,60,60 };
 	//AddTarget(Trect1, Trect1);
 
