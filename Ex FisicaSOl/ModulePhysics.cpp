@@ -10,7 +10,7 @@
 
 
 
-
+#define MASS 1
 #define OPACITY 80
 
 ModulePhysics::ModulePhysics(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -64,7 +64,7 @@ bool ModulePhysics::Start()
     collisionMethod[0] = CollisionDetection::ITERATIVE;
     collisionMethod[1] = CollisionDetection::TELEPORT;
     collisionMethod[2] = CollisionDetection::RAYCAST;
-    currentCollisionMethod = &collisionMethod[1];
+    currentCollisionMethod = &collisionMethod[2];
 
     currentIntegrator = EULER;
 
@@ -168,20 +168,23 @@ update_status ModulePhysics::PreUpdate()
 
     for (RigidBody* bomb : bombs)
     {
-        if (bomb->collider->type == ColliderType::BULLET)
-        {
-            ApplyAerodynamics(bomb, App->deltaTime.getDeltaTimeInSeconds());
-            ApplyWindForce(bomb, App->deltaTime.getDeltaTimeInSeconds());
+        
+        if (bomb->isMoving) {
+            
+
+            if (bomb->posRect.y <= 200 && bomb->isMoving)
+            {
+                ApplyAerodynamics(bomb, App->deltaTime.getDeltaTimeInSeconds(),0.5f);
+            }
+            else if (bomb->isMoving)
+            {
+                ApplyAerodynamics(bomb, App->deltaTime.getDeltaTimeInSeconds(),30.0f);
+            }
+            
+            
         }
         
-        if (bomb->posRect.y >= 150 && bomb->isMoving)
-        {
-            bomb->velocity.y = 2;
-        }
-        else if(bomb->isMoving)
-        {
-            bomb->velocity.y = 8;
-        }
+
 
         if (currentIntegrator == EULER)
         {
@@ -210,7 +213,7 @@ update_status ModulePhysics::PreUpdate()
 
         if (bullet->collider->type == ColliderType::BULLET)
         {
-            ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
+            //ApplyAerodynamics(bullet, App->deltaTime.getDeltaTimeInSeconds());
             //ApplyWindForce(bullet, App->deltaTime.getDeltaTimeInSeconds());
         }
 
@@ -503,7 +506,7 @@ void ModulePhysics::IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2) 
 void ModulePhysics::RayCast(RigidBody* c1) {
 
     if (c1->collider->type == ColliderType::BULLET) {
-        int rayLength = 3;
+        int rayLength = 8;
 
         int x1 = c1->collider->data.x + c1->collider->data.w / 2;  // Start point of the ray (center of the bullet)
         int y1 = c1->collider->data.y + c1->collider->data.h / 2;
@@ -559,13 +562,14 @@ RigidBody* ModulePhysics::createBouncer(int x, int y, int width, int height)
     return bouncer;
 }
 
-void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime)
+void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime, float area)
 {
     //The formula for aerodynamic drag is: Drag = 0.5 * airDensity * velocity^2 * dragCoefficient * area
     //airDensity = 1.225 (at sea level and at 15 °C), and area = 1 for simplicity
+
     body->dragCoefficient = 0.1f;
     float airDensity = 1.225f;
-    float area = 1.0f;
+
 
     float dragForceX = 0.5f * airDensity * body->velocity.x * body->velocity.x * body->dragCoefficient * area;
     float dragForceY = 0.5f * airDensity * body->velocity.y * body->velocity.y * body->dragCoefficient * area;
@@ -578,7 +582,10 @@ void ModulePhysics::ApplyAerodynamics(RigidBody* body, float deltaTime)
         body->acceleration.x += dragForceX * dragDirection.x * deltaTime;
     }
 
-    body->acceleration.y += dragForceY * dragDirection.y * deltaTime;
+    body->acceleration.y += (dragForceY * dragDirection.y * deltaTime) + (9.81f * deltaTime);
+    if (body->velocity.y < 0) {
+        body->velocity.y = 3.5f; // Minimum air velocity so that drag doesn't lift the object
+    }
 }
 
 void ModulePhysics::ApplyWindForce(RigidBody* body, float deltaTime)

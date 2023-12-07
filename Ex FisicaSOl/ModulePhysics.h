@@ -257,7 +257,7 @@ public:
     void IterativeCollisionIntegration(RigidBody* c1, RigidBody* c2);
     void RayCast(RigidBody* c1);
     RigidBody* createBouncer(int x, int y, int width, int height);
-    void ApplyAerodynamics(RigidBody* body, float deltaTime);
+    void ApplyAerodynamics(RigidBody* body, float deltaTime, float area =1.0f);
     void ApplyWindForce(RigidBody* body, float deltaTime);
 
     void ShowDebug();
