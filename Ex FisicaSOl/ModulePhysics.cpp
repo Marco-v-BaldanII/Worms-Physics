@@ -31,6 +31,7 @@ bool ModulePhysics::Start()
     //aqui esta los pajaros de todos los colliders change//
     bird = App->textures->Load("Assets/images/BebeMarco-Sheet.png");
     MarcoPeligro = App->textures->Load("Assets/images/MarcoEnPeligro.png");
+    explosiveTexture = App->textures->Load("Assets/images/explosion.png");
 
     //Pushbacks bebé
 
@@ -49,12 +50,21 @@ bool ModulePhysics::Start()
     bebeLeft.PushBack({ 128,32,32,32 });*/
     bebeLeft.loop = true;
     bebeLeft.speed = 0.05f;
+
+    explosiveAnim.PushBack({ 0,0,31,32 });
+    explosiveAnim.PushBack({ 32,0,31,32 });
+    explosiveAnim.PushBack({ 64,0,31,32 });
+    explosiveAnim.PushBack({ 96,0,31,32 });
+    explosiveAnim.PushBack({ 128,0,31,32 });
+    explosiveAnim.PushBack({ 160,0,31,32 });
+    explosiveAnim.loop = false;
+    explosiveAnim.speed = 0.1f;
  
 
     collisionMethod[0] = CollisionDetection::ITERATIVE;
     collisionMethod[1] = CollisionDetection::TELEPORT;
     collisionMethod[2] = CollisionDetection::RAYCAST;
-    currentCollisionMethod = &collisionMethod[0];
+    currentCollisionMethod = &collisionMethod[1];
 
     currentIntegrator = EULER;
 
@@ -223,6 +233,7 @@ update_status ModulePhysics::PreUpdate()
         }
         for (Explosion* _explosion : explosions) {
             SDL_Point p = { _explosion->shape.x, _explosion->shape.y };
+            
             if (IsRectangleIntersectingWithCircle(bullet->collider->data, p, _explosion->shape.r) == true && _explosion->done == false) {
                 LOG("someone has touched an explosion");
                 bullet->collider->listener->OnExplosion(bullet);
@@ -381,6 +392,12 @@ update_status ModulePhysics::PostUpdate()
                     }
                 
             }
+        }
+        for (Explosion* _explosion : explosions) {
+            
+            _explosion->Update();
+            App->renderer->Blit(_explosion->explosion_tex, _explosion->shape.x -(_explosion->shape.r/1.5f), _explosion->shape.y -(_explosion->shape.r /1.5f), &_explosion->currentAnim->GetCurrentFrame());
+            
         }
     
     

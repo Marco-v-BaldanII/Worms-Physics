@@ -668,7 +668,7 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 		if ( c2->collider->made_explosion == false) {
 			c2->StopAllMotion();
 			LOG("\n EXPLODE \n");
-			Explosion* explode = new Explosion(c2->collider->data.x +(c2->collider->data.w/2), c2->collider->data.y + (c2->collider->data.h/2), 30);
+			Explosion* explode = new Explosion(c2->collider->data.x +(c2->collider->data.w/2), c2->collider->data.y + (c2->collider->data.h/2), 23, App->physics->explosiveTexture, App->physics->explosiveAnim);
 			App->physics->explosions.push_back(explode);
 			c2->collider->made_explosion = true;
 			explode->mybody = c2;

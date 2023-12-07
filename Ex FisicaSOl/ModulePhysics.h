@@ -133,15 +133,31 @@ class Explosion {
 public:
     Timer myTimer;
     circle shape;
+    SDL_Texture* explosion_tex = nullptr;
+
+    Anim* currentAnim = nullptr;
+    Anim explosionAnim;
 
     bool done = false;
 
-    Explosion(int x, int y, int rad) {
+    Explosion(int x, int y, int rad, SDL_Texture* tex , Anim explosiveAnim) {
         myTimer.Start();
         shape.x = x;
         shape.y = y;
         shape.r = rad;
+
+        explosion_tex = tex;
+        explosionAnim = explosiveAnim;
+        currentAnim = &explosionAnim;
+
         // add explosion to explosion list
+    }
+
+    void Update() {
+
+        currentAnim->Update();
+
+
     }
 
     RigidBody* mybody;
@@ -253,6 +269,9 @@ public:
     std::list<Explosion*> explosions;
     RigidBody* corpses[50] = { nullptr };
     Explosion* defused[10] = { nullptr };
+
+    Anim explosiveAnim;
+    SDL_Texture* explosiveTexture = nullptr;
 
     CollisionDetection collisionMethod[3];
     CollisionDetection* currentCollisionMethod;
