@@ -82,6 +82,7 @@ bool ModulePlayer::Start()
 		myPlayers[i]->rigid->acceleration.y = 0;
 		myPlayers[i]->rigid->ID = 2;
 		myPlayers[i]->rigid->isGrounded = false;
+		myPlayers[i]->rigid->bounceCount = 0;
 		myPlayers[i]->shoted = false;
 
 
@@ -684,6 +685,7 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 			if (myPlayers[i]->rigid == c2) /*Comprobar que el player es el correcto*/ {
 				if (!myPlayers[i]->isJumping && myPlayers[i]->rigid->collider->data.y < c1->collider->data.y) {
 					myPlayers[i]->rigid->isGrounded = true;
+					c2->bounceCount = 0;
 					c2->velocity.y = 0;
 					c2->acceleration.y = 0;
 					// Negar movimiento vertical en seguida que choca con algo
