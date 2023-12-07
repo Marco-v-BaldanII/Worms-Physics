@@ -749,13 +749,26 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 	}
 
 	if (c1->collider->type == ColliderType::BOUNCER && (c2->collider->type == ColliderType::PLAYER || c2->collider->type == ColliderType::BULLET)) {
-		c2->velocity.y *= -1;
-		c2->velocity.y *= 0.5f;
 
-		if (abs(c2->velocity.y) < 0.8f) {
+		if (c2->bounceCount < 4)
+		{
+			if (abs(c2->velocity.y) > 0.8f)
+			{
+				c2->velocity.y *= 0.6f;
+				c2->velocity.y *= -1;
+			}
+			else if (c2->velocity.y != 0)
+			{
+				c2->velocity.y = 0.1f * (c2->velocity.y > 0 ? -1 : 1);
+			}
+			c2->bounceCount++; 
+		}
+		else
+		{
 			c2->velocity.y = 0;
 		}
 	}
+
 
 	if (c2->collider->type == ColliderType::BULLET && c1->collider->type == ColliderType::BREAKABLE) {
 		LOG("bullet has hit a box");

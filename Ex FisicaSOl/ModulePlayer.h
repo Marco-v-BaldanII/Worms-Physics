@@ -153,6 +153,8 @@ public:
 	void Shoot();
 	int turno = 0;
 	
+	
+
 	Movement myMovement[5];
 	Movement* currentMovement;
 

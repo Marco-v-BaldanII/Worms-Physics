@@ -182,7 +182,7 @@ public:
     bool isMoving = false;
 
     bool isGrounded = true;
-
+    int bounceCount = 0;
     float dragCoefficient;
     vec2 windForce;
 
