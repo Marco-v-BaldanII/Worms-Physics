@@ -34,6 +34,11 @@ bool ModulePlayer::Start()
 	font = App->fonts->Load("Assets/images/my_font.png", lookupTable, 3);
 	SDL_Texture* Gun_Selection = App->textures->Load("Assets/images/GunSelection-Sheet.png");
 
+	JumpSound =  App->audio->LoadFx("Assets/sounds/free_jump.wav");
+	BabySound = App->audio->LoadFx("Assets/sounds/crying-baby.wav");
+	explosionSound = App->audio->LoadFx("Assets/sounds/canonshot.wav");
+
+
 	for (int i = 0; i < NUM_PLAYERS; ++i) {
 		myPlayers[i] = new Player();
 		myPlayers[i]->rigid = new RigidBody();
@@ -461,6 +466,7 @@ update_status ModulePlayer::Update()
 					}
 
 					if (App->input->GetKey(SDL_SCANCODE_Z) == KEY_REPEAT && myPlayers[i]->rigid->isGrounded) {
+						App->audio->PlayFx(JumpSound);
 						myPlayers[i]->rigid->velocity.y -= JUMP_FORCE;
 						myPlayers[i]->rigid->isGrounded = false;
 						myPlayers[i]->isJumping = true;
@@ -524,6 +530,7 @@ update_status ModulePlayer::Update()
 					preview = true;
 					if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 						myPlayers[i]->currentWeapon->Shoot(this, App->physics, App->input->GetMouseX(), App->input->GetMouseY());
+						if (myPlayers[i]->currentWeapon->name == "birdBazooka") { App->audio->PlayFx(BabySound); }
 						ChangeTurn();
 						turntaken = true;
 						currentPlayer = myPlayers[(i + 1) % NUM_PLAYERS];
@@ -709,6 +716,7 @@ void ModulePlayer::OnCollision(RigidBody* c1, RigidBody* c2) {
 	if (c2->collider->type == ColliderType::BULLET ) {
 		if ( c2->collider->made_explosion == false) {
 			c2->StopAllMotion();
+			App->audio->PlayFx(explosionSound);
 			LOG("\n EXPLODE \n");
 			Explosion* explode = new Explosion(c2->collider->data.x +(c2->collider->data.w/2), c2->collider->data.y + (c2->collider->data.h/2), 23, App->physics->explosiveTexture, App->physics->explosiveAnim);
 			App->physics->explosions.push_back(explode);

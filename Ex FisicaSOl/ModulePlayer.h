@@ -156,6 +156,10 @@ public:
 	Player* currentPlayer;
 	int font;
 
+	uint JumpSound = 0;
+	uint BabySound;
+	uint explosionSound;
+
 	void ResetMatch();
 
 public:
